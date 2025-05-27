@@ -1,0 +1,15 @@
+<!-- packages/guide/pages/guide/map/map.wxml -->
+<view class="container">
+  <view class="page-title">{{pageTitle}}</view>
+  <view class="content">
+    <!-- 景区地图页面内容 -->
+    <view class="map-container">
+      <map class="scenic-map" longitude="116.404" latitude="39.915" scale="14" markers="{{markers}}" show-location></map>
+    </view>
+    <view class="map-controls">
+      <view class="control-item" bindtap="zoomIn">放大</view>
+      <view class="control-item" bindtap="zoomOut">缩小</view>
+      <view class="control-item" bindtap="showMyLocation">我的位置</view>
+    </view>
+  </view>
+</view>

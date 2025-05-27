@@ -1,0 +1,16 @@
+<!-- components/virtual-list/virtual-list.wxml -->
+<scroll-view 
+  class="virtual-list-container"
+  scroll-y
+  bindscroll="onScroll"
+  scroll-top="{{scrollTop}}"
+  style="height: 100%;">
+  <view class="virtual-list-phantom" style="height: {{totalHeight}}px;"></view>
+  <view class="virtual-list-content" style="transform: translateY({{startIndex * itemHeight}}px);">
+    <slot name="before"></slot>
+    <block wx:for="{{visibleData}}" wx:key="index">
+      <slot name="item" data-item="{{item}}" data-index="{{index + startIndex}}"></slot>
+    </block>
+    <slot name="after"></slot>
+  </view>
+</scroll-view> 

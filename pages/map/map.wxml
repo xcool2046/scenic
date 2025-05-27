@@ -1,0 +1,76 @@
+<!--pages/map/map.wxml-->
+<view class="container">
+  <view class="header">
+    <text class="title">景区导览图</text>
+    <view class="actions">
+      <view class="action-btn" bindtap="previewMap">
+        <image class="action-icon" src="/assets/icons/preview.png" mode="aspectFit"></image>
+        <text>查看大图</text>
+      </view>
+      <view class="action-btn" bindtap="onSaveMap">
+        <image class="action-icon" src="/assets/icons/download.png" mode="aspectFit"></image>
+        <text>保存地图</text>
+      </view>
+    </view>
+  </view>
+  
+  <view class="map-container">
+    <image class="map-image" src="{{mapUrl}}" mode="aspectFit" bindtap="previewMap"></image>
+    
+    <!-- 地图标记点 -->
+    <view class="spot-markers">
+      <view wx:for="{{spots}}" wx:key="id" 
+        class="spot-marker" 
+        style="left: {{item.x}}%; top: {{item.y}}%"
+        bindtap="onSpotTap"
+        data-id="{{item.id}}">
+        <view class="marker-dot"></view>
+        <text class="marker-name">{{item.name}}</text>
+      </view>
+    </view>
+  </view>
+  
+  <view class="legend">
+    <view class="legend-title">图例说明</view>
+    <view class="legend-items">
+      <view class="legend-item">
+        <view class="legend-dot entrance"></view>
+        <text>入口</text>
+      </view>
+      <view class="legend-item">
+        <view class="legend-dot toilet"></view>
+        <text>卫生间</text>
+      </view>
+      <view class="legend-item">
+        <view class="legend-dot food"></view>
+        <text>餐饮</text>
+      </view>
+      <view class="legend-item">
+        <view class="legend-dot rest"></view>
+        <text>休息区</text>
+      </view>
+    </view>
+  </view>
+  
+  <view class="spot-list">
+    <view class="spot-list-title">景点列表</view>
+    <view class="spot-items">
+      <view wx:for="{{spots}}" wx:key="id" class="spot-item" bindtap="onSpotTap" data-id="{{item.id}}">
+        <text class="spot-name">{{item.name}}</text>
+        <image class="spot-arrow" src="/assets/icons/arrow.png" mode="aspectFit"></image>
+      </view>
+    </view>
+  </view>
+  
+  <!-- 加载提示 -->
+  <view class="loading" wx:if="{{loading}}">
+    <image class="loading-icon" src="/assets/icons/loading.gif" mode="aspectFit"></image>
+    <text>加载地图中...</text>
+  </view>
+  
+  <!-- 错误提示 -->
+  <view class="error" wx:if="{{error}}">
+    <text>地图加载失败</text>
+    <view class="retry-btn" bindtap="loadMapData">重试</view>
+  </view>
+</view> 

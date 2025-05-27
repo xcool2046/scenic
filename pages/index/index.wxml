@@ -1,0 +1,192 @@
+<!--index.wxml-->
+<view class="container">
+  <!-- 轮播图 -->
+  <view class="banner-container">
+    <swiper 
+      class="banner-swiper" 
+      indicator-dots="{{indicatorDots}}"
+      indicator-color="rgba(255, 255, 255, 0.5)"
+      indicator-active-color="#ffffff"
+      autoplay="{{autoplay}}" 
+      interval="{{interval}}" 
+      duration="{{duration}}"
+      circular="{{circular}}"
+      previous-margin="{{previousMargin}}"
+      next-margin="{{nextMargin}}"
+      easing-function="easeInOutCubic"
+      bindchange="onBannerChange"
+    >
+      <block wx:for="{{bannerList}}" wx:key="id">
+        <swiper-item>
+          <view class="banner-item {{currentBannerIndex === index ? 'active' : ''}}">
+            <image 
+              src="{{item.url}}" 
+              class="banner-image" 
+              mode="aspectFill"
+              bindtap="onBannerTap"
+              data-id="{{item.id}}"
+              bindload="onBannerImageLoad"
+              binderror="onBannerImageError"
+            ></image>
+            <view class="banner-title" wx:if="{{item.title}}">{{item.title}}</view>
+          </view>
+        </swiper-item>
+      </block>
+    </swiper>
+    
+    <!-- 自定义指示器 -->
+    <view class="banner-indicator" wx:if="{{!indicatorDots && bannerList.length > 1}}">
+      <block wx:for="{{bannerList}}" wx:key="id">
+        <view class="indicator-dot {{currentBannerIndex === index ? 'active' : ''}}"></view>
+      </block>
+    </view>
+  </view>
+
+  <!-- 基本信息面板 -->
+  <view class="info-panel">
+    <view class="info-item" wx:if="{{uiConfig.showWeather}}">
+      <view class="info-label">天气</view>
+      <view class="info-value">{{weatherInfo.temperature}} · {{weatherInfo.weather}}</view>
+    </view>
+    <view class="info-divider" wx:if="{{uiConfig.showWeather && uiConfig.showCrowdLevel}}"></view>
+    <view class="info-item" wx:if="{{uiConfig.showCrowdLevel}}">
+      <view class="info-label">人流量</view>
+      <view class="info-value">{{crowdInfo.level}}</view>
+    </view>
+    <view class="info-divider"></view>
+    <view class="info-item">
+      <view class="info-label">开放时间</view>
+      <view class="info-value">{{openStatus.time}}{{!openStatus.isOpen ? ' (已闭园)' : ''}}</view>
+    </view>
+  </view>
+
+  <!-- 核心服务卡片 -->
+  <view class="service-cards">
+    <view class="service-card ticket" bindtap="onCommonTap" data-type="ticket" style="background-image: url('{{images.CARDS.TICKET}}')">
+      <view class="service-content">
+        <view class="icon-base icon-responsive icon-circle icon-primary">
+          <image class="icon-image" src="{{icons.CDN_ICONS.TICKET}}"></image>
+        </view>
+        <text class="service-title">电子门票</text>
+      </view>
+    </view>
+    <view class="service-card map" bindtap="onCommonTap" data-type="map" style="background-image: url('{{images.CARDS.MAP}}')">
+      <view class="service-content">
+        <view class="icon-base icon-responsive icon-circle icon-primary">
+          <image class="icon-image" src="{{icons.CDN_ICONS.MAP}}"></image>
+        </view>
+        <text class="service-title">景区地图</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 今日活动 -->
+  <view class="section today-activities" wx:if="{{uiConfig.showActivities && activities.length > 0}}">
+    <view class="section-header">
+      <text class="section-title">今日活动</text>
+    </view>
+    <view class="activity-list">
+      <view class="activity-item" wx:for="{{activities}}" wx:key="title" bindtap="onActivityTap" data-index="{{index}}">
+        <view class="activity-time" wx:if="{{item.title.indexOf('【') === 0}}">{{item.title.substring(0, 7)}}</view>
+        <view class="activity-time" wx:else>公告：</view>
+        <view class="activity-content">
+          <view class="activity-title">{{item.title.indexOf('【') === 0 ? item.title.substring(7) : item.title.replace('公告：', '')}}</view>
+          <view class="activity-desc">{{item.desc}}</view>
+        </view>
+        <view class="icon-base icon-small">
+          <image class="icon-image" src="{{item.title.includes('公告') ? icons.NOTICE_ICON : (item.title.includes('讲座') ? icons.LECTURE_ICON : icons.PERFORMANCE_ICON)}}"></image>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 快捷服务 -->
+  <view class="quick-services" wx:if="{{uiConfig.showQuickServices}}">
+    <view class="service-row">
+      <view class="quick-service-item" bindtap="onCommonTap" data-type="parking">
+        <view class="icon-base icon-responsive icon-circle home-icon">
+          <image class="icon-image" src="{{icons.PARKING_BTN}}"></image>
+        </view>
+        <text class="quick-service-name">停车场</text>
+      </view>
+      <view class="quick-service-item" bindtap="onCommonTap" data-type="scan">
+        <view class="icon-base icon-responsive icon-circle home-icon">
+          <image class="icon-image" src="{{icons.SCAN_BTN}}"></image>
+        </view>
+        <text class="quick-service-name">扫一扫</text>
+      </view>
+      <view class="quick-service-item" bindtap="onCommonTap" data-type="emergency">
+        <view class="icon-base icon-responsive icon-circle home-icon icon-danger">
+          <image class="icon-image" src="{{icons.SOS_BTN}}"></image>
+        </view>
+        <text class="quick-service-name">紧急求助</text>
+      </view>
+      <view class="quick-service-item" bindtap="onCommonTap" data-type="guide">
+        <view class="icon-base icon-responsive icon-circle home-icon">
+          <image class="icon-image" src="{{icons.ROUTE_BTN}}"></image>
+        </view>
+        <text class="quick-service-name">推荐路线</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 便捷设施 -->
+  <view class="section" wx:if="{{uiConfig.showFacilities}}">
+    <view class="section-header">
+      <text class="section-title">便捷设施</text>
+    </view>
+    <view class="facility-list">
+      <view class="facility-item" bindtap="findNearby" data-type="toilet">
+        <view class="icon-base icon-responsive icon-square facility-icon">
+          <image class="icon-image" src="{{icons.CDN_ICONS.TOILET}}"></image>
+        </view>
+        <text class="facility-name">卫生间</text>
+      </view>
+      <view class="facility-item" bindtap="findNearby" data-type="food">
+        <view class="icon-base icon-responsive icon-square facility-icon">
+          <image class="icon-image" src="{{icons.CDN_ICONS.FOOD}}"></image>
+        </view>
+        <text class="facility-name">餐饮</text>
+      </view>
+      <view class="facility-item" bindtap="findNearby" data-type="rest">
+        <view class="icon-base icon-responsive icon-square facility-icon">
+          <image class="icon-image" src="{{icons.CDN_ICONS.REST_AREA}}"></image>
+        </view>
+        <text class="facility-name">休息区</text>
+      </view>
+      <view class="facility-item" bindtap="findNearby" data-type="medical">
+        <view class="icon-base icon-responsive icon-square facility-icon">
+          <image class="icon-image" src="{{icons.CDN_ICONS.MEDICAL}}"></image>
+        </view>
+        <text class="facility-name">医疗</text>
+      </view>
+      <view class="facility-item" bindtap="onCommonTap" data-type="transport">
+        <view class="icon-base icon-responsive icon-square facility-icon">
+          <image class="icon-image" src="{{icons.TRANSPORT_ICON}}"></image>
+        </view>
+        <text class="facility-name">交通</text>
+      </view>
+      <view class="facility-item" bindtap="onCommonTap" data-type="all">
+        <view class="icon-base icon-responsive icon-square facility-icon">
+          <image class="icon-image" src="{{icons.MORE_ICON}}"></image>
+        </view>
+        <text class="facility-name">更多</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部空白区域，防止内容被底部tab遮挡 -->
+  <view class="bottom-gap"></view>
+  
+  <!-- 加载中提示 -->
+  <view class="loading-timeout" wx:if="{{loadingTimeout}}">
+    <text>数据加载失败</text>
+    <view class="retry-btn" bindtap="refreshHomeData">重新加载</view>
+  </view>
+  
+  <!-- 加载状态组件 -->
+  <loading id="loading" text="加载中" mask="{{true}}" loading="{{false}}"></loading>
+  
+  <!-- 轻提示组件 -->
+  <toast id="toast"></toast>
+</view>

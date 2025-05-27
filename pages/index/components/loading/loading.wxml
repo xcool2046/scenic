@@ -1,0 +1,21 @@
+<!-- components/loading/loading.wxml -->
+<view class="loading-container {{loading ? 'show' : 'hide'}}">
+  <!-- 蒙层 -->
+  <view class="loading-mask" wx:if="{{mask}}" bindtap="onTapMask"></view>
+  
+  <!-- 加载内容 -->
+  <view class="loading-content">
+    <!-- 旋转加载图标 -->
+    <view wx:if="{{type === 'spinner'}}" class="loading-spinner" style="width: {{size}}rpx; height: {{size}}rpx; border-color: {{color}} transparent transparent transparent;"></view>
+    
+    <!-- 点动画加载图标 -->
+    <view wx:elif="{{type === 'dot'}}" class="loading-dots">
+      <view class="loading-dot" style="background-color: {{color}};"></view>
+      <view class="loading-dot" style="background-color: {{color}};"></view>
+      <view class="loading-dot" style="background-color: {{color}};"></view>
+    </view>
+    
+    <!-- 加载文字 -->
+    <text class="loading-text">{{text}}</text>
+  </view>
+</view> 

@@ -1,0 +1,175 @@
+<!--pages/guide/spot/spot.wxml-->
+<view class="container" wx:if="{{!loading && spot}}">
+  <!-- 顶部轮播图 -->
+  <swiper 
+    class="banner" 
+    indicator-dots="{{indicatorDots}}"
+    autoplay="{{autoplay}}" 
+    interval="{{interval}}" 
+    duration="{{duration}}"
+  >
+    <block wx:for="{{spot.images}}" wx:key="*this">
+      <swiper-item>
+        <image bindtap="previewImage" data-src="{{item}}" src="{{item}}" mode="aspectFill" class="banner-image"></image>
+      </swiper-item>
+    </block>
+  </swiper>
+  
+  <!-- 实时人流量信息 -->
+  <view class="crowd-section">
+    <view class="crowd-header">
+      <text class="crowd-title">实时人流情况</text>
+      <text class="update-time">更新于 {{crowdInfo.updateTime}}</text>
+    </view>
+    
+    <view class="crowd-content">
+      <view class="crowd-status">
+        <view class="crowd-level level-{{crowdInfo.level}}">
+          <text>{{crowdInfo.levelText}}</text>
+        </view>
+        <view class="wait-time">
+          <text>预计等待: {{crowdInfo.waitTime}}分钟</text>
+        </view>
+      </view>
+      
+      <view class="crowd-progress">
+        <view class="progress-bg">
+          <view class="progress-bar level-{{crowdInfo.level}}" style="width: {{crowdInfo.percentFull}}%"></view>
+        </view>
+        <view class="progress-text">
+          <text>{{crowdInfo.percentFull}}%</text>
+        </view>
+      </view>
+    </view>
+  </view>
+  
+  <!-- 最佳游览时间 -->
+  <view class="visit-time-section">
+    <view class="section-title">
+      <text>最佳游览时间</text>
+    </view>
+    <view class="visit-time-list">
+      <block wx:for="{{bestVisitTimes}}" wx:key="period">
+        <view class="visit-time-item status-{{item.status}}">
+          <view class="visit-period">{{item.period}}</view>
+          <view class="visit-time">{{item.time}}</view>
+          <view class="visit-status">
+            <text wx:if="{{item.status === 'best'}}">推荐</text>
+            <text wx:elif="{{item.status === 'good'}}">较好</text>
+            <text wx:else>一般</text>
+          </view>
+        </view>
+      </block>
+    </view>
+  </view>
+  
+  <!-- 景点基本信息 -->
+  <view class="info-section">
+    <view class="info-header">
+      <view class="info-name-container">
+        <text class="spot-name">{{spot.name}}</text>
+        <view class="spot-type-tag">
+          <text>{{
+            spot.type === 'scenery' ? '景点' :
+            spot.type === 'facility' ? '设施' :
+            spot.type === 'entrance' ? '出入口' :
+            spot.type === 'food' ? '餐饮' : '其他'
+          }}</text>
+        </view>
+      </view>
+      <view class="like-btn {{isLiked ? 'liked' : ''}}" bindtap="toggleLike">
+        <image src="{{isLiked ? '/assets/icons/heart_filled.png' : '/assets/icons/heart.png'}}"></image>
+      </view>
+    </view>
+    
+    <view class="rating-row">
+      <view class="rating">
+        <text class="rating-score">{{spot.popularity}}</text>
+        <view class="rating-stars">
+          <block wx:for="{{5}}" wx:key="*this">
+            <image 
+              class="star" 
+              src="{{index < Math.floor(spot.popularity) ? '/assets/icons/star_filled.png' : (index < spot.popularity ? '/assets/icons/star_half.png' : '/assets/icons/star.png')}}"
+            ></image>
+          </block>
+        </view>
+      </view>
+      <view class="location-text">{{spot.location}}</view>
+    </view>
+  </view>
+  
+  <!-- 景点特色标签 -->
+  <view class="tags-section">
+    <view class="tags-list">
+      <block wx:for="{{spot.features}}" wx:key="*this">
+        <view class="tag-item">
+          <text>{{item}}</text>
+        </view>
+      </block>
+    </view>
+  </view>
+  
+  <!-- 景点开放信息 -->
+  <view class="info-item">
+    <view class="info-item-title">
+      <image src="/assets/icons/time.png"></image>
+      <text>开放时间</text>
+    </view>
+    <text class="info-item-content">{{spot.openTime}}</text>
+  </view>
+  
+  <!-- 景点位置 -->
+  <view class="info-item">
+    <view class="info-item-title">
+      <image src="/assets/icons/location.png"></image>
+      <text>位置信息</text>
+    </view>
+    <view class="info-item-content location-content" bindtap="navigateToMap">
+      <text>{{spot.location}}</text>
+      <view class="map-link">
+        <text>查看地图</text>
+        <image src="/assets/icons/arrow_right.png"></image>
+      </view>
+    </view>
+  </view>
+  
+  <!-- 景点详细介绍 -->
+  <view class="desc-section">
+    <view class="section-title">
+      <text>景点介绍</text>
+    </view>
+    <text class="desc-content">{{spot.description}}</text>
+  </view>
+  
+  <!-- 附近景点 -->
+  <view class="nearby-section" wx:if="{{spot.nearbySpots && spot.nearbySpots.length > 0}}">
+    <view class="section-title">
+      <text>附近景点</text>
+    </view>
+    <scroll-view scroll-x="true" class="nearby-scroll">
+      <view class="nearby-list">
+        <block wx:for="{{spot.nearbySpots}}" wx:key="*this">
+          <view 
+            class="nearby-item" 
+            bindtap="navigateToNearbySpot" 
+            data-id="{{item}}"
+          >
+            <image class="nearby-image" src="{{spotData[item-1].images[0]}}" mode="aspectFill"></image>
+            <text class="nearby-name">{{spotData[item-1].name}}</text>
+          </view>
+        </block>
+      </view>
+    </scroll-view>
+  </view>
+  
+  <!-- 底部分享按钮 -->
+  <view class="share-btn">
+    <button open-type="share">分享此景点</button>
+  </view>
+</view>
+
+<!-- 加载状态组件 -->
+<loading id="loading" text="加载中" mask="{{true}}" loading="{{loading}}"></loading>
+
+<!-- 轻提示组件 -->
+<toast id="toast"></toast> 

@@ -1,0 +1,133 @@
+/* pages/realtime-info/realtime-info.wxss */
+.realtime-info-page {
+  min-height: 100vh;
+  background-color: #f8f8f8;
+  padding: 30rpx;
+  box-sizing: border-box;
+}
+
+.header {
+  margin-bottom: 40rpx;
+}
+
+.title {
+  font-size: 36rpx;
+  font-weight: bold;
+  margin-bottom: 10rpx;
+  color: #333;
+}
+
+.subtitle {
+  font-size: 24rpx;
+  color: #666;
+}
+
+/* 加载状态 */
+.loading-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 60rpx 0;
+}
+
+.loading-animation {
+  width: 60rpx;
+  height: 60rpx;
+  border: 4rpx solid #f3f3f3;
+  border-top: 4rpx solid #1AAD19;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 20rpx;
+}
+
+.loading-text {
+  font-size: 26rpx;
+  color: #666;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* 信息区域 */
+.info-section {
+  margin-bottom: 40rpx;
+}
+
+.section-title {
+  margin: 20rpx 0;
+}
+
+.title-text {
+  font-size: 30rpx;
+  font-weight: bold;
+  color: #333;
+  position: relative;
+  padding-left: 20rpx;
+}
+
+.title-text::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 6rpx;
+  width: 8rpx;
+  height: 28rpx;
+  background-color: #1AAD19;
+  border-radius: 4rpx;
+}
+
+.section-content {
+  margin-bottom: 30rpx;
+}
+
+/* 提示区域 */
+.tips-section {
+  padding: 20rpx;
+  background-color: #f0f9eb;
+  border-radius: 12rpx;
+  margin-bottom: 30rpx;
+}
+
+.tip-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10rpx;
+}
+
+.tip-item:last-child {
+  margin-bottom: 0;
+}
+
+.tip-icon {
+  margin-right: 10rpx;
+  color: #67C23A;
+}
+
+.tip-text {
+  font-size: 26rpx;
+  color: #67C23A;
+}
+
+/* 骨架屏样式 */
+.skeleton {
+  height: 240rpx;
+  background: linear-gradient(90deg, #f2f2f2 25%, #e6e6e6 37%, #f2f2f2 63%);
+  background-size: 400% 100%;
+  animation: skeleton-loading 1.4s ease infinite;
+  border-radius: 16rpx;
+}
+
+.skeleton-large {
+  height: 500rpx;
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0 50%;
+  }
+} 

@@ -1,0 +1,20 @@
+{
+  "name": "scenic-mini-program",
+  "version": "1.0.0",
+  "description": "景区导览小程序",
+  "main": "app.js",
+  "dependencies": {
+    "@amap/amap-jsapi-loader": "^1.0.1",
+    "miniprogram-amap": "^1.0.1" 
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "微信小程序",
+    "景区",
+    "导览"
+  ],
+  "author": "",
+  "license": "ISC"
+} 

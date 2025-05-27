@@ -1,0 +1,9 @@
+{
+  "navigationBarTitleText": "景区地图",
+  "navigationBarBackgroundColor": "#1AAD19",
+  "navigationBarTextStyle": "white",
+  "usingComponents": {
+    "loading": "/components/loading/loading",
+    "toast": "/components/toast/toast"
+  }
+} 

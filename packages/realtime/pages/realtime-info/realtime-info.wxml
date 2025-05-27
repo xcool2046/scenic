@@ -1,0 +1,45 @@
+<!-- packages/realtime/pages/realtime-info/realtime-info.wxml -->
+<view class="container">
+  <view class="page-title">{{pageTitle}}</view>
+  <view class="content">
+    <!-- 实时信息页面内容 -->
+    <view class="info-section">
+      <view class="section-title">景区实时人流</view>
+      <view class="crowd-info">
+        <view class="crowd-status {{crowdStatus}}">{{crowdLevel}}</view>
+        <progress percent="{{crowdPercentage}}" stroke-width="8" color="{{crowdColor}}" />
+        <view class="crowd-tips">{{crowdTips}}</view>
+      </view>
+    </view>
+    
+    <view class="info-section">
+      <view class="section-title">热门景点等待时间</view>
+      <view class="spot-list">
+        <view class="spot-item" wx:for="{{spots}}" wx:key="id">
+          <view class="spot-name">{{item.name}}</view>
+          <view class="spot-wait {{item.waitLevel}}">{{item.waitTime}}分钟</view>
+        </view>
+      </view>
+    </view>
+    
+    <view class="info-section">
+      <view class="section-title">天气情况</view>
+      <view class="weather-info">
+        <view class="weather-main">
+          <view class="temperature">{{temperature}}</view>
+          <view class="weather-desc">{{weatherDesc}}</view>
+        </view>
+        <view class="weather-detail">
+          <view class="detail-item">
+            <view class="label">湿度</view>
+            <view class="value">{{humidity}}%</view>
+          </view>
+          <view class="detail-item">
+            <view class="label">风力</view>
+            <view class="value">{{windPower}}</view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

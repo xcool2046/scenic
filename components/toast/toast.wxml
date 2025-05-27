@@ -1,0 +1,32 @@
+<!-- components/toast/toast.wxml -->
+<view class="toast-container {{show ? 'show' : 'hide'}} toast-position-{{position}}">
+  <!-- 蒙层 -->
+  <view class="toast-mask" wx:if="{{mask}}" bindtap="onMaskTap"></view>
+  
+  <!-- 提示内容 -->
+  <view class="toast-content">
+    <!-- 图标区域 -->
+    <block wx:if="{{icon !== 'none'}}">
+      <!-- 成功图标 -->
+      <view wx:if="{{icon === 'success'}}" class="toast-icon toast-success-icon">
+        <view class="toast-success-icon-line1"></view>
+        <view class="toast-success-icon-line2"></view>
+      </view>
+      
+      <!-- 错误图标 -->
+      <view wx:elif="{{icon === 'error'}}" class="toast-icon toast-error-icon">
+        <view class="toast-error-icon-line1"></view>
+        <view class="toast-error-icon-line2"></view>
+      </view>
+      
+      <!-- 加载图标 -->
+      <view wx:elif="{{icon === 'loading'}}" class="toast-icon toast-loading-icon"></view>
+      
+      <!-- 自定义图标 -->
+      <image wx:elif="{{icon === 'custom' && image}}" class="toast-icon toast-custom-icon" src="{{image}}" mode="aspectFit"></image>
+    </block>
+    
+    <!-- 文字区域 -->
+    <text class="toast-text" wx:if="{{text}}">{{text}}</text>
+  </view>
+</view> 

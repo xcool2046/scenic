@@ -1,0 +1,47 @@
+<!--components/spot-congestion/spot-congestion.wxml-->
+<view class="spot-congestion">
+  <view class="congestion-title">
+    <text class="title-text">景点实时拥堵情况</text>
+    <text class="update-time" wx:if="{{updateTime}}">{{updateTime}} 更新</text>
+  </view>
+  
+  <view class="spots-list">
+    <view class="spot-item" wx:for="{{spotsData}}" wx:key="id" bindtap="onSpotTap" data-id="{{item.id}}">
+      <view class="spot-info">
+        <view class="spot-name">{{item.name}}</view>
+        <view class="spot-level" style="color: {{levelColors[item.congestionLevel] || '#67C23A'}}">
+          {{item.congestionLevel}}
+        </view>
+      </view>
+      
+      <view class="spot-details">
+        <progress 
+          class="spot-progress" 
+          percent="{{item.levelValue * 20}}" 
+          stroke-width="6" 
+          activeColor="{{levelColors[item.congestionLevel] || '#67C23A'}}"
+          backgroundColor="#f0f0f0"
+        />
+        
+        <view class="spot-wait-time" wx:if="{{item.waitTime}}">
+          <text class="wait-time-label">等待时间:</text>
+          <text class="wait-time-value">约{{item.waitTime}}分钟</text>
+        </view>
+        
+        <view class="spot-warning" wx:if="{{item.warning}}">
+          <view class="icon-base icon-small warning-icon">
+            <image class="icon-image" src="/assets/icons/warning.png"></image>
+          </view>
+          <text class="warning-text">{{item.warning}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+  
+  <view class="legend">
+    <view class="legend-item" wx:for="{{['舒适', '一般', '较拥挤', '拥挤', '非常拥挤']}}" wx:key="*this">
+      <view class="legend-color" style="background-color: {{levelColors[item]}}"></view>
+      <text class="legend-text">{{item}}</text>
+    </view>
+  </view>
+</view> 

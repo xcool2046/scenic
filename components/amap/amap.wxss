@@ -1,0 +1,170 @@
+/* components/amap/amap.wxss */
+.amap-container {
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+.amap-canvas {
+  width: 100%;
+  height: 100%;
+  background-color: #f5f5f5;
+}
+
+.map-loading {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #666;
+  font-size: 28rpx;
+}
+
+.map-simulate {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+.map-bg {
+  width: 100%;
+  height: 100%;
+}
+
+.map-marker {
+  position: absolute;
+  transform: translate(-50%, -100%);
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.marker-label {
+  background-color: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  padding: 4rpx 10rpx;
+  border-radius: 8rpx;
+  font-size: 22rpx;
+  margin-top: 6rpx;
+  max-width: 150rpx;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.path-info {
+  position: absolute;
+  top: 20rpx;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 10rpx;
+  padding: 15rpx 20rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.1);
+  z-index: 5;
+}
+
+.path-distance {
+  font-size: 30rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 4rpx;
+}
+
+.path-duration {
+  font-size: 24rpx;
+  color: #666;
+}
+
+.map-notice {
+  position: absolute;
+  bottom: 50rpx;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.5);
+  color: #fff;
+  padding: 20rpx;
+  font-size: 28rpx;
+}
+
+.map-controls {
+  position: absolute;
+  bottom: 40rpx;
+  right: 30rpx;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+
+.control-btn {
+  width: 80rpx;
+  height: 80rpx;
+  background-color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.1);
+}
+
+.control-btn.active {
+  background-color: #1AAD19;
+}
+
+.control-btn.active image {
+  filter: brightness(5);
+}
+
+.control-btn image {
+  width: 50rpx;
+  height: 50rpx;
+}
+
+/* 兴趣点列表样式 */
+.poi-list {
+  position: absolute;
+  bottom: 130rpx;
+  left: 0;
+  right: 0;
+  height: 140rpx;
+  white-space: nowrap;
+  padding: 0 20rpx;
+  z-index: 15;
+}
+
+.poi-item {
+  display: inline-block;
+  margin-right: 20rpx;
+  background-color: #fff;
+  border-radius: 10rpx;
+  padding: 15rpx 25rpx;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.1);
+  min-width: 180rpx;
+}
+
+.poi-name {
+  font-size: 28rpx;
+  color: #333;
+  margin-bottom: 8rpx;
+  font-weight: bold;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 180rpx;
+}
+
+.poi-distance {
+  font-size: 24rpx;
+  color: #666;
+} 

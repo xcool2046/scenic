@@ -1,0 +1,53 @@
+{
+  "description": "项目私有配置文件。此文件中的内容将覆盖 project.config.json 中的相同字段。项目的改动优先同步到此文件中。详见文档：https://developers.weixin.qq.com/miniprogram/dev/devtools/projectconfig.html",
+  "projectname": "Smart%20scenic%20spot",
+  "setting": {
+    "compileHotReLoad": true,
+    "urlCheck": true,
+    "coverView": true,
+    "lazyloadPlaceholderEnable": false,
+    "skylineRenderEnable": false,
+    "preloadBackgroundData": false,
+    "autoAudits": false,
+    "useApiHook": true,
+    "useApiHostProcess": true,
+    "showShadowRootInWxmlPanel": true,
+    "useStaticServer": false,
+    "useLanDebug": false,
+    "showES6CompileOption": false,
+    "bigPackageSizeSupport": false,
+    "checkInvalidKey": true,
+    "ignoreDevUnusedFiles": true,
+    "securityCheck": false
+  },
+  "libVersion": "3.8.5",
+  "permission": {
+    "scope.userLocation": {
+      "desc": "您的位置信息将用于景区导览与导航功能"
+    }
+  },
+  "requiredPrivateInfos": [
+    "getLocation",
+    "chooseLocation"
+  ],
+  "condition": {},
+  "settings": {
+    "useCompilerPlugins": false,
+    "checkSiteMap": false
+  },
+  "requestdomain": [
+    "apis.map.qq.com",
+    "map.qq.com",
+    "3gimg.qq.com",
+    "4gimg.map.qq.com",
+    "webapi.amap.com",
+    "restapi.amap.com",
+    "vdata.amap.com",
+    "wss.amap.com"
+  ],
+  "navigateToMiniProgramAppIdList": [],
+  "network": {
+    "request": true,
+    "downloadFile": true
+  }
+}

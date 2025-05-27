@@ -1,0 +1,121 @@
+/* components/refresh-list/refresh-list.wxss */
+.refresh-list-container {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+
+/* 下拉刷新头部 */
+.refresh-header {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  background-color: #f2f2f2;
+  transition: height 0.2s ease-out;
+}
+
+.refresh-content {
+  width: 100%;
+  height: 60px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.refresh-content text {
+  font-size: 28rpx;
+  color: #666;
+  margin-top: 10rpx;
+}
+
+.refresh-icon {
+  width: 36rpx;
+  height: 36rpx;
+  margin-bottom: 6rpx;
+}
+
+.down-arrow {
+  border-left: 3px solid #999;
+  border-bottom: 3px solid #999;
+  transform: rotate(-45deg);
+  transition: transform 0.2s;
+}
+
+.up-arrow {
+  border-left: 3px solid #999;
+  border-bottom: 3px solid #999;
+  transform: rotate(135deg);
+  transition: transform 0.2s;
+}
+
+.loading {
+  width: 36rpx;
+  height: 36rpx;
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid #1AAD19;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* 滚动区域 */
+.scroll-view {
+  width: 100%;
+  overflow: hidden;
+}
+
+/* 空内容提示 */
+.empty-view {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 100rpx 0;
+  box-sizing: border-box;
+}
+
+.empty-icon {
+  width: 160rpx;
+  height: 160rpx;
+  margin-bottom: 30rpx;
+  background-color: #f5f5f5;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.empty-view text {
+  font-size: 28rpx;
+  color: #999;
+}
+
+/* 加载更多提示 */
+.load-more {
+  width: 100%;
+  height: 80rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 30rpx 0;
+}
+
+.loading-icon {
+  width: 30rpx;
+  height: 30rpx;
+  margin-right: 10rpx;
+  border: 2px solid #f3f3f3;
+  border-top: 2px solid #1AAD19;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.load-more text {
+  font-size: 26rpx;
+  color: #999;
+} 

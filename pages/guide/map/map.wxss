@@ -1,0 +1,279 @@
+/* pages/guide/map/map.wxss */
+.map-container {
+  width: 100%;
+  height: 100vh;
+  position: relative;
+}
+
+/* 顶部筛选栏样式 */
+.filter-bar {
+  position: absolute;
+  top: 20rpx;
+  left: 0;
+  right: 0;
+  height: 80rpx;
+  padding: 0 20rpx;
+  z-index: 10;
+}
+
+.filter-scroll {
+  width: 100%;
+  height: 100%;
+  white-space: nowrap;
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 40rpx;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.1);
+}
+
+.filter-list {
+  display: inline-flex;
+  padding: 0 20rpx;
+  height: 100%;
+}
+
+.filter-item {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 30rpx;
+  height: 100%;
+  font-size: 28rpx;
+  color: #666;
+}
+
+.filter-item.active {
+  color: #1AAD19;
+  font-weight: bold;
+}
+
+/* 路线选择按钮 */
+.route-selector {
+  position: absolute;
+  top: 120rpx;
+  right: 20rpx;
+  z-index: 10;
+}
+
+.route-btn {
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 40rpx;
+  padding: 20rpx 30rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28rpx;
+  color: #1AAD19;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.1);
+}
+
+.route-btn.active {
+  background-color: #1AAD19;
+  color: #fff;
+}
+
+/* 周边设施快捷按钮 */
+.nearby-buttons {
+  position: absolute;
+  top: 120rpx;
+  left: 20rpx;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: 15rpx;
+}
+
+.nearby-btn {
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 30rpx;
+  padding: 12rpx 25rpx;
+  font-size: 24rpx;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.1);
+}
+
+.nearby-btn.toilet {
+  color: #1890ff;
+}
+
+.nearby-btn.food {
+  color: #fa8c16;
+}
+
+.nearby-btn.rest {
+  color: #722ed1;
+}
+
+/* 功能按钮 */
+.function-buttons {
+  position: absolute;
+  bottom: 200rpx;
+  left: 20rpx;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: 15rpx;
+}
+
+.function-btn {
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 30rpx;
+  padding: 12rpx 25rpx;
+  font-size: 24rpx;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.1);
+  color: #666;
+}
+
+.function-btn.active {
+  background-color: #1AAD19;
+  color: #fff;
+}
+
+/* 底部景点信息面板 */
+.info-panel {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 200rpx;
+  background-color: #fff;
+  border-radius: 30rpx 30rpx 0 0;
+  box-shadow: 0 -2rpx 10rpx rgba(0, 0, 0, 0.1);
+  z-index: 20;
+  transform: translateY(100%);
+  transition: transform 0.3s ease-out;
+}
+
+.info-panel.show {
+  transform: translateY(0);
+}
+
+.info-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20rpx 30rpx 10rpx;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+
+.info-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+}
+
+.close-btn {
+  width: 40rpx;
+  height: 40rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40rpx;
+  color: #999;
+}
+
+.info-content {
+  padding: 20rpx 30rpx;
+}
+
+/* 景点元信息 */
+.info-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10rpx;
+}
+
+.info-type {
+  font-size: 24rpx;
+  color: #1AAD19;
+}
+
+.info-distance {
+  font-size: 22rpx;
+  color: #666;
+}
+
+.info-desc {
+  font-size: 24rpx;
+  color: #666;
+  margin-bottom: 20rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.info-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 20rpx;
+}
+
+.action-btn {
+  padding: 15rpx 30rpx;
+  border-radius: 30rpx;
+  font-size: 24rpx;
+}
+
+.action-btn.detail {
+  background-color: #f0f0f0;
+  color: #666;
+}
+
+.action-btn.navigate {
+  background-color: #1AAD19;
+  color: #fff;
+}
+
+/* 路线类型选择 */
+.route-types {
+  position: absolute;
+  top: 70rpx; /* 位于筛选栏下方 */
+  left: 0;
+  right: 0;
+  height: 60rpx;
+  z-index: 10;
+  padding: 0 20rpx;
+}
+
+.route-type-scroll {
+  width: 100%;
+  height: 100%;
+  white-space: nowrap;
+}
+
+.route-type-list {
+  display: inline-flex;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.85);
+  border-radius: 30rpx;
+  overflow: hidden;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
+}
+
+.route-type-item {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 30rpx;
+  height: 100%;
+  font-size: 28rpx;
+  color: #666;
+  position: relative;
+}
+
+.route-type-item.active {
+  color: #ffffff;
+  background-color: #1AAD19;
+}
+
+.route-type-item.active:after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 30rpx;
+  height: 4rpx;
+  background-color: #ffffff;
+} 

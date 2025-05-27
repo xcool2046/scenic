@@ -1,0 +1,165 @@
+/* components/weather-card/weather-card.wxss */
+
+.weather-card {
+  background: linear-gradient(to right, #4facfe, #00f2fe);
+  border-radius: 16rpx;
+  padding: 30rpx;
+  color: white;
+  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.1);
+  margin-bottom: 20rpx;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.weather-card.expanded {
+  height: auto;
+}
+
+/* 当前天气 */
+.current-weather {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+}
+
+.weather-icon-container {
+  width: 120rpx;
+  height: 120rpx;
+  margin-right: 20rpx;
+}
+
+.weather-icon {
+  width: 100%;
+  height: 100%;
+}
+
+.weather-info {
+  flex: 1;
+}
+
+.weather-temp {
+  font-size: 48rpx;
+  font-weight: bold;
+  margin-bottom: 6rpx;
+}
+
+.weather-text {
+  font-size: 28rpx;
+  opacity: 0.9;
+}
+
+.weather-details {
+  flex-basis: 100%;
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20rpx;
+  border-top: 1rpx solid rgba(255, 255, 255, 0.2);
+  padding-top: 20rpx;
+}
+
+.weather-detail-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.detail-label {
+  font-size: 22rpx;
+  opacity: 0.7;
+  margin-bottom: 6rpx;
+}
+
+.detail-value {
+  font-size: 26rpx;
+  font-weight: 500;
+}
+
+.expand-icon {
+  position: absolute;
+  right: 10rpx;
+  top: 10rpx;
+  font-size: 22rpx;
+  opacity: 0.8;
+}
+
+.expand-icon .down::after {
+  content: ' ▼';
+  font-size: 18rpx;
+}
+
+.expand-icon .up::after {
+  content: ' ▲';
+  font-size: 18rpx;
+}
+
+/* 天气预报 */
+.weather-forecast {
+  margin-top: 30rpx;
+  animation: fadeIn 0.3s;
+}
+
+.forecast-title {
+  font-size: 28rpx;
+  margin-bottom: 20rpx;
+  opacity: 0.9;
+}
+
+.forecast-scroll {
+  white-space: nowrap;
+}
+
+.forecast-list {
+  display: inline-flex;
+}
+
+.forecast-item {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 20rpx;
+  min-width: 120rpx;
+}
+
+.forecast-day {
+  font-size: 24rpx;
+  margin-bottom: 10rpx;
+}
+
+.forecast-icon {
+  width: 60rpx;
+  height: 60rpx;
+  margin-bottom: 10rpx;
+}
+
+.forecast-temp {
+  font-size: 24rpx;
+  margin-bottom: 6rpx;
+  text-align: center;
+}
+
+.temp-max {
+  font-weight: bold;
+  margin-right: 6rpx;
+}
+
+.temp-min {
+  opacity: 0.7;
+}
+
+.forecast-text {
+  font-size: 22rpx;
+  opacity: 0.8;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20rpx);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+} 

@@ -1,0 +1,46 @@
+<!--pages/guide/nearby/nearby.wxml-->
+<view class="container">
+  <view class="header">
+    <text class="title">{{title}}</text>
+    <text class="subtitle">为您找到 {{facilities.length}} 个结果</text>
+  </view>
+
+  <view class="facility-list">
+    <view wx:if="{{!loading && facilities.length === 0}}" class="empty-tip">
+      <text>暂无{{title}}信息</text>
+    </view>
+    
+    <view wx:for="{{facilities}}" wx:key="id" class="facility-item">
+      <view class="facility-info" bindtap="viewFacilityDetail" data-id="{{item.id}}">
+        <image class="facility-icon" src="{{item.icon}}" mode="aspectFit"></image>
+        <view class="facility-details">
+          <view class="facility-name">{{item.name}}</view>
+          <view class="facility-distance">距离您: {{item.distance}}米</view>
+          <view class="facility-status" wx:if="{{item.open !== undefined}}">
+            <text class="{{item.open ? 'status-open' : 'status-closed'}}">{{item.open ? '正常开放' : '维护中'}}</text>
+          </view>
+          <view class="facility-rating" wx:if="{{item.rating}}">
+            <text>评分: {{item.rating}}分</text>
+          </view>
+        </view>
+      </view>
+      <view class="facility-actions">
+        <view class="navigate-btn" bindtap="navigateToFacility" data-id="{{item.id}}">
+          <image class="navigate-icon" src="/assets/icons/navigate.png" mode="aspectFit"></image>
+          <text>导航</text>
+        </view>
+      </view>
+    </view>
+  </view>
+  
+  <!-- 加载提示 -->
+  <view class="loading" wx:if="{{loading}}">
+    <image class="loading-icon" src="/assets/icons/loading.gif" mode="aspectFit"></image>
+    <text>正在搜索{{title}}...</text>
+  </view>
+  
+  <!-- 底部提示 -->
+  <view class="footer-tip" wx:if="{{!loading && facilities.length > 0}}">
+    <text>点击项目查看详情，点击导航按钮进行导航</text>
+  </view>
+</view> 

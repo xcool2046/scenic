@@ -1,0 +1,8 @@
+{
+  "navigationBarTitleText": "实时信息",
+  "navigationBarBackgroundColor": "#1AAD19",
+  "navigationBarTextStyle": "white",
+  "enablePullDownRefresh": true,
+  "backgroundColor": "#f8f8f8",
+  "usingComponents": {}
+}

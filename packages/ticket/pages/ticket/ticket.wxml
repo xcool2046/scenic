@@ -1,0 +1,131 @@
+<!-- packages/ticket/pages/ticket/ticket.wxml -->
+<view class="container">
+  <!-- 顶部横幅 -->
+  <view class="banner-section">
+    <image class="banner-image" src="/assets/images/tickets/ticket_banner.jpg" mode="aspectFill"></image>
+    <view class="banner-text">
+      <view class="banner-title">{{pageTitle}}</view>
+      <view class="banner-subtitle">提前购票，快速入园</view>
+    </view>
+  </view>
+  
+  <!-- 日期选择区域 -->
+  <view class="date-section">
+    <view class="section-title">选择游玩日期</view>
+    <scroll-view class="date-scroll" scroll-x>
+      <view class="date-list">
+        <view 
+          wx:for="{{dateOptions}}" 
+          wx:key="date" 
+          class="date-item {{selectedDate === item.date ? 'selected' : ''}} {{item.isWeekend ? 'weekend' : ''}}"
+          bindtap="selectDate"
+          data-date="{{item.date}}"
+        >
+          <view class="date-day">{{item.display}}</view>
+          <view class="date-tag" wx:if="{{item.isToday}}">今天</view>
+          <view class="date-tag weekend-tag" wx:elif="{{item.isWeekend}}">周末</view>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+  
+  <!-- 票种列表 -->
+  <view class="ticket-section">
+    <view class="section-title">选择票种</view>
+    <view class="ticket-list">
+      <block wx:if="{{loading}}">
+        <view class="loading-placeholder">
+          <view class="loading-item"></view>
+          <view class="loading-item"></view>
+          <view class="loading-item"></view>
+        </view>
+      </block>
+      <block wx:elif="{{ticketTypes.length === 0}}">
+        <view class="empty-tickets">暂无可用票种</view>
+      </block>
+      <block wx:else>
+        <view 
+          wx:for="{{ticketTypes}}" 
+          wx:key="id" 
+          class="ticket-item {{selectedTicket && selectedTicket.id === item.id ? 'selected' : ''}}"
+          bindtap="selectTicket"
+          data-index="{{index}}"
+        >
+          <view class="ticket-tag" wx:if="{{item.tag}}">{{item.tag}}</view>
+          <view class="ticket-info">
+            <view class="ticket-name">{{item.name}}</view>
+            <view class="ticket-desc">{{item.description}}</view>
+            <view class="ticket-notice">{{item.notice}}</view>
+          </view>
+          <view class="ticket-price">
+            <view class="price-current">¥{{item.price}}</view>
+            <view class="price-original" wx:if="{{item.originalPrice > item.price}}">¥{{item.originalPrice}}</view>
+          </view>
+        </view>
+      </block>
+    </view>
+  </view>
+  
+  <!-- 数量选择 -->
+  <view class="quantity-section" wx:if="{{selectedTicket}}">
+    <view class="section-title">购买数量</view>
+    <view class="quantity-control">
+      <view class="quantity-btn {{quantity <= 1 ? 'disabled' : ''}}" bindtap="changeQuantity" data-type="minus">-</view>
+      <view class="quantity-display">{{quantity}}</view>
+      <view class="quantity-btn {{quantity >= (selectedTicket.limitPerOrder || 10) ? 'disabled' : ''}}" bindtap="changeQuantity" data-type="plus">+</view>
+      <view class="quantity-limit">单次限购{{selectedTicket.limitPerOrder || 10}}张</view>
+    </view>
+  </view>
+  
+  <!-- 购买按钮 -->
+  <view class="purchase-section">
+    <view class="total-price" wx:if="{{selectedTicket}}">
+      合计: <text class="price-value">¥{{totalPrice}}</text>
+    </view>
+    <view class="order-btns">
+      <view class="order-btn secondary" bindtap="goToOrders">我的订单</view>
+      <view class="order-btn primary" bindtap="buyNow">立即购买</view>
+    </view>
+  </view>
+  
+  <!-- 图文详情 -->
+  <view class="detail-section">
+    <view class="section-title">景区介绍</view>
+    <view class="detail-content" bindtap="showTicketDetails">
+      <view class="detail-intro">
+        <view class="intro-text">景区占地面积约500亩，以自然山水风光为主，融合了当地特色文化...</view>
+        <view class="intro-more">查看更多</view>
+      </view>
+      <view class="detail-images">
+        <image class="detail-img" src="/assets/images/tickets/scenic_1.jpg" mode="aspectFill"></image>
+        <image class="detail-img" src="/assets/images/tickets/scenic_2.jpg" mode="aspectFill"></image>
+        <image class="detail-img" src="/assets/images/tickets/scenic_3.jpg" mode="aspectFill"></image>
+      </view>
+    </view>
+  </view>
+  
+  <!-- 购票须知 -->
+  <view class="notice-section">
+    <view class="section-title">购票须知</view>
+    <view class="notice-content">
+      <view class="notice-item">
+        <view class="notice-title">入园须知</view>
+        <view class="notice-text">1. 门票当天有效，出园需再次入园请提前办理出入园手续</view>
+        <view class="notice-text">2. 12岁(含)以下儿童、65岁(含)以上老人需由成人陪同入园</view>
+      </view>
+      <view class="notice-item">
+        <view class="notice-title">退改规则</view>
+        <view class="notice-text">1. 未使用的门票支持退款，游玩日期前一天24:00前申请退款</view>
+        <view class="notice-text">2. 已过期或已使用的门票不支持退款</view>
+      </view>
+      <view class="notice-item">
+        <view class="notice-title">温馨提示</view>
+        <view class="notice-text">1. 为避免排队，建议提前购票</view>
+        <view class="notice-text">2. 景区高峰期可能采取限流措施，请合理安排出行时间</view>
+      </view>
+    </view>
+  </view>
+  
+  <!-- 底部间隔 -->
+  <view class="bottom-gap"></view>
+</view>

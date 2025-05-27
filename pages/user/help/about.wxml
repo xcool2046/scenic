@@ -1,0 +1,53 @@
+<!--pages/user/help/about.wxml-->
+<view class="container">
+  <view class="header">
+    <image class="logo" src="/assets/icons/home.png" mode="aspectFit"></image>
+    <text class="title">景区导览</text>
+    <text class="version">版本 1.0.0</text>
+  </view>
+  
+  <view class="content">
+    <view class="section">
+      <text class="section-title">应用简介</text>
+      <text class="section-content">本应用是一款景区游客服务小程序，提供景区导览、票务服务、游览资讯等功能，旨在为游客提供便捷的景区游览体验。</text>
+    </view>
+    
+    <view class="section">
+      <text class="section-title">资源归属</text>
+      <view class="attribution-item">
+        <text class="attribution-label">图标资源:</text>
+        <text class="attribution-content">Icons by Icons8 (https://icons8.com)</text>
+      </view>
+      <view class="attribution-item">
+        <text class="attribution-label">图片资源:</text>
+        <text class="attribution-content">Photos from Unsplash (https://unsplash.com)</text>
+      </view>
+    </view>
+    
+    <view class="section">
+      <text class="section-title">开发团队</text>
+      <view class="team-item">
+        <text class="team-role">产品经理:</text>
+        <text class="team-name">[产品经理姓名]</text>
+      </view>
+      <view class="team-item">
+        <text class="team-role">设计师:</text>
+        <text class="team-name">[设计师姓名]</text>
+      </view>
+      <view class="team-item">
+        <text class="team-role">开发者:</text>
+        <text class="team-name">[开发者姓名]</text>
+      </view>
+    </view>
+    
+    <view class="section">
+      <text class="section-title">联系我们</text>
+      <text class="section-content">电子邮箱: example@example.com</text>
+      <text class="section-content">客服电话: 400-123-4567</text>
+    </view>
+  </view>
+  
+  <view class="footer">
+    <text class="copyright">© 2025 景区导览小程序 版权所有</text>
+  </view>
+</view> 

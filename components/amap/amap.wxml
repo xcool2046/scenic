@@ -1,0 +1,89 @@
+<!-- components/amap/amap.wxml -->
+<view class="amap-container" style="height: {{height}};">
+  <!-- 实际高德地图接入可以使用两种方式: -->
+  <!-- 1. web-view方式：可加载高德H5地图，但有诸多限制 -->
+  <!-- 2. 自行绘制：使用canvas等方式在小程序中实现地图功能 -->
+  
+  <!-- 方案一：使用web-view加载高德H5地图（需要配置业务域名） -->
+  <web-view wx:if="{{useWebView && amapUrl}}" src="{{amapUrl}}"></web-view>
+  
+  <!-- 方案二：使用canvas自行实现地图渲染（需要更复杂的逻辑） -->
+  <view wx:else id="{{mapId}}" class="amap-canvas" bindtap="onMapTap">
+    <!-- 地图加载提示 -->
+    <view wx:if="{{!mapLoaded}}" class="map-loading">
+      <text>地图加载中...</text>
+    </view>
+    
+    <!-- 模拟地图容器 -->
+    <view wx:else class="map-simulate">
+      <!-- 在正式实现中，这里会使用canvas或web-view -->
+      <!-- 以下为模拟展示效果 -->
+      <image src="/assets/images/map_preview.jpg" mode="aspectFill" class="map-bg"></image>
+      
+      <!-- 模拟标记点 -->
+      <view 
+        wx:for="{{markers}}" 
+        wx:key="id"
+        class="map-marker"
+        style="left: {{index * 60 + 30}}px; top: {{100}}px;"
+        bindtap="onMarkerTap"
+        data-marker-id="{{item.id}}"
+      >
+        <image src="{{item.iconPath}}" style="width: 30px; height: 30px;"></image>
+        <view class="marker-label" wx:if="{{item.title}}">{{item.title}}</view>
+      </view>
+      
+      <!-- 路线距离和时间信息 -->
+      <view class="path-info" wx:if="{{pathDistance > 0}}">
+        <view class="path-distance">{{pathDistance}}米</view>
+        <view class="path-duration">约{{pathDuration >= 60 ? Math.floor(pathDuration/60) + '分钟' : pathDuration + '秒'}}</view>
+      </view>
+      
+      <!-- 提示文本 -->
+      <view class="map-notice">
+        <text>高德地图接入示例</text>
+        <text>实际项目需替换为真实高德地图SDK</text>
+      </view>
+    </view>
+  </view>
+  
+  <!-- 地图功能按钮 -->
+  <view class="map-controls">
+    <!-- 定位按钮 -->
+    <view class="control-btn location" bindtap="moveToLocation">
+      <image src="/assets/icons/home.png"></image>
+    </view>
+    
+    <!-- 交通状况按钮 -->
+    <view class="control-btn traffic {{trafficVisible ? 'active' : ''}}" bindtap="toggleTraffic">
+      <image src="/assets/icons/home.png"></image>
+    </view>
+    
+    <!-- 室内地图按钮 -->
+    <view class="control-btn indoor {{isIndoor ? 'active' : ''}}" bindtap="toggleIndoorMap">
+      <image src="/assets/icons/home.png"></image>
+    </view>
+    
+    <!-- 周边搜索按钮 -->
+    <view class="control-btn search" bindtap="searchNearbyPOI">
+      <image src="/assets/icons/home.png"></image>
+    </view>
+  </view>
+  
+  <!-- 周边兴趣点列表 -->
+  <scroll-view scroll-x class="poi-list" wx:if="{{pois && pois.length > 0}}">
+    <view 
+      wx:for="{{pois}}" 
+      wx:key="id" 
+      class="poi-item"
+      bindtap="onPoiTap"
+      data-poi-id="{{item.id}}"
+    >
+      <view class="poi-name">{{item.name}}</view>
+      <view class="poi-distance">{{item.distance}}米</view>
+    </view>
+  </scroll-view>
+  
+  <!-- 插槽，用于添加自定义内容 -->
+  <slot></slot>
+</view> 

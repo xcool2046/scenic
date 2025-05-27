@@ -1,0 +1,8 @@
+<!-- packages/ticket/pages/ticket/detail/detail.wxml -->
+<view class="container">
+  <view class="page-title">{{pageTitle}}</view>
+  <view class="content">
+    <!-- 门票详情页面内容 -->
+    <view class="placeholder">页面开发中...</view>
+  </view>
+</view>

@@ -1,0 +1,106 @@
+/**
+ * Enhanced Icon Styles for WeChat Mini Program
+ * 
+ * These styles improve icon appearance and responsiveness across different screen sizes
+ */
+
+/* 通用图标基础样式 */
+.icon-base {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+/* 响应式图标尺寸 - 保持比例，自适应屏幕大小 */
+.icon-responsive {
+  width: 16vw;
+  max-width: 90rpx;
+  height: 16vw;
+  max-height: 90rpx;
+  position: relative;
+}
+
+/* 图标容器圆形样式 */
+.icon-circle {
+  border-radius: 50%;
+  background: linear-gradient(145deg, #ffffff, #f0f0f0);
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
+}
+
+/* 图标容器方形样式（带圆角） */
+.icon-square {
+  border-radius: 16rpx;
+  background: linear-gradient(145deg, #ffffff, #f0f0f0);
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
+}
+
+/* 图标自身样式 */
+.icon-image {
+  width: 65%;
+  height: 65%;
+  object-fit: contain;
+}
+
+/* 首页图标组 */
+.home-icon {
+  padding: 3vw;
+  margin-bottom: 12rpx;
+}
+
+/* 导览页图标组 */
+.guide-icon {
+  padding: 2.5vw;
+  margin-bottom: 10rpx;
+}
+
+/* 设施图标组 */
+.facility-icon {
+  padding: 3vw;
+  margin-bottom: 10rpx;
+}
+
+/* 图标激活/点击状态 */
+.icon-active {
+  transform: scale(0.95);
+  box-shadow: inset 0 4rpx 8rpx rgba(0, 0, 0, 0.1);
+}
+
+/* 图标主题颜色变体 */
+.icon-primary {
+  background: linear-gradient(145deg, #1fbd1e, #17a316);
+}
+
+.icon-primary .icon-image {
+  filter: brightness(10);
+}
+
+.icon-warning {
+  background: linear-gradient(145deg, #ffa726, #f57c00);
+}
+
+.icon-warning .icon-image {
+  filter: brightness(10);
+}
+
+.icon-danger {
+  background: linear-gradient(145deg, #ef5350, #e53935);
+}
+
+.icon-danger .icon-image {
+  filter: brightness(10);
+}
+
+/* 小图标样式 */
+.icon-small {
+  width: 40rpx;
+  height: 40rpx;
+  min-width: 40rpx;
+  padding: 0;
+}
+
+.icon-small .icon-image {
+  width: 100%;
+  height: 100%;
+} 

@@ -1,0 +1,148 @@
+/* pages/guide/nearby/nearby.wxss */
+.container {
+  padding: 20rpx;
+  background-color: #f8f8f8;
+  min-height: 100vh;
+}
+
+.header {
+  margin-bottom: 30rpx;
+}
+
+.title {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #333;
+  display: block;
+  margin-bottom: 10rpx;
+}
+
+.subtitle {
+  font-size: 28rpx;
+  color: #666;
+  display: block;
+}
+
+.facility-list {
+  width: 100%;
+}
+
+.facility-item {
+  background-color: #fff;
+  border-radius: 12rpx;
+  padding: 20rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.facility-info {
+  display: flex;
+  flex: 1;
+}
+
+.facility-icon {
+  width: 80rpx;
+  height: 80rpx;
+  margin-right: 20rpx;
+}
+
+.facility-details {
+  flex: 1;
+}
+
+.facility-name {
+  font-size: 32rpx;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 8rpx;
+}
+
+.facility-distance {
+  font-size: 26rpx;
+  color: #666;
+  margin-bottom: 8rpx;
+}
+
+.facility-status {
+  font-size: 24rpx;
+  margin-bottom: 4rpx;
+}
+
+.status-open {
+  color: #52c41a;
+}
+
+.status-closed {
+  color: #ff4d4f;
+}
+
+.facility-rating {
+  font-size: 24rpx;
+  color: #fa8c16;
+}
+
+.facility-actions {
+  display: flex;
+  align-items: center;
+}
+
+.navigate-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10rpx;
+}
+
+.navigate-icon {
+  width: 48rpx;
+  height: 48rpx;
+  margin-bottom: 6rpx;
+}
+
+.navigate-btn text {
+  font-size: 24rpx;
+  color: #1AAD19;
+}
+
+.empty-tip {
+  text-align: center;
+  padding: 60rpx 0;
+}
+
+.empty-tip text {
+  font-size: 28rpx;
+  color: #999;
+}
+
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60rpx 0;
+}
+
+.loading-icon {
+  width: 80rpx;
+  height: 80rpx;
+  margin-bottom: 20rpx;
+}
+
+.loading text {
+  font-size: 28rpx;
+  color: #666;
+}
+
+.footer-tip {
+  text-align: center;
+  padding: 20rpx 0;
+  margin-top: 20rpx;
+}
+
+.footer-tip text {
+  font-size: 24rpx;
+  color: #999;
+} 

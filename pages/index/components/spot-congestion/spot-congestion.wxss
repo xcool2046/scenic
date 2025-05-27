@@ -1,0 +1,125 @@
+/* components/spot-congestion/spot-congestion.wxss */
+.spot-congestion {
+  background-color: white;
+  border-radius: 16rpx;
+  padding: 30rpx;
+  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.08);
+}
+
+.congestion-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24rpx;
+}
+
+.title-text {
+  font-size: 30rpx;
+  font-weight: bold;
+  color: #333;
+}
+
+.update-time {
+  font-size: 22rpx;
+  color: #999;
+}
+
+.spots-list {
+  margin-bottom: 20rpx;
+}
+
+.spot-item {
+  padding: 20rpx 0;
+  border-bottom: 1rpx solid #f5f5f5;
+}
+
+.spot-item:last-child {
+  border-bottom: none;
+}
+
+.spot-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12rpx;
+}
+
+.spot-name {
+  font-size: 28rpx;
+  font-weight: 500;
+  color: #333;
+}
+
+.spot-level {
+  font-size: 26rpx;
+  font-weight: bold;
+}
+
+.spot-details {
+  margin-top: 16rpx;
+}
+
+.spot-progress {
+  margin-bottom: 14rpx;
+}
+
+.spot-wait-time {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 10rpx;
+}
+
+.wait-time-label {
+  font-size: 24rpx;
+  color: #666;
+  margin-right: 10rpx;
+}
+
+.wait-time-value {
+  font-size: 24rpx;
+  font-weight: 500;
+  color: #333;
+}
+
+.spot-warning {
+  display: flex;
+  align-items: center;
+  background-color: #FFF9EC;
+  padding: 10rpx 16rpx;
+  border-radius: 8rpx;
+  margin-top: 10rpx;
+}
+
+.warning-icon {
+  margin-right: 8rpx;
+  color: #E6A23C;
+}
+
+.warning-text {
+  font-size: 24rpx;
+  color: #E6A23C;
+}
+
+.legend {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 20rpx;
+  border-top: 1rpx solid #f5f5f5;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+}
+
+.legend-color {
+  width: 16rpx;
+  height: 16rpx;
+  border-radius: 4rpx;
+  margin-right: 6rpx;
+}
+
+.legend-text {
+  font-size: 22rpx;
+  color: #666;
+} 

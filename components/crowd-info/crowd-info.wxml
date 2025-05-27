@@ -1,0 +1,34 @@
+<!--components/crowd-info/crowd-info.wxml-->
+<view class="crowd-info">
+  <view class="crowd-level" style="background-color: {{levelColors[crowdInfo.level] || '#67C23A'}}">
+    <text class="level-text">{{crowdInfo.level || '未知'}}</text>
+  </view>
+  
+  <view class="crowd-details">
+    <view class="progress-container">
+      <view class="progress-label">
+        <text>当前拥挤度</text>
+        <text>{{crowdInfo.percentage || 0}}%</text>
+      </view>
+      <view class="progress-bar">
+        <view class="progress-inner" style="width: {{crowdInfo.percentage || 0}}%; background-color: {{levelColors[crowdInfo.level] || '#67C23A'}}"></view>
+      </view>
+    </view>
+    
+    <view class="crowd-counts" wx:if="{{showTotalCount && crowdInfo.totalCount}}">
+      <text class="count-label">当前游客总数</text>
+      <text class="count-value">{{crowdInfo.totalCount}}人</text>
+    </view>
+  </view>
+  
+  <view class="crowd-warning" wx:if="{{crowdInfo.warning}}">
+    <view class="icon-base icon-small warning-icon">
+      <image class="icon-image" src="/assets/icons/warning.png"></image>
+    </view>
+    <text class="warning-text">{{crowdInfo.warning}}</text>
+  </view>
+  
+  <view class="update-time" wx:if="{{crowdInfo.timestamp}}">
+    <text>更新时间: {{crowdInfo.timestamp}}</text>
+  </view>
+</view> 

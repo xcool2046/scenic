@@ -1,0 +1,10 @@
+{
+  "navigationBarTitleText": "实时信息",
+  "enablePullDownRefresh": true,
+  "backgroundColor": "#f8f8f8",
+  "usingComponents": {
+    "weather-card": "./components/weather-card/weather-card",
+    "crowd-info": "./components/crowd-info/crowd-info",
+    "spot-congestion": "./components/spot-congestion/spot-congestion"
+  }
+} 

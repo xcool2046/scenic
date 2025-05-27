@@ -1,0 +1,124 @@
+<!--pages/user/user.wxml-->
+<view class="page">
+  <!-- 用户信息 -->
+  <view class="user-card">
+    <view class="avatar-container">
+      <button class="avatar-wrapper" open-type="chooseAvatar" bindchooseavatar="onChooseAvatar">
+        <image class="avatar" src="{{userInfo.avatarUrl || '/assets/icons/user/default_avatar.png'}}"></image>
+      </button>
+    </view>
+    <view class="user-info">
+      <block wx:if="{{isLoggedIn}}">
+        <text class="nickname">{{userInfo.nickName || '游客'}}</text>
+        <text class="user-id">ID: {{userInfo.userId || '未登录'}}</text>
+      </block>
+      <block wx:else>
+        <button class="login-btn" bindtap="login">登录/注册</button>
+      </block>
+    </view>
+  </view>
+  
+  <!-- 订单管理 -->
+  <view class="orders-section">
+    <view class="section-header">
+      <text class="section-title">我的订单</text>
+      <view class="view-all" bindtap="viewAllOrders">
+        <text>全部订单</text>
+        <view class="icon-base icon-small">
+          <image class="icon-image" src="{{'/assets/icons/guide/arrow_right.png'}}"></image>
+        </view>
+      </view>
+    </view>
+    <view class="order-types">
+      <view class="order-type" bindtap="viewOrdersByType" data-type="pending">
+        <view class="icon-base icon-responsive icon-circle">
+          <image class="icon-image" src="{{icons.PENDING}}"></image>
+        </view>
+        <text>待使用</text>
+        <view class="badge" wx:if="{{pendingCount > 0}}">{{pendingCount}}</view>
+      </view>
+      <view class="order-type" bindtap="viewOrdersByType" data-type="used">
+        <view class="icon-base icon-responsive icon-circle">
+          <image class="icon-image" src="{{icons.USED}}"></image>
+        </view>
+        <text>已使用</text>
+      </view>
+      <view class="order-type" bindtap="viewOrdersByType" data-type="refund">
+        <view class="icon-base icon-responsive icon-circle">
+          <image class="icon-image" src="{{icons.REFUND}}"></image>
+        </view>
+        <text>退款</text>
+      </view>
+    </view>
+  </view>
+  
+  <!-- 功能列表 -->
+  <view class="feature-list">
+    <view class="feature-item" bindtap="navigateToFavorite">
+      <view class="icon-base icon-small">
+        <image class="icon-image" src="{{icons.FAVORITE}}"></image>
+      </view>
+      <text>我的收藏</text>
+      <view class="icon-base icon-small">
+        <image class="icon-image" src="{{'/assets/icons/guide/arrow_right.png'}}"></image>
+      </view>
+    </view>
+    <view class="feature-item" bindtap="provideFeedback">
+      <view class="icon-base icon-small">
+        <image class="icon-image" src="{{icons.FEEDBACK}}"></image>
+      </view>
+      <text>意见反馈</text>
+      <view class="icon-base icon-small">
+        <image class="icon-image" src="{{'/assets/icons/guide/arrow_right.png'}}"></image>
+      </view>
+    </view>
+    <view class="feature-item" bindtap="navigateToSettings">
+      <view class="icon-base icon-small">
+        <image class="icon-image" src="{{icons.SETTINGS}}"></image>
+      </view>
+      <text>设置</text>
+      <view class="icon-base icon-small">
+        <image class="icon-image" src="{{'/assets/icons/guide/arrow_right.png'}}"></image>
+      </view>
+    </view>
+  </view>
+  
+  <!-- 帮助中心 -->
+  <view class="help-section">
+    <view class="section-header">
+      <text class="section-title">帮助中心</text>
+    </view>
+    <view class="help-items">
+      <view class="help-item" bindtap="navigateToFAQ">
+        <view class="icon-base icon-small">
+          <image class="icon-image" src="{{icons.FAQ}}"></image>
+        </view>
+        <text>常见问题</text>
+      </view>
+      <view class="help-item" bindtap="contactService">
+        <view class="icon-base icon-small">
+          <image class="icon-image" src="{{icons.SERVICE}}"></image>
+        </view>
+        <text>联系客服</text>
+      </view>
+      <view class="help-item" bindtap="emergency">
+        <view class="icon-base icon-small">
+          <image class="icon-image" src="{{icons.EMERGENCY}}"></image>
+        </view>
+        <text>紧急救援</text>
+      </view>
+      <view class="help-item" bindtap="navigateToAbout">
+        <view class="icon-base icon-small">
+          <image class="icon-image" src="{{icons.ABOUT}}"></image>
+        </view>
+        <text>关于我们</text>
+      </view>
+    </view>
+  </view>
+  
+  <!-- 加载状态组件 -->
+  <loading id="loading" text="加载中" mask="{{true}}" loading="{{false}}"></loading>
+  
+  <!-- 轻提示组件 -->
+  <toast id="toast"></toast>
+</view> 

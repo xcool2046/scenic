@@ -1,0 +1,73 @@
+<!--pages/realtime-info/realtime-info.wxml-->
+<view class="realtime-info-page">
+  <view class="header">
+    <view class="title">景区实时信息</view>
+    <view class="subtitle">为您提供实时天气、人流量和拥堵信息</view>
+  </view>
+  
+  <!-- 加载中状态 -->
+  <view class="loading-wrapper" wx:if="{{refreshing}}">
+    <view class="loading-animation"></view>
+    <text class="loading-text">正在获取最新数据...</text>
+  </view>
+  
+  <!-- 信息区域 -->
+  <view class="info-section">
+    <!-- 天气信息 -->
+    <view class="section-title">
+      <text class="title-text">天气情况</text>
+    </view>
+    <view class="section-content">
+      <view class="skeleton" wx:if="{{loadingWeather}}"></view>
+      <weather-card 
+        wx:else
+        weatherData="{{weatherData}}" 
+        forecastData="{{weatherForecast}}"
+        showForecast="{{true}}"
+      ></weather-card>
+    </view>
+    
+    <!-- 人流量信息 -->
+    <view class="section-title">
+      <text class="title-text">景区人流量</text>
+    </view>
+    <view class="section-content">
+      <view class="skeleton" wx:if="{{loadingCrowd}}"></view>
+      <crowd-info 
+        wx:else
+        crowdInfo="{{crowdInfo}}" 
+        showTotalCount="{{true}}"
+      ></crowd-info>
+    </view>
+    
+    <!-- 景点拥堵情况 -->
+    <view class="section-title">
+      <text class="title-text">景点拥堵情况</text>
+    </view>
+    <view class="section-content">
+      <view class="skeleton skeleton-large" wx:if="{{loadingSpots}}"></view>
+      <spot-congestion 
+        wx:else
+        spotsData="{{spotsCongestInfo}}" 
+        updateTime="{{updateTime}}"
+        bind:spotTap="onSpotTap"
+      ></spot-congestion>
+    </view>
+  </view>
+  
+  <!-- 提示区域 -->
+  <view class="tips-section">
+    <view class="tip-item">
+      <view class="icon-base icon-small tip-icon">
+        <image class="icon-image" src="/assets/icons/tip.png"></image>
+      </view>
+      <text class="tip-text">数据每5分钟自动刷新一次</text>
+    </view>
+    <view class="tip-item">
+      <view class="icon-base icon-small tip-icon">
+        <image class="icon-image" src="/assets/icons/pull.png"></image>
+      </view>
+      <text class="tip-text">下拉页面可以手动刷新数据</text>
+    </view>
+  </view>
+</view> 

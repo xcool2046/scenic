@@ -1,0 +1,82 @@
+<!--pages/guide/guide.wxml-->
+<view class="page">
+  <!-- 景区地图预览 -->
+  <view class="map-container" bindtap="navigateToFullMap">
+    <image class="map-preview" src="{{images.MAP_PREVIEW}}" mode="aspectFill"></image>
+    <view class="map-overlay">
+      <text class="map-text">点击查看详细地图</text>
+    </view>
+  </view>
+  
+  <!-- 景点列表 -->
+  <view class="section-title">
+    <text>景点列表</text>
+    <view class="sort-option" bindtap="toggleSortOption">
+      <text>{{sortText}}</text>
+      <view class="icon-base icon-small">
+        <image class="icon-image" src="{{icons.SORT}}"></image>
+      </view>
+    </view>
+  </view>
+  
+  <view class="spot-list">
+    <block wx:for="{{spots}}" wx:key="id">
+      <view class="spot-item" bindtap="navigateToSpotDetail" data-id="{{item.id}}">
+        <image class="spot-image" src="{{item.image}}" mode="aspectFill"></image>
+        <view class="spot-info">
+          <view class="spot-title">
+            <text>{{item.name}}</text>
+            <view class="spot-tag hot" wx:if="{{item.hot}}">
+              <view class="icon-base icon-small">
+                <image class="icon-image" src="{{icons.HOT_TAG}}"></image>
+              </view>
+            </view>
+          </view>
+          <text class="spot-desc">{{item.desc}}</text>
+          <view class="spot-meta">
+            <view class="spot-distance">
+              <view class="icon-base icon-small">
+                <image class="icon-image" src="{{icons.DISTANCE}}"></image>
+              </view>
+              <text>{{item.distance}}</text>
+            </view>
+            <view class="spot-duration">
+              <view class="icon-base icon-small">
+                <image class="icon-image" src="{{icons.TIME_ICON}}"></image>
+              </view>
+              <text>建议游览{{item.duration}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </block>
+  </view>
+  
+  <!-- 推荐路线 -->
+  <view class="section-title">
+    <text>推荐路线</text>
+  </view>
+  
+  <view class="route-cards">
+    <block wx:for="{{routes}}" wx:key="id">
+      <view class="route-card" bindtap="navigateToRouteDetail" data-id="{{item.id}}">
+        <image class="route-image" src="{{item.image}}" mode="aspectFill"></image>
+        <view class="route-card-overlay">
+          <view class="route-card-content">
+            <text class="route-name">{{item.name}}</text>
+            <view class="route-details">
+              <text class="route-spots">{{item.spotCount}}个景点</text>
+              <text class="route-time">约{{item.duration}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </block>
+  </view>
+  
+  <!-- 加载状态组件 -->
+  <loading id="loading" text="加载中" mask="{{true}}" loading="{{false}}"></loading>
+  
+  <!-- 轻提示组件 -->
+  <toast id="toast"></toast>
+</view> 

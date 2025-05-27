@@ -1,0 +1,483 @@
+/* pages/guide/spot/spot.wxss */
+.container {
+  padding-bottom: 120rpx;
+  background-color: #f8f8f8;
+}
+
+/* 轮播图样式 */
+.banner {
+  width: 100%;
+  height: 500rpx;
+}
+
+.banner-image {
+  width: 100%;
+  height: 100%;
+}
+
+/* 实时人流量信息 */
+.crowd-section {
+  margin-top: -10rpx;
+  padding: 30rpx;
+  background-color: #fff;
+  margin-bottom: 20rpx;
+}
+
+.crowd-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20rpx;
+}
+
+.crowd-title {
+  font-size: 30rpx;
+  font-weight: bold;
+  color: #333;
+}
+
+.update-time {
+  font-size: 24rpx;
+  color: #999;
+}
+
+.crowd-content {
+  margin-bottom: 10rpx;
+}
+
+.crowd-status {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15rpx;
+}
+
+.crowd-level {
+  padding: 8rpx 20rpx;
+  border-radius: 20rpx;
+  font-size: 24rpx;
+}
+
+.crowd-level.level-1 {
+  background-color: #e8f7e8;
+  color: #1AAD19;
+}
+
+.crowd-level.level-2 {
+  background-color: #e8f5ff;
+  color: #1890ff;
+}
+
+.crowd-level.level-3 {
+  background-color: #fff7e8;
+  color: #fa8c16;
+}
+
+.crowd-level.level-4 {
+  background-color: #fff1f0;
+  color: #f5222d;
+}
+
+.wait-time {
+  font-size: 24rpx;
+  color: #666;
+}
+
+.crowd-progress {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin-top: 10rpx;
+}
+
+.progress-bg {
+  flex: 1;
+  height: 16rpx;
+  background-color: #f0f0f0;
+  border-radius: 8rpx;
+  overflow: hidden;
+}
+
+.progress-bar {
+  height: 100%;
+  border-radius: 8rpx;
+}
+
+.progress-bar.level-1 {
+  background-color: #1AAD19;
+}
+
+.progress-bar.level-2 {
+  background-color: #1890ff;
+}
+
+.progress-bar.level-3 {
+  background-color: #fa8c16;
+}
+
+.progress-bar.level-4 {
+  background-color: #f5222d;
+}
+
+.progress-text {
+  margin-left: 20rpx;
+  font-size: 24rpx;
+  color: #666;
+  width: 80rpx;
+}
+
+/* 最佳游览时间 */
+.visit-time-section {
+  padding: 30rpx;
+  background-color: #fff;
+  margin-bottom: 20rpx;
+}
+
+.visit-time-list {
+  display: flex;
+  justify-content: space-between;
+  padding: 20rpx 0;
+}
+
+.visit-time-item {
+  text-align: center;
+  width: 23%;
+  padding: 15rpx 0;
+  border-radius: 10rpx;
+}
+
+.visit-time-item.status-best {
+  background-color: #e8f7e8;
+  border: 1rpx solid #1AAD19;
+}
+
+.visit-time-item.status-good {
+  background-color: #e8f5ff;
+  border: 1rpx solid #1890ff;
+}
+
+.visit-time-item.status-normal {
+  background-color: #f9f9f9;
+  border: 1rpx solid #e0e0e0;
+}
+
+.visit-period {
+  font-size: 28rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 10rpx;
+}
+
+.visit-time {
+  font-size: 24rpx;
+  color: #666;
+  margin-bottom: 10rpx;
+}
+
+.visit-status {
+  font-size: 22rpx;
+}
+
+.visit-time-item.status-best .visit-status {
+  color: #1AAD19;
+}
+
+.visit-time-item.status-good .visit-status {
+  color: #1890ff;
+}
+
+.visit-time-item.status-normal .visit-status {
+  color: #999;
+}
+
+/* 景点基本信息区域 */
+.info-section {
+  background-color: #fff;
+  padding: 30rpx;
+  margin-bottom: 20rpx;
+}
+
+.info-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20rpx;
+}
+
+.info-name-container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+.spot-name {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #333;
+  margin-right: 20rpx;
+}
+
+.spot-type-tag {
+  padding: 6rpx 16rpx;
+  background-color: #e8f7e8;
+  border-radius: 20rpx;
+}
+
+.spot-type-tag text {
+  font-size: 22rpx;
+  color: #1AAD19;
+}
+
+.like-btn {
+  width: 60rpx;
+  height: 60rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.like-btn image {
+  width: 40rpx;
+  height: 40rpx;
+}
+
+.like-btn.liked image {
+  animation: like-animation 0.3s ease;
+}
+
+@keyframes like-animation {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.3);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.rating-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.rating {
+  display: flex;
+  align-items: center;
+}
+
+.rating-score {
+  font-size: 34rpx;
+  color: #ff6b6b;
+  font-weight: bold;
+  margin-right: 10rpx;
+}
+
+.rating-stars {
+  display: flex;
+}
+
+.star {
+  width: 30rpx;
+  height: 30rpx;
+  margin-right: 4rpx;
+}
+
+.location-text {
+  font-size: 24rpx;
+  color: #666;
+}
+
+/* 景点标签样式 */
+.tags-section {
+  background-color: #fff;
+  padding: 30rpx;
+  margin-bottom: 20rpx;
+}
+
+.tags-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20rpx;
+}
+
+.tag-item {
+  padding: 10rpx 20rpx;
+  background-color: #f0f0f0;
+  border-radius: 30rpx;
+}
+
+.tag-item text {
+  font-size: 24rpx;
+  color: #666;
+}
+
+/* 信息项样式 */
+.info-item {
+  background-color: #fff;
+  padding: 30rpx;
+  margin-bottom: 20rpx;
+}
+
+.info-item-title {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15rpx;
+}
+
+.info-item-title image {
+  width: 30rpx;
+  height: 30rpx;
+  margin-right: 10rpx;
+}
+
+.info-item-title text {
+  font-size: 28rpx;
+  color: #333;
+  font-weight: bold;
+}
+
+.info-item-content {
+  font-size: 26rpx;
+  color: #666;
+  line-height: 1.6;
+}
+
+.location-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.map-link {
+  display: flex;
+  align-items: center;
+  color: #1AAD19;
+}
+
+.map-link text {
+  font-size: 24rpx;
+  margin-right: 6rpx;
+}
+
+.map-link image {
+  width: 24rpx;
+  height: 24rpx;
+}
+
+/* 描述部分样式 */
+.desc-section {
+  background-color: #fff;
+  padding: 30rpx;
+  margin-bottom: 20rpx;
+}
+
+.section-title {
+  font-size: 30rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 20rpx;
+  display: flex;
+  align-items: center;
+}
+
+.section-title:before {
+  content: '';
+  display: inline-block;
+  width: 8rpx;
+  height: 30rpx;
+  background-color: #1AAD19;
+  margin-right: 15rpx;
+  border-radius: 4rpx;
+}
+
+.desc-content {
+  font-size: 28rpx;
+  color: #666;
+  line-height: 1.8;
+}
+
+/* 附近景点样式 */
+.nearby-section {
+  background-color: #fff;
+  padding: 30rpx;
+  margin-bottom: 20rpx;
+}
+
+.nearby-scroll {
+  width: 100%;
+}
+
+.nearby-list {
+  display: flex;
+  padding: 20rpx 0;
+}
+
+.nearby-item {
+  margin-right: 30rpx;
+  width: 200rpx;
+}
+
+.nearby-image {
+  width: 200rpx;
+  height: 150rpx;
+  border-radius: 10rpx;
+  margin-bottom: 10rpx;
+}
+
+.nearby-name {
+  font-size: 26rpx;
+  color: #333;
+  display: block;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 底部分享按钮 */
+.share-btn {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 20rpx 30rpx;
+  background-color: #fff;
+  box-shadow: 0 -2rpx 10rpx rgba(0, 0, 0, 0.05);
+}
+
+.share-btn button {
+  background-color: #1AAD19;
+  color: #fff;
+  font-size: 32rpx;
+  font-weight: bold;
+  border-radius: 45rpx;
+  margin: 0;
+}
+
+/* 加载中样式 */
+.loading-container {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.loading image {
+  width: 80rpx;
+  height: 80rpx;
+  margin-bottom: 20rpx;
+}
+
+.loading text {
+  font-size: 28rpx;
+  color: #999;
+} 

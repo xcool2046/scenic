@@ -1,0 +1,68 @@
+<!-- components/refresh-list/refresh-list.wxml -->
+<view class="refresh-list-container" style="height: {{height}};">
+  <!-- 下拉刷新头部 -->
+  <view class="refresh-header" style="height: {{distance}}px; margin-top: -{{distance}}px;">
+    <view class="refresh-content">
+      <block wx:if="{{pullState === 1}}">
+        <view class="refresh-icon down-arrow"></view>
+        <text>{{refreshText}}</text>
+      </block>
+      <block wx:elif="{{pullState === 2}}">
+        <view class="refresh-icon up-arrow"></view>
+        <text>{{releaseText}}</text>
+      </block>
+      <block wx:elif="{{pullState === 3}}">
+        <view class="refresh-icon loading"></view>
+        <text>{{loadingText}}</text>
+      </block>
+    </view>
+  </view>
+  
+  <!-- 内容区域 -->
+  <scroll-view 
+    class="scroll-view"
+    scroll-y="{{true}}"
+    style="height: 100%;"
+    bindscroll="handleScroll"
+    bindscrolltolower="handleScrollToLower"
+    lower-threshold="{{bottomThreshold}}"
+    bindtouchstart="handleTouchStart"
+    bindtouchmove="handleTouchMove"
+    bindtouchend="handleTouchEnd"
+    scroll-anchoring="{{true}}"
+    refresher-enabled="{{false}}"
+    enhanced="{{true}}"
+    bounces="{{false}}"
+    show-scrollbar="{{true}}"
+    data-scroll-top="{{scrollTop}}"
+  >
+    <!-- 下拉刷新占位，用于补偿下拉动作 -->
+    <view style="height: {{distance}}px;"></view>
+    
+    <!-- 内容插槽 -->
+    <slot></slot>
+    
+    <!-- 空内容提示 -->
+    <view class="empty-view" wx:if="{{listData.length === 0 && !loading}}">
+      <view class="empty-icon"></view>
+      <text>{{emptyText}}</text>
+    </view>
+    
+    <!-- 底部加载提示 -->
+    <view class="load-more" wx:if="{{listData.length > 0}}">
+      <block wx:if="{{loading || isLoadingMore}}">
+        <view class="loading-icon"></view>
+        <text>加载中...</text>
+      </block>
+      <block wx:elif="{{!hasMore}}">
+        <text>{{noMoreText}}</text>
+      </block>
+      <block wx:else>
+        <text wx:if="{{enableLoadMore}}">{{loadMoreText}}</text>
+      </block>
+    </view>
+    
+    <!-- 底部安全区域 -->
+    <view style="height: {{bottomGap}}px;"></view>
+  </scroll-view>
+</view> 
