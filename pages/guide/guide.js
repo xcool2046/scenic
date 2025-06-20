@@ -49,26 +49,33 @@ Page({
         name: '经典全景游',
         spotCount: 8,
         duration: '3小时',
-        image: config.IMAGES.ROUTE_IMAGES.CLASSIC
+        image: config.IMAGES.ROUTE_IMAGES.CLASSIC,
+        description: '涵盖景区所有主要景点，适合首次游览的游客，全程约3小时，可深度体验景区精华。'
       },
       {
         id: 2,
         name: '休闲亲子游',
         spotCount: 5,
         duration: '2小时',
-        image: config.IMAGES.ROUTE_IMAGES.FAMILY
+        image: config.IMAGES.ROUTE_IMAGES.FAMILY,
+        description: '专为家庭设计的轻松路线，路程相对较短，适合带老人和小孩的家庭游览。'
       },
       {
         id: 3,
         name: '摄影精选线',
         spotCount: 6,
         duration: '2.5小时',
-        image: config.IMAGES.ROUTE_IMAGES.PHOTO
+        image: config.IMAGES.ROUTE_IMAGES.PHOTO,
+        description: '精选最佳拍摄点位，适合摄影爱好者，每个景点都有独特的拍摄角度和光线条件。'
       }
     ],
     // 添加CDN图标路径
     icons: config.ICONS,
-    images: config.IMAGES
+    images: config.IMAGES,
+    
+    // 路线详情弹窗数据
+    showRouteModal: false,
+    selectedRoute: null
   },
 
   onLoad(options) {
@@ -117,44 +124,31 @@ Page({
     });
   },
 
-  // 导航到路线详情
-  navigateToRouteDetail(e) {
+  // 显示路线详情（改为弹窗展示）
+  showRouteDetail(e) {
     const routeId = e.currentTarget.dataset.id;
-    wx.navigateTo({
-      url: `/pages/guide/route/route?id=${routeId}`
+    const route = this.data.routes.find(r => r.id === routeId);
+    
+    if (route) {
+      this.setData({
+        selectedRoute: route,
+        showRouteModal: true
+      });
+    }
+  },
+
+  // 关闭路线详情弹窗
+  hideRouteModal() {
+    this.setData({
+      showRouteModal: false,
+      selectedRoute: null
     });
   },
 
-  // 导航到设施页面
-  navigateToFacility(e) {
-    const type = e.currentTarget.dataset.type;
-    let title = '';
-    
-    switch(type) {
-      case 'toilet':
-        title = '洗手间';
-        break;
-      case 'food':
-        title = '餐饮服务';
-        break;
-      case 'rest':
-        title = '休息区';
-        break;
-      case 'parking':
-        title = '停车场';
-        break;
-      case 'medical':
-        title = '医疗服务';
-        break;
-      case 'transport':
-        title = '接驳车';
-        break;
-      default:
-        title = '设施信息';
-    }
-    
+  // 设施相关功能提示（改为跳转到附近页面）
+  navigateToNearby() {
     wx.navigateTo({
-      url: `/pages/guide/facility/facility?type=${type}&title=${title}`
+      url: '/pages/guide/nearby/nearby'
     });
   }
 }) 

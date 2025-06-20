@@ -1,0 +1,114 @@
+<!-- pages/review/review.wxml -->
+<view class="review-container">
+  
+  <!-- 页面标题区 - Apple风格大标题 -->
+  <view class="page-header {{animationStates.headerVisible ? 'visible' : ''}}">
+    <view class="header-content">
+      <view class="header-icon">⭐</view>
+      <view class="header-title">码上评价</view>
+      <view class="header-subtitle">您的宝贵意见是我们前进的动力</view>
+    </view>
+  </view>
+
+  <!-- 评分卡片 - Apple风格大卡片 -->
+  <view class="rating-card card {{animationStates.ratingVisible ? 'visible' : ''}}">
+    <view class="card-header">
+      <view class="card-title">服务评分</view>
+      <view class="card-subtitle">轻触星星来评分</view>
+    </view>
+    
+    <view class="rating-list">
+      <view 
+        class="rating-item" 
+        wx:for="{{ratingDimensions}}" 
+        wx:key="key"
+      >
+        <view class="rating-info">
+          <view class="rating-icon">{{item.icon}}</view>
+          <view class="rating-details">
+            <view class="rating-name">{{item.name}}</view>
+            <view class="rating-desc">{{item.description}}</view>
+          </view>
+        </view>
+        
+        <view class="rating-stars">
+          <view 
+            class="star star-{{item.key}} {{rating[item.key] >= index + 1 ? 'active' : ''}}"
+            wx:for="{{[1,2,3,4,5]}}" 
+            wx:for-index="index"
+            wx:key="index"
+            data-dimension="{{item.key}}"
+            data-value="{{index + 1}}"
+            bindtap="onRatingTap"
+          >★</view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 快捷标签卡片 -->
+  <view class="tags-card card {{animationStates.tagsVisible ? 'visible' : ''}}">
+    <view class="card-header">
+      <view class="card-title">快捷评价</view>
+      <view class="card-subtitle">选择您的感受</view>
+    </view>
+    
+    <view class="tags-grid">
+      <view 
+        class="tag-item {{selectedTags.indexOf(item) > -1 ? 'selected' : ''}}"
+        wx:for="{{quickTags}}" 
+        wx:key="*this"
+        data-tag="{{item}}"
+        bindtap="onTagTap"
+      >{{item}}</view>
+    </view>
+  </view>
+
+  <!-- 详细评价卡片 -->
+  <view class="text-card card {{animationStates.textVisible ? 'visible' : ''}}">
+    <view class="card-header">
+      <view class="card-title">详细评价</view>
+      <view class="card-subtitle">分享您的具体感受</view>
+    </view>
+    
+    <view class="textarea-container">
+      <textarea
+        class="review-textarea"
+        placeholder="请分享您的具体感受和建议，帮助我们提供更好的服务..."
+        placeholder-class="textarea-placeholder"
+        value="{{reviewText}}"
+        bindinput="onReviewInput"
+        maxlength="500"
+        show-confirm-bar="{{false}}"
+        auto-height
+      ></textarea>
+      <view class="char-count">{{reviewText.length}}/500</view>
+    </view>
+  </view>
+
+  <!-- 提交按钮区 - Apple风格 -->
+  <view class="submit-card {{animationStates.submitVisible ? 'visible' : ''}}">
+    <view class="action-buttons">
+      <button 
+        class="btn-secondary"
+        bindtap="onResetForm"
+      >重新填写</button>
+      
+      <button 
+        class="btn-primary {{isSubmitting ? 'loading' : ''}}"
+        bindtap="onSubmitReview"
+        disabled="{{isSubmitting}}"
+      >
+        <text wx:if="{{!isSubmitting}}">提交评价</text>
+        <text wx:else>提交中...</text>
+      </button>
+    </view>
+    
+    <!-- 历史评价入口 -->
+    <view class="history-link" bindtap="viewReviewHistory">
+      <text class="history-text">查看我的评价历史</text>
+      <text class="history-arrow">→</text>
+    </view>
+  </view>
+
+</view> 

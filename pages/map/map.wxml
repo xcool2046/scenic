@@ -1,76 +1,139 @@
 <!--pages/map/map.wxml-->
 <view class="container">
   <view class="header">
-    <text class="title">景区导览图</text>
+    <text class="title">景区地图</text>
     <view class="actions">
-      <view class="action-btn" bindtap="previewMap">
-        <image class="action-icon" src="/assets/icons/preview.png" mode="aspectFit"></image>
-        <text>查看大图</text>
+      <view class="action-btn" bindtap="getCurrentLocation">
+        <image class="action-icon" src="/assets/icons/user_location.png" mode="aspectFit"></image>
+        <text>定位</text>
       </view>
-      <view class="action-btn" bindtap="onSaveMap">
-        <image class="action-icon" src="/assets/icons/download.png" mode="aspectFit"></image>
-        <text>保存地图</text>
+      <view class="action-btn" bindtap="switchMapType">
+        <image class="action-icon" src="{{config.CDN_ICONS.MAP}}" mode="aspectFit"></image>
+        <text>{{mapType === 'satellite' ? '标准' : '卫星'}}</text>
       </view>
     </view>
   </view>
   
+  <!-- 微信原生地图组件 -->
   <view class="map-container">
-    <image class="map-image" src="{{mapUrl}}" mode="aspectFit" bindtap="previewMap"></image>
-    
-    <!-- 地图标记点 -->
-    <view class="spot-markers">
-      <view wx:for="{{spots}}" wx:key="id" 
-        class="spot-marker" 
-        style="left: {{item.x}}%; top: {{item.y}}%"
-        bindtap="onSpotTap"
-        data-id="{{item.id}}">
-        <view class="marker-dot"></view>
-        <text class="marker-name">{{item.name}}</text>
+    <!-- 加载状态 -->
+    <view wx:if="{{loading}}" class="loading-container">
+      <view class="loading-spinner"></view>
+      <text class="loading-text">地图加载中...</text>
+    </view>
+
+    <!-- 错误状态 -->
+    <view wx:elif="{{error}}" class="error-container">
+      <text class="error-icon">!</text>
+      <text class="error-message">{{errorMessage || '地图加载失败'}}</text>
+      <button class="retry-button" bindtap="retryLoad">点击重试</button>
+    </view>
+
+    <!-- 地图主体 -->
+    <map
+      wx:else
+      id="map"
+      class="map-view"
+      style="width: 100%; height: 100%;"
+      latitude="{{latitude}}"
+      longitude="{{longitude}}"
+      scale="{{scale}}"
+      markers="{{markers}}"
+      polyline="{{polyline}}"
+      show-location
+      show-compass
+      enable-zoom
+      enable-scroll
+      enable-rotate
+      bindmarkertap="onMarkerTap"
+      bindregionchange="onRegionChange"
+      bindtap="onMapTap"
+    >
+    </map>
+
+    <!-- 控件 -->
+    <view class="map-controls" wx:if="{{!loading && !error}}">
+      <view class="ctrl-item" bindtap="getCurrentLocation">
+        <image src="/assets/icons/guide/location.png" class="ctrl-icon"></image>
+      </view>
+      <view class="ctrl-item" bindtap="zoomIn">
+        <image src="/assets/icons/buttons/zoom-in.png" class="ctrl-icon"></image>
+      </view>
+      <view class="ctrl-item" bindtap="zoomOut">
+        <image src="/assets/icons/buttons/zoom-out.png" class="ctrl-icon"></image>
+      </view>
+    </view>
+
+    <!-- 底部信息面板 -->
+    <view class="map-info-panel" wx:if="{{selectedMarker}}">
+      <view class="marker-info">
+        <view class="marker-header">
+          <view class="marker-name">{{selectedMarker.title}}</view>
+          <view class="marker-type">{{selectedMarker.type}}</view>
+        </view>
+        <view class="marker-desc" wx:if="{{selectedMarker.description}}">{{selectedMarker.description}}</view>
+        <view class="marker-actions">
+          <button class="btn-small primary" bindtap="navigateToMarker">导航</button>
+          <button class="btn-small" bindtap="viewMarkerDetail" wx:if="{{selectedMarker.detailUrl}}">详情</button>
+          <button class="btn-small" bindtap="closeInfoPanel">关闭</button>
+        </view>
+      </view>
+    </view>
+
+    <!-- 图例说明 -->
+    <view class="legend-panel" wx:if="{{showLegend}}">
+      <view class="legend-header">
+        <text class="legend-title">图例说明</text>
+        <view class="legend-close" bindtap="toggleLegend">×</view>
+      </view>
+      <view class="legend-items">
+        <view class="legend-item">
+          <image class="legend-icon" src="/assets/icons/markers/entrance.png" mode="aspectFit"></image>
+          <text>入口/出口</text>
+        </view>
+        <view class="legend-item">
+          <image class="legend-icon" src="/assets/icons/markers/scenic.png" mode="aspectFit"></image>
+          <text>景点</text>
+        </view>
+        <view class="legend-item">
+          <image class="legend-icon" src="/assets/icons/markers/toilet.png" mode="aspectFit"></image>
+          <text>卫生间</text>
+        </view>
+        <view class="legend-item">
+          <image class="legend-icon" src="/assets/icons/markers/food.png" mode="aspectFit"></image>
+          <text>餐饮</text>
+        </view>
+        <view class="legend-item">
+          <image class="legend-icon" src="/assets/icons/markers/rest.png" mode="aspectFit"></image>
+          <text>休息区</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 浮动按钮 -->
+    <view class="floating-buttons">
+      <view class="float-btn legend-btn" bindtap="toggleLegend">
+        <image class="float-icon" src="{{config.CDN_ICONS.MORE}}" mode="aspectFit"></image>
       </view>
     </view>
   </view>
-  
-  <view class="legend">
-    <view class="legend-title">图例说明</view>
-    <view class="legend-items">
-      <view class="legend-item">
-        <view class="legend-dot entrance"></view>
-        <text>入口</text>
-      </view>
-      <view class="legend-item">
-        <view class="legend-dot toilet"></view>
-        <text>卫生间</text>
-      </view>
-      <view class="legend-item">
-        <view class="legend-dot food"></view>
-        <text>餐饮</text>
-      </view>
-      <view class="legend-item">
-        <view class="legend-dot rest"></view>
-        <text>休息区</text>
+
+  <!-- 选中标记信息面板 -->
+  <view class="info-panel {{selectedMarker ? 'show' : ''}}" wx:if="{{selectedMarker}}">
+    <view class="panel-header">
+      <text class="panel-title">{{selectedMarker.name}}</text>
+      <view class="close-btn" bindtap="closeInfoPanel">×</view>
+    </view>
+    <view class="panel-content">
+      <image wx:if="{{selectedMarker.images && selectedMarker.images[0]}}" src="{{selectedMarker.images[0]}}" class="panel-image" mode="aspectFill"></image>
+      <text class="panel-description">{{selectedMarker.description}}</text>
+      <view class="panel-tags">
+        <text class="tag" wx:for="{{selectedMarker.features}}" wx:key="*this">{{item}}</text>
       </view>
     </view>
-  </view>
-  
-  <view class="spot-list">
-    <view class="spot-list-title">景点列表</view>
-    <view class="spot-items">
-      <view wx:for="{{spots}}" wx:key="id" class="spot-item" bindtap="onSpotTap" data-id="{{item.id}}">
-        <text class="spot-name">{{item.name}}</text>
-        <image class="spot-arrow" src="/assets/icons/arrow.png" mode="aspectFit"></image>
-      </view>
+    <view class="panel-actions">
+      <button class="action-btn primary" data-markerid="{{selectedMarker.id}}" bindtap="navigateToMarker">到这里去</button>
+      <button class="action-btn" data-markerid="{{selectedMarker.id}}" bindtap="viewMarkerDetail">查看详情</button>
     </view>
   </view>
-  
-  <!-- 加载提示 -->
-  <view class="loading" wx:if="{{loading}}">
-    <image class="loading-icon" src="/assets/icons/loading.gif" mode="aspectFit"></image>
-    <text>加载地图中...</text>
-  </view>
-  
-  <!-- 错误提示 -->
-  <view class="error" wx:if="{{error}}">
-    <text>地图加载失败</text>
-    <view class="retry-btn" bindtap="loadMapData">重试</view>
-  </view>
-</view> 
+</view>

@@ -80,100 +80,103 @@
     </view>
   </view>
 
-  <!-- 今日活动 -->
-  <view class="section today-activities" wx:if="{{uiConfig.showActivities && activities.length > 0}}">
+  <!-- 7个码上服务 -->
+  <view class="smart-services">
     <view class="section-header">
-      <text class="section-title">今日活动</text>
+      <text class="section-title">智慧服务</text>
+      <text class="section-subtitle">一码通行 · 智享服务</text>
     </view>
-    <view class="activity-list">
-      <view class="activity-item" wx:for="{{activities}}" wx:key="title" bindtap="onActivityTap" data-index="{{index}}">
-        <view class="activity-time" wx:if="{{item.title.indexOf('【') === 0}}">{{item.title.substring(0, 7)}}</view>
-        <view class="activity-time" wx:else>公告：</view>
-        <view class="activity-content">
-          <view class="activity-title">{{item.title.indexOf('【') === 0 ? item.title.substring(7) : item.title.replace('公告：', '')}}</view>
-          <view class="activity-desc">{{item.desc}}</view>
-        </view>
-        <view class="icon-base icon-small">
-          <image class="icon-image" src="{{item.title.includes('公告') ? icons.NOTICE_ICON : (item.title.includes('讲座') ? icons.LECTURE_ICON : icons.PERFORMANCE_ICON)}}"></image>
+    
+    <!-- 第一行：扫码进码（大卡片，跨两列） -->
+    <view class="service-row-main">
+      <view class="service-main-item" bindtap="onServiceTap" data-service="scan">
+        <view class="service-main-content">
+          <view class="service-main-icon">
+            <image src="https://cdn.jsdelivr.net/npm/@tabler/icons@latest/icons/qrcode.svg" mode="aspectFit"></image>
+          </view>
+          <view class="service-main-info">
+            <text class="service-main-name">扫码进码</text>
+            <text class="service-main-desc">二维码验票入园</text>
+          </view>
         </view>
       </view>
     </view>
-  </view>
-
-  <!-- 快捷服务 -->
-  <view class="quick-services" wx:if="{{uiConfig.showQuickServices}}">
+    
+    <!-- 第二行：码上评价 + 码上惠客 -->
     <view class="service-row">
-      <view class="quick-service-item" bindtap="onCommonTap" data-type="parking">
-        <view class="icon-base icon-responsive icon-circle home-icon">
-          <image class="icon-image" src="{{icons.PARKING_BTN}}"></image>
+      <view class="service-item" bindtap="onServiceTap" data-service="review">
+        <view class="service-icon">
+          <image src="https://cdn.jsdelivr.net/npm/@tabler/icons@latest/icons/star.svg" mode="aspectFit"></image>
         </view>
-        <text class="quick-service-name">停车场</text>
+        <view class="service-info">
+          <text class="service-name">码上评价</text>
+          <text class="service-desc">服务评价反馈</text>
+        </view>
       </view>
-      <view class="quick-service-item" bindtap="onCommonTap" data-type="scan">
-        <view class="icon-base icon-responsive icon-circle home-icon">
-          <image class="icon-image" src="{{icons.SCAN_BTN}}"></image>
+      
+      <view class="service-item" bindtap="onServiceTap" data-service="coupon">
+        <view class="service-icon">
+          <image src="https://cdn.jsdelivr.net/npm/@tabler/icons@latest/icons/discount-2.svg" mode="aspectFit"></image>
         </view>
-        <text class="quick-service-name">扫一扫</text>
+        <view class="service-info">
+          <text class="service-name">码上惠客</text>
+          <text class="service-desc">优惠券与积分</text>
+        </view>
       </view>
-      <view class="quick-service-item" bindtap="onCommonTap" data-type="emergency">
-        <view class="icon-base icon-responsive icon-circle home-icon icon-danger">
-          <image class="icon-image" src="{{icons.SOS_BTN}}"></image>
+    </view>
+    
+    <!-- 第三行：码上消费 + 码上导游 -->
+    <view class="service-row">
+      <view class="service-item" bindtap="onServiceTap" data-service="shopping">
+        <view class="service-icon">
+          <image src="https://cdn.jsdelivr.net/npm/@tabler/icons@latest/icons/shopping-cart.svg" mode="aspectFit"></image>
         </view>
-        <text class="quick-service-name">紧急求助</text>
+        <view class="service-info">
+          <text class="service-name">码上消费</text>
+          <text class="service-desc">在线购买服务</text>
+        </view>
       </view>
-      <view class="quick-service-item" bindtap="onCommonTap" data-type="guide">
-        <view class="icon-base icon-responsive icon-circle home-icon">
-          <image class="icon-image" src="{{icons.ROUTE_BTN}}"></image>
+      
+      <view class="service-item" bindtap="onServiceTap" data-service="audio-guide">
+        <view class="service-icon">
+          <image src="https://cdn.jsdelivr.net/npm/@tabler/icons@latest/icons/headphones.svg" mode="aspectFit"></image>
         </view>
-        <text class="quick-service-name">推荐路线</text>
+        <view class="service-info">
+          <text class="service-name">码上导游</text>
+          <text class="service-desc">智能语音导览</text>
+        </view>
+      </view>
+    </view>
+    
+    <!-- 第四行：码上监管 + 码上合作 -->
+    <view class="service-row">
+      <view class="service-item" bindtap="onServiceTap" data-service="management">
+        <view class="service-icon">
+          <image src="https://cdn.jsdelivr.net/npm/@tabler/icons@latest/icons/shield-check.svg" mode="aspectFit"></image>
+        </view>
+        <view class="service-info">
+          <text class="service-name">码上监管</text>
+          <text class="service-desc">服务质量监控</text>
+        </view>
+      </view>
+      
+      <view class="service-item" bindtap="onServiceTap" data-service="merchant">
+        <view class="service-icon">
+          <image src="https://cdn.jsdelivr.net/npm/@tabler/icons@2.47.0/icons/building-store.svg" mode="aspectFit" binderror="onIconError"></image>
+        </view>
+        <view class="service-info">
+          <text class="service-name">码上合作</text>
+          <text class="service-desc">商家入驻合作</text>
+        </view>
       </view>
     </view>
   </view>
 
-  <!-- 便捷设施 -->
-  <view class="section" wx:if="{{uiConfig.showFacilities}}">
-    <view class="section-header">
-      <text class="section-title">便捷设施</text>
-    </view>
-    <view class="facility-list">
-      <view class="facility-item" bindtap="findNearby" data-type="toilet">
-        <view class="icon-base icon-responsive icon-square facility-icon">
-          <image class="icon-image" src="{{icons.CDN_ICONS.TOILET}}"></image>
-        </view>
-        <text class="facility-name">卫生间</text>
-      </view>
-      <view class="facility-item" bindtap="findNearby" data-type="food">
-        <view class="icon-base icon-responsive icon-square facility-icon">
-          <image class="icon-image" src="{{icons.CDN_ICONS.FOOD}}"></image>
-        </view>
-        <text class="facility-name">餐饮</text>
-      </view>
-      <view class="facility-item" bindtap="findNearby" data-type="rest">
-        <view class="icon-base icon-responsive icon-square facility-icon">
-          <image class="icon-image" src="{{icons.CDN_ICONS.REST_AREA}}"></image>
-        </view>
-        <text class="facility-name">休息区</text>
-      </view>
-      <view class="facility-item" bindtap="findNearby" data-type="medical">
-        <view class="icon-base icon-responsive icon-square facility-icon">
-          <image class="icon-image" src="{{icons.CDN_ICONS.MEDICAL}}"></image>
-        </view>
-        <text class="facility-name">医疗</text>
-      </view>
-      <view class="facility-item" bindtap="onCommonTap" data-type="transport">
-        <view class="icon-base icon-responsive icon-square facility-icon">
-          <image class="icon-image" src="{{icons.TRANSPORT_ICON}}"></image>
-        </view>
-        <text class="facility-name">交通</text>
-      </view>
-      <view class="facility-item" bindtap="onCommonTap" data-type="all">
-        <view class="icon-base icon-responsive icon-square facility-icon">
-          <image class="icon-image" src="{{icons.MORE_ICON}}"></image>
-        </view>
-        <text class="facility-name">更多</text>
-      </view>
-    </view>
-  </view>
+
+
+
+
+
 
   <!-- 底部空白区域，防止内容被底部tab遮挡 -->
   <view class="bottom-gap"></view>
@@ -183,10 +186,4 @@
     <text>数据加载失败</text>
     <view class="retry-btn" bindtap="refreshHomeData">重新加载</view>
   </view>
-  
-  <!-- 加载状态组件 -->
-  <loading id="loading" text="加载中" mask="{{true}}" loading="{{false}}"></loading>
-  
-  <!-- 轻提示组件 -->
-  <toast id="toast"></toast>
 </view>

@@ -59,15 +59,15 @@
   <view class="tips-section">
     <view class="tip-item">
       <view class="icon-base icon-small tip-icon">
-        <image class="icon-image" src="/assets/icons/tip.png"></image>
+        <image class="icon-image" src="{{config.CDN_ICONS.TIP}}"></image>
       </view>
       <text class="tip-text">数据每5分钟自动刷新一次</text>
     </view>
     <view class="tip-item">
       <view class="icon-base icon-small tip-icon">
-        <image class="icon-image" src="/assets/icons/pull.png"></image>
+        <image class="icon-image" src="{{config.CDN_ICONS.PULL}}"></image>
       </view>
       <text class="tip-text">下拉页面可以手动刷新数据</text>
     </view>
   </view>
-</view> 
+</view>

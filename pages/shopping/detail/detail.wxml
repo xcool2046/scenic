@@ -1,0 +1,127 @@
+<!--商品详情页-->
+<view class="detail-container">
+  
+  <!-- 商品图片轮播 -->
+  <view class="image-section">
+    <swiper class="product-swiper" 
+            indicator-dots="true" 
+            indicator-color="rgba(255,255,255,0.5)"
+            indicator-active-color="#ffffff"
+            bindchange="onImageChange">
+      <swiper-item wx:for="{{productImages}}" wx:key="*this">
+        <image class="product-image" 
+               src="{{item}}" 
+               mode="aspectFill"
+               data-index="{{index}}"
+               bindtap="previewImage">
+        </image>
+      </swiper-item>
+    </swiper>
+    
+    <!-- 图片指示器 -->
+    <view class="image-indicator" wx:if="{{productImages.length > 1}}">
+      <text class="indicator-text">{{currentImageIndex + 1}} / {{productImages.length}}</text>
+    </view>
+  </view>
+
+  <!-- 商品信息 -->
+  <view class="info-section">
+    <view class="product-header">
+      <view class="product-badge" wx:if="{{product.badge}}">{{product.badge}}</view>
+      <view class="product-name">{{product.name}}</view>
+      <view class="product-description">{{product.description}}</view>
+    </view>
+    
+    <view class="price-section">
+      <view class="price-main">
+        <text class="price-symbol">¥</text>
+        <text class="price-value">{{product.price}}</text>
+      </view>
+      <view class="price-original" wx:if="{{product.originalPrice}}">
+        <text class="original-text">原价</text>
+        <text class="original-value">¥{{product.originalPrice}}</text>
+      </view>
+    </view>
+    
+    <view class="sales-info">
+      <view class="sales-item">
+        <text class="sales-label">已售</text>
+        <text class="sales-value">{{product.sales}}</text>
+      </view>
+      <view class="sales-item">
+        <text class="sales-label">库存</text>
+        <text class="sales-value">{{product.stock}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 商品详情 -->
+  <view class="details-section">
+    <view class="section-title">
+      <view class="title-main">商品详情</view>
+      <view class="title-sub">PRODUCT DETAILS</view>
+    </view>
+    
+    <view class="details-list">
+      <view class="detail-item" wx:for="{{product.details}}" wx:key="*this">
+        <text class="detail-text">{{item}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 数量选择 -->
+  <view class="quantity-section">
+    <view class="section-title">
+      <view class="title-main">购买数量</view>
+      <view class="title-sub">QUANTITY</view>
+    </view>
+    
+    <view class="quantity-selector">
+      <view class="quantity-btn decrease {{quantity <= 1 ? 'disabled' : ''}}" 
+            bindtap="decreaseQuantity">
+        <text class="btn-text">−</text>
+      </view>
+      <input class="quantity-input" 
+             type="number" 
+             value="{{quantity}}"
+             bindinput="onQuantityInput"
+             disabled="{{loading}}">
+      </input>
+      <view class="quantity-btn increase {{quantity >= product.stock ? 'disabled' : ''}}" 
+            bindtap="increaseQuantity">
+        <text class="btn-text">+</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部操作栏 -->
+  <view class="bottom-actions">
+    <view class="action-left">
+      <view class="cart-btn" bindtap="goToCart">
+        <text class="cart-icon">🛒</text>
+        <view class="cart-badge" wx:if="{{cartCount > 0}}">{{cartCount}}</view>
+      </view>
+    </view>
+    
+    <view class="action-right">
+      <view class="add-cart-btn {{addingToCart ? 'loading' : ''}}" 
+            bindtap="addToCart">
+        <text class="btn-text">{{addingToCart ? '添加中...' : '加入购物车'}}</text>
+      </view>
+      
+      <view class="buy-now-btn {{buying ? 'loading' : ''}}" 
+            bindtap="buyNow">
+        <text class="btn-text">{{buying ? '处理中...' : '立即购买'}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 加载状态 -->
+  <view class="loading-overlay" wx:if="{{loading}}">
+    <view class="loading-content">
+      <view class="loading-spinner"></view>
+      <text class="loading-text">加载中...</text>
+    </view>
+  </view>
+
+</view> 

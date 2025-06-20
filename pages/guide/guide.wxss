@@ -1,19 +1,29 @@
 /* pages/guide/guide.wxss */
 .page {
   padding: 0 0 30rpx 0;
-  background-color: #f5f5f5;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  min-height: 100vh;
 }
 
-/* 地图预览 */
+/* 地图预览 - 毛玻璃效果升级 */
 .map-container {
   position: relative;
   width: 100%;
-  height: 360rpx;
+  height: 400rpx;
+  border-radius: 0 0 24rpx 24rpx;
+  overflow: hidden;
+  box-shadow: 0 8rpx 32rpx rgba(0,0,0,0.12);
 }
 
 .map-preview {
   width: 100%;
   height: 100%;
+  transform: scale(1.02);
+  transition: transform 0.3s ease;
+}
+
+.map-container:active .map-preview {
+  transform: scale(1);
 }
 
 .map-overlay {
@@ -21,67 +31,91 @@
   bottom: 0;
   left: 0;
   right: 0;
-  background-color: rgba(0,0,0,0.5);
-  padding: 20rpx;
+  background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.3) 40%, rgba(0,0,0,0.7) 100%);
+  backdrop-filter: blur(8rpx);
+  -webkit-backdrop-filter: blur(8rpx);
+  padding: 32rpx 20rpx 24rpx;
   display: flex;
   justify-content: center;
 }
 
 .map-text {
   color: #fff;
-  font-size: 28rpx;
+  font-size: 30rpx;
+  font-weight: 500;
+  text-shadow: 0 2rpx 8rpx rgba(0,0,0,0.3);
+  letter-spacing: 0.5rpx;
 }
 
-/* 章节标题 */
+/* 章节标题 - 增强视觉层次 */
 .section-title {
-  margin: 30rpx 30rpx 20rpx;
+  margin: 40rpx 30rpx 24rpx;
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
 .section-title > text {
-  font-size: 32rpx;
-  font-weight: bold;
-  color: #333;
+  font-size: 36rpx;
+  font-weight: 800;
+  color: #1a1a1a;
+  letter-spacing: -0.5rpx;
 }
 
 .sort-option {
   display: flex;
   align-items: center;
-  font-size: 24rpx;
-  color: #666;
+  font-size: 26rpx;
+  color: #6c757d;
+  padding: 12rpx 16rpx;
+  background: rgba(255,255,255,0.8);
+  backdrop-filter: blur(12rpx);
+  border-radius: 20rpx;
+  border: 1rpx solid rgba(255,255,255,0.2);
+  transition: all 0.2s ease;
 }
 
-.sort-icon {
-  width: 30rpx;
-  height: 30rpx;
-  margin-left: 10rpx;
+.sort-option:active {
+  background: rgba(255,255,255,0.95);
+  transform: scale(0.98);
 }
 
-/* 景点列表 */
+/* 景点列表 - 数字奢品卡片设计 */
 .spot-list {
   padding: 0 30rpx;
 }
 
 .spot-item {
   display: flex;
-  background-color: #fff;
-  border-radius: 12rpx;
-  margin-bottom: 20rpx;
+  background: linear-gradient(135deg, #ffffff 0%, #fafbfc 100%);
+  border-radius: 20rpx;
+  margin-bottom: 24rpx;
   overflow: hidden;
-  box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.05);
+  box-shadow: 
+    0 4rpx 20rpx rgba(0,0,0,0.08),
+    0 1rpx 3rpx rgba(0,0,0,0.1);
+  border: 1rpx solid rgba(255,255,255,0.8);
+  transition: all 0.3s ease;
+}
+
+.spot-item:active {
+  transform: translateY(-2rpx);
+  box-shadow: 
+    0 8rpx 28rpx rgba(0,0,0,0.12),
+    0 4rpx 8rpx rgba(0,0,0,0.08);
 }
 
 .spot-image {
-  width: 220rpx;
-  height: 180rpx;
+  width: 240rpx;
+  height: 200rpx;
   flex-shrink: 0;
+  border-radius: 16rpx 0 0 16rpx;
+  overflow: hidden;
 }
 
 .spot-info {
   flex: 1;
-  padding: 20rpx;
+  padding: 24rpx;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -90,79 +124,117 @@
 .spot-title {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10rpx;
+  align-items: flex-start;
+  margin-bottom: 12rpx;
 }
 
 .spot-title > text {
-  font-size: 30rpx;
-  font-weight: bold;
-  color: #333;
+  font-size: 34rpx;
+  font-weight: 700;
+  color: #212529;
+  letter-spacing: -0.3rpx;
+  line-height: 1.3;
 }
 
 .spot-tag {
   display: flex;
   align-items: center;
-  height: 30rpx;
-}
-
-.spot-tag image {
-  width: 30rpx;
-  height: 30rpx;
+  height: 32rpx;
+  background: linear-gradient(135deg, #ff6b35 0%, #ff8e53 100%);
+  padding: 0 8rpx;
+  border-radius: 16rpx;
+  margin-left: 12rpx;
 }
 
 .spot-tag.hot {
-  color: #FF9500;
+  color: #fff;
+  font-size: 20rpx;
+  font-weight: 600;
 }
 
 .spot-desc {
-  font-size: 24rpx;
-  color: #666;
+  font-size: 26rpx;
+  color: #6c757d;
   margin-bottom: 20rpx;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
+  line-height: 1.5;
 }
 
+/* 超大数字 + 微小文字 对比设计 */
 .spot-meta {
   display: flex;
   justify-content: space-between;
-  font-size: 22rpx;
-  color: #999;
+  align-items: flex-end;
 }
 
 .spot-distance, .spot-duration {
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-start;
 }
 
-.spot-distance text, .spot-duration text {
-  margin-left: 6rpx;
+.spot-distance .meta-number,
+.spot-duration .meta-number {
+  font-size: 48rpx;
+  font-weight: 800;
+  color: #007bff;
+  line-height: 1;
+  margin-bottom: 4rpx;
+  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
-/* 路线卡片 */
+.spot-distance .meta-label,
+.spot-duration .meta-label {
+  font-size: 20rpx;
+  color: #adb5bd;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5rpx;
+}
+
+/* 路线卡片 - 增强渐变和阴影 */
 .route-cards {
   padding: 0 30rpx;
   display: flex;
   flex-direction: column;
-  gap: 20rpx;
+  gap: 24rpx;
 }
 
 .route-card {
   position: relative;
-  height: 160rpx;
+  height: 180rpx;
   width: 100%;
-  border-radius: 12rpx;
+  border-radius: 20rpx;
   overflow: hidden;
-  box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.05);
+  box-shadow: 
+    0 8rpx 32rpx rgba(0,0,0,0.12),
+    0 2rpx 8rpx rgba(0,0,0,0.08);
+  transition: all 0.3s ease;
+}
+
+.route-card:active {
+  transform: translateY(-4rpx);
+  box-shadow: 
+    0 12rpx 40rpx rgba(0,0,0,0.15),
+    0 4rpx 12rpx rgba(0,0,0,0.1);
 }
 
 .route-image {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.route-card:active .route-image {
+  transform: scale(1.05);
 }
 
 .route-card-overlay {
@@ -171,10 +243,11 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(to right, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.1) 100%);
+  background: linear-gradient(135deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 60%, rgba(0,0,0,0.1) 100%);
+  backdrop-filter: blur(2rpx);
   display: flex;
   align-items: center;
-  padding: 0 30rpx;
+  padding: 0 32rpx;
 }
 
 .route-card-content {
@@ -182,20 +255,182 @@
 }
 
 .route-name {
-  font-size: 32rpx;
-  font-weight: bold;
-  margin-bottom: 10rpx;
+  font-size: 36rpx;
+  font-weight: 700;
+  margin-bottom: 8rpx;
   display: block;
+  text-shadow: 0 2rpx 8rpx rgba(0,0,0,0.3);
+  letter-spacing: -0.3rpx;
 }
 
 .route-details {
   display: flex;
   font-size: 24rpx;
-  opacity: 0.8;
+  opacity: 0.9;
+  font-weight: 500;
 }
 
 .route-spots {
-  margin-right: 20rpx;
+  margin-right: 24rpx;
+}
+
+.route-time {
+  color: rgba(255,255,255,0.8);
+}
+
+/* 路线详情弹窗 - Apple风格模态框 */
+.route-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(8rpx);
+  -webkit-backdrop-filter: blur(8rpx);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: modalFadeIn 0.3s ease;
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    backdrop-filter: blur(0);
+  }
+  to {
+    opacity: 1;
+    backdrop-filter: blur(8rpx);
+  }
+}
+
+.route-modal-content {
+  width: 90%;
+  max-width: 600rpx;
+  background: linear-gradient(135deg, #ffffff 0%, #fafbfc 100%);
+  border-radius: 24rpx;
+  overflow: hidden;
+  box-shadow: 
+    0 24rpx 60rpx rgba(0,0,0,0.2),
+    0 8rpx 20rpx rgba(0,0,0,0.1);
+  animation: modalSlideUp 0.3s ease;
+}
+
+@keyframes modalSlideUp {
+  from {
+    transform: translateY(60rpx);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.route-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 32rpx 32rpx 24rpx;
+  border-bottom: 1rpx solid rgba(0,0,0,0.05);
+}
+
+.route-modal-title {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: #1a1a1a;
+  letter-spacing: -0.3rpx;
+}
+
+.route-modal-close {
+  width: 56rpx;
+  height: 56rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.05);
+  border-radius: 28rpx;
+  font-size: 32rpx;
+  color: #6c757d;
+  font-weight: 300;
+  transition: all 0.2s ease;
+}
+
+.route-modal-close:active {
+  background: rgba(0,0,0,0.1);
+  transform: scale(0.95);
+}
+
+.route-modal-body {
+  padding: 0 32rpx 32rpx;
+}
+
+.route-modal-image {
+  width: 100%;
+  height: 320rpx;
+  border-radius: 16rpx;
+  margin-bottom: 24rpx;
+}
+
+.route-modal-meta {
+  display: flex;
+  gap: 24rpx;
+  margin-bottom: 20rpx;
+}
+
+.route-modal-spots,
+.route-modal-duration {
+  display: flex;
+  align-items: center;
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #007bff;
+}
+
+.route-modal-desc {
+  font-size: 28rpx;
+  color: #6c757d;
+  line-height: 1.6;
+  letter-spacing: 0.2rpx;
+}
+
+.route-modal-footer {
+  display: flex;
+  gap: 16rpx;
+  padding: 24rpx 32rpx 32rpx;
+}
+
+.route-modal-btn {
+  flex: 1;
+  height: 88rpx;
+  border-radius: 22rpx;
+  font-size: 28rpx;
+  font-weight: 600;
+  border: none;
+  transition: all 0.2s ease;
+}
+
+.route-modal-btn.secondary {
+  background: rgba(0,0,0,0.05);
+  color: #6c757d;
+}
+
+.route-modal-btn.secondary:active {
+  background: rgba(0,0,0,0.1);
+  transform: scale(0.98);
+}
+
+.route-modal-btn.primary {
+  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+  color: #fff;
+  box-shadow: 0 4rpx 16rpx rgba(0,123,255,0.3);
+}
+
+.route-modal-btn.primary:active {
+  transform: scale(0.98);
+  box-shadow: 0 2rpx 8rpx rgba(0,123,255,0.3);
 }
 
 /* 便利设施 */

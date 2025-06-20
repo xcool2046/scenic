@@ -108,7 +108,11 @@ const imageOptimizer = {
   // 获取适合当前设备的图片尺寸
   getOptimizedImageSize(originalUrl) {
     // 获取设备信息
-    const systemInfo = wx.getSystemInfoSync();
+    // 使用新的API替换废弃的wx.getSystemInfoSync
+const deviceInfo = wx.getDeviceInfo ? wx.getDeviceInfo() : {};
+const windowInfo = wx.getWindowInfo ? wx.getWindowInfo() : {};
+const appBaseInfo = wx.getAppBaseInfo ? wx.getAppBaseInfo() : {};
+const systemInfo = { ...deviceInfo, ...windowInfo, ...appBaseInfo };
     const { windowWidth } = systemInfo;
     
     // 根据屏幕宽度选择合适的图片尺寸
@@ -195,9 +199,44 @@ const renderOptimizer = {
   }
 };
 
+// 便捷方法：直接从模块导出常用方法
+const mark = performanceMonitor.mark.bind(performanceMonitor);
+const measure = performanceMonitor.measure.bind(performanceMonitor);
+
+// 记录系统信息（app.js 中使用）
+const recordSystemInfo = (systemInfo) => {
+  console.log('[Performance] 系统信息记录:', systemInfo);
+  wx.setStorageSync('system_info', {
+    ...systemInfo,
+    recordTime: Date.now()
+  });
+};
+
+// 记录错误信息（app.js 中使用）
+const recordError = (errorInfo) => {
+  console.error('[Performance] 错误记录:', errorInfo);
+  
+  const errors = wx.getStorageSync('app_errors') || [];
+  errors.push({
+    ...errorInfo,
+    timestamp: Date.now()
+  });
+  
+  // 只保留最近20条错误记录
+  if (errors.length > 20) {
+    errors.splice(0, errors.length - 20);
+  }
+  
+  wx.setStorageSync('app_errors', errors);
+};
+
 module.exports = {
   performanceMonitor,
   imageOptimizer,
   renderOptimizer,
-  PERFORMANCE_MARKS
+  PERFORMANCE_MARKS,
+  mark,
+  measure,
+  recordSystemInfo,
+  recordError
 }; 

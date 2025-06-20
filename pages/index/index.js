@@ -1,45 +1,39 @@
 // index.js
 const config = require('../../utils/config');
-const interaction = require('../../utils/interaction');
-const api = require('../../utils/api');
-const cache = require('../../utils/cache');
-const performance = require('../../utils/performance');
-const imageOptimizer = require('../../utils/imageOptimizer');
-const workerManager = require('../../utils/workerManager');
-const preloader = require('../../utils/preloader');
-const defaultAvatarUrl = 'https://mmbiz.qpic.cn/mmbiz/icTdbqWNOwNRna42FI242Lcia07jQodd2FJGIYQfG0LAJGFxM4FbnQP6yfMxBgJ0F3YRqJCJ1aPAK2dQagdusBZg/0'
 const app = getApp();
 
-// 缓存键定义
-const CACHE_KEYS = {
-  WEATHER: 'index_weather_data',
-  CROWD: 'index_crowd_data',
-  CONGEST: 'index_congest_data'
+// 交互工具函数
+const interaction = {
+  showToast: (title, icon = 'none') => {
+    wx.showToast({ title, icon, duration: 2000 });
+  },
+  showSuccess: (title) => {
+    wx.showToast({ title, icon: 'success', duration: 2000 });
+  }
 };
 
 Page({
   data: {
-    motto: 'Hello World',
-    userInfo: {
-      avatarUrl: defaultAvatarUrl,
-      nickName: '',
-    },
-    hasUserInfo: false,
-    canIUseGetUserProfile: wx.canIUse('getUserProfile'),
-    canIUseNicknameComp: wx.canIUse('input.type.nickname'),
+    // 基础信息
     weatherInfo: {
       temperature: '23°C',
-      weather: '晴朗'
+      weather: '晴朗',
+      humidity: '--',
+      windSpeed: '--'
     },
     crowdInfo: {
       level: '一般',
       levelValue: 2,
-      percentage: 45
+      percentage: 45,
+      count: '--',
+      trend: 'stable'
     },
     openStatus: {
       isOpen: true,
       time: '09:00-17:30'
     },
+    
+    // 活动信息
     activities: [
       {
         title: '【9:30】"探索自然"科普讲座',
@@ -54,34 +48,33 @@ Page({
         desc: '请游客绕行，预计明日恢复'
       }
     ],
+    
+    // 图标和图片配置
     icons: {
       ...config.ICONS,
-      CDN_ICONS: config.CDN_ICONS // 添加CDN图标
+      CDN_ICONS: config.CDN_ICONS
     },
     images: config.IMAGES,
-    
-    // 下拉刷新相关
-    refreshing: false,
     
     // 轮播图配置
     bannerList: [
       { 
         id: 1, 
-        url: '/assets/images/banner/banner1.jpg', 
-        title: '景区一日游特惠', 
-        linkUrl: '/packages/ticket/pages/ticket/ticket?type=daytour'
+        url: '/assets/images/banner.jpg', 
+        title: '景悦达智慧服务', 
+        linkUrl: '/pages/ticket/ticket'
       },
       { 
         id: 2, 
-        url: '/assets/images/banner/banner2.jpg', 
-        title: '花海美景正当时',
-        linkUrl: '/pages/guide/spot/spot?id=flower_sea'  
+        url: '/assets/images/cards/map_card.jpg', 
+        title: '智慧导览',
+        linkUrl: '/pages/guide/guide'  
       },
       { 
         id: 3, 
-        url: '/assets/images/banner/banner3.jpg', 
-        title: '民俗表演预约中',
-        linkUrl: '/pages/activity/detail?id=folk_show'
+        url: 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?ixlib=rb-4.0.3&auto=format&fit=crop&w=750&q=80', 
+        title: '便民服务',
+        linkUrl: '/pages/realtime-info/realtime-info'
       }
     ],
     indicatorDots: true,
@@ -92,961 +85,332 @@ Page({
     previousMargin: '20rpx',
     nextMargin: '20rpx',
     currentBannerIndex: 0,
-    bannerLoaded: false,
     
-    // 景点拥堵预警
-    congestWarnings: [],
-    
-    pageName: '首页',
-    showSkeleton: true,
-    banners: [],
-    notices: [],
-    loadingTimeout: false,
-    // 图片懒加载相关数据
-    imagesLoaded: {
-      banner: false,
-      weather: false,
-      modules: false
-    },
-    modules: [
-      { id: 'ticket', name: '购票', icon: '/assets/icons/home/ticket.png', url: '/packages/ticket/pages/ticket/ticket' },
-      { id: 'guide', name: '导览', icon: '/assets/icons/home/guide.png', url: '/packages/guide/pages/guide/guide' },
-      { id: 'realtime', name: '实时', icon: '/assets/icons/home/realtime.png', url: '/packages/realtime/pages/realtime/realtime' },
-      { id: 'map', name: '地图', icon: '/assets/icons/home/map.png', url: '/pages/map/map' }
-    ],
+    // UI配置
     uiConfig: {
       showActivities: true,
       showCrowdLevel: true,
       showWeather: true,
       showQuickServices: true,
       showFacilities: true
-    }
-  },
-  
-  bindViewTap() {
-    wx.navigateTo({
-      url: '../logs/logs'
-    })
-  },
-  
-  onChooseAvatar(e) {
-    const { avatarUrl } = e.detail
-    const { nickName } = this.data.userInfo
-    this.setData({
-      "userInfo.avatarUrl": avatarUrl,
-      hasUserInfo: nickName && avatarUrl && avatarUrl !== defaultAvatarUrl,
-    })
-  },
-  
-  onInputChange(e) {
-    const nickName = e.detail.value
-    const { avatarUrl } = this.data.userInfo
-    this.setData({
-      "userInfo.nickName": nickName,
-      hasUserInfo: nickName && avatarUrl && avatarUrl !== defaultAvatarUrl,
-    })
-  },
-  
-  getUserProfile(e) {
-    // 推荐使用wx.getUserProfile获取用户信息，开发者每次通过该接口获取用户个人信息均需用户确认，开发者妥善保管用户快速填写的头像昵称，避免重复弹窗
-    wx.getUserProfile({
-      desc: '用于完善会员资料',
-      success: (res) => {
-        console.log(res)
-        this.setData({
-          userInfo: res.userInfo,
-          hasUserInfo: true
-        })
+    },
+    
+    // 状态管理
+    loadingTimeout: false,
+
+    // 服务项配置（核心卡片+智慧服务）
+    serviceCards: [
+      {
+        key: 'ticket',
+        type: 'core',
+        title: '电子门票',
+        desc: '',
+        icon: config.CDN_ICONS.TICKET,
+        bg: config.IMAGES.CARDS.TICKET,
+        alt: '电子门票',
+        route: '/pages/ticket/ticket',
+        dataType: 'ticket'
       },
-      fail: (err) => {
-        interaction.showToast('获取用户信息失败');
+      {
+        key: 'map',
+        type: 'core',
+        title: '景区地图',
+        desc: '',
+        icon: config.CDN_ICONS.MAP,
+        bg: config.IMAGES.CARDS.MAP,
+        alt: '景区地图',
+        route: '/pages/map/map',
+        dataType: 'map'
+      },
+      // 智慧服务项
+      {
+        key: 'scan',
+        type: 'smart',
+        title: '扫码进码',
+        desc: '二维码验票入园',
+        icon: '/assets/icons/home/scan.png',
+        alt: '扫码进码',
+        route: '/pages/scan-verify/scan-verify',
+        dataService: 'scan',
+        main: true
+      },
+      {
+        key: 'review',
+        type: 'smart',
+        title: '码上评价',
+        desc: '服务评价反馈',
+        icon: '/assets/icons/navigation/ticket_icon.png',
+        alt: '码上评价',
+        route: '/pages/review/review',
+        dataService: 'review'
+      },
+      {
+        key: 'coupon',
+        type: 'smart',
+        title: '码上惠客',
+        desc: '优惠券与积分',
+        icon: '/assets/icons/home/ticket_large.png',
+        alt: '码上惠客',
+        route: '/pages/coupon/coupon',
+        dataService: 'coupon'
+      },
+      {
+        key: 'shopping',
+        type: 'smart',
+        title: '码上消费',
+        desc: '在线购买服务',
+        icon: '/assets/icons/home/food.png',
+        alt: '码上消费',
+        route: '/pages/shopping/shopping',
+        dataService: 'shopping'
+      },
+      {
+        key: 'audio-guide',
+        type: 'smart',
+        title: '码上导游',
+        desc: '智能语音导览',
+        icon: '/assets/icons/home/routes.png',
+        alt: '码上导游',
+        route: '/pages/audio-guide/audio-guide',
+        dataService: 'audio-guide'
+      },
+      {
+        key: 'management',
+        type: 'smart',
+        title: '码上监管',
+        desc: '服务质量监控',
+        icon: '/assets/icons/navigation/scan_code.png',
+        alt: '码上监管',
+        route: '/pages/management/management',
+        dataService: 'management'
+      },
+      {
+        key: 'merchant',
+        type: 'smart',
+        title: '码上合作',
+        desc: '商家入驻合作',
+        icon: '/assets/icons/user/service.png',
+        alt: '码上合作',
+        route: '/pages/merchant/merchant',
+        dataService: 'merchant'
       }
-    })
-  },
-  
-  onLoad() {
-    // 记录页面性能
-    performance.performanceMonitor.recordPagePerformance('index');
-    
-    // 加载配置信息
-    this.updateUIConfig();
-    
-    // 检查是否有预加载数据
-    this.checkPreloadedData();
-    
-    // 改进轮播图和基础信息面板
-    this.loadBannerList();
-    
-    // 加载今日活动信息
-    this.loadActivities();
-    
-    // 设置加载超时保护 - 缩短超时时间提高响应速度
-    this.loadingTimeoutTimer = setTimeout(() => {
-      // 超过2秒仍未加载完成，显示超时提示
-      this.setData({ loadingTimeout: false });
-      // 自动加载基础数据
-      this.loadBasicData();
-      // 隐藏骨架屏
-      this.setData({ showSkeleton: false });
-    }, 2000);
-    
-    // 确保所有UI组件和工具正确初始化
-    this.ensureComponentsLoaded();
-  },
-  
-  onShow() {
-    // 记录页面显示性能
-    performance.performanceMonitor.recordPageShow('index');
+    ],
   },
 
-  onReady() {
-    // 页面初次渲染完成后，预加载其它页面图片资源
-    this.preloadOtherPagesImages();
+  onLoad() {
+    console.log('首页加载完成');
+    this.initializeData();
   },
   
-  // 检查是否有预加载数据
-  checkPreloadedData() {
+  // 初始化数据
+  async initializeData() {
     try {
-      // 从全局App获取预加载状态
-      if (app.globalData.loadingStatus.isPreloaded) {
-        // 已预加载，直接使用数据
-        this.loadPreloadedData();
-      } else {
-        // 直接加载所有数据，避免等待预加载
-        this.loadAllData();
-      }
-    } catch (err) {
-      console.error('检查预加载数据失败', err);
-      // 出错时直接加载所有数据
-      this.loadAllData();
-    }
-  },
-  
-  // 加载预加载的数据
-  loadPreloadedData() {
-    try {
-      const weatherData = preloader.getPreloadedData('weather');
-      const spotsData = preloader.getPreloadedData('spots');
-      
-      // 如果有预加载数据，直接使用
-      if (weatherData) {
-        this.setData({ weatherInfo: weatherData.now });
-      } else {
-        this.loadWeatherData();
-      }
-      
-      if (spotsData) {
-        // 处理拥挤度数据
-        this.processCrowdData(spotsData);
-      } else {
-        this.loadCrowdData();
-      }
-      
-      // 加载其他数据
-      this.loadBanners();
-      this.loadNotices();
-      
-      // 所有数据加载完成
-      this.hideSkeletonWhenReady();
-    } catch (err) {
-      console.error('加载预加载数据失败', err);
-      // 出错时直接加载基础数据
-      this.loadBasicData();
-      this.setData({ showSkeleton: false });
-    }
-  },
-  
-  // 单独加载所有数据
-  loadAllData() {
-    try {
-      // 并行加载所有数据
-      this.loadWeatherData();
-      this.loadCrowdData();
-      this.loadBanners();
-      this.loadNotices();
-      
-      // 监听所有数据是否都已加载完成
-      this.hideSkeletonWhenReady();
-    } catch (err) {
-      console.error('加载所有数据失败', err);
-      // 出错时直接加载基础数据
-      this.loadBasicData();
-      this.setData({ showSkeleton: false });
-    }
-  },
-  
-  // 所有数据加载完成后隐藏骨架屏
-  hideSkeletonWhenReady() {
-    try {
-      // 使用Worker计算数据加载状态(模拟复杂计算)
-      workerManager.processData([
-        { loaded: !!this.data.weatherInfo, type: 'weather' },
-        { loaded: !!this.data.crowdInfo, type: 'crowd' },
-        { loaded: this.data.banners.length > 0, type: 'banners' },
-        { loaded: this.data.notices.length > 0, type: 'notices' }
-      ], result => {
-        const allDataLoaded = result.every(item => item.loaded);
-        
-        if (allDataLoaded) {
-          // 取消超时计时器
-          if (this.loadingTimeoutTimer) {
-            clearTimeout(this.loadingTimeoutTimer);
-          }
-          
-          // 隐藏骨架屏
-          this.setData({ 
-            showSkeleton: false,
-            loadingTimeout: false
-          });
-          
-          // 记录页面加载完成性能
-          performance.performanceMonitor.mark(performance.PERFORMANCE_MARKS.PAGE_DATA_LOADED, {
-            page: 'index'
-          });
-        }
-      });
-    } catch (err) {
-      console.error('Worker处理失败', err);
-      // 降级处理，直接隐藏骨架屏
-      this.setData({ 
-        showSkeleton: false,
-        loadingTimeout: false
-      });
-    }
-  },
-  
-  // 加载天气数据
-  loadWeatherData() {
-    try {
-      const api = require('../../utils/api');
-      
-      api.getWeather('default_location')
-        .then(data => {
-          if (data && data.now) {
-            this.setData({ weatherInfo: data.now });
-          }
-        })
-        .catch(err => {
-          console.error('加载天气数据失败', err);
-          // 使用默认数据
-          this.setData({
-            weatherInfo: {
-              temperature: '23°C',
-              weather: '晴朗'
-            }
-          });
-        });
-    } catch (err) {
-      console.error('天气数据加载异常', err);
-    }
-  },
-  
-  // 加载人流量数据
-  loadCrowdData() {
-    try {
-      const api = require('../../utils/api');
-      
-      api.getCrowdInfo()
-        .then(res => {
-          if (res.code === 200 && res.data) {
-            this.processCrowdData(res);
-          }
-        })
-        .catch(err => {
-          console.error('加载人流量数据失败', err);
-          // 使用默认数据
-          this.setData({
-            crowdInfo: {
-              level: '舒适',
-              levelValue: 1,
-              percentage: 30
-            }
-          });
-        });
-    } catch (err) {
-      console.error('人流量数据加载异常', err);
-    }
-  },
-  
-  // 处理拥挤度数据
-  processCrowdData(crowdData) {
-    try {
-      if (!crowdData || !crowdData.data) return;
-      
-      // 使用Worker计算拥挤度颜色
-      workerManager.postTask('calculateCrowdColor', {
-        level: crowdData.data.levelValue,
-        percentage: crowdData.data.percentage
-      }, result => {
-        // 设置拥挤度数据
-        this.setData({
-          crowdInfo: {
-            ...crowdData.data,
-            color: result.color,
-            textColor: result.textColor
-          }
-        });
-      });
-    } catch (err) {
-      console.error('处理拥挤度数据异常', err);
-      // 降级处理，使用默认颜色
-      this.setData({
-        crowdInfo: {
-          ...crowdData.data,
-          color: '#52c41a',
-          textColor: '#fff'
-        }
-      });
-    }
-  },
-  
-  // 加载轮播图
-  loadBanners() {
-    try {
-      // 模拟加载轮播图数据
-      const mockBanners = [
-        { id: 1, image: '/assets/icons/home/banner1.jpg', title: '景区优惠', url: '/packages/ticket/pages/ticket/ticket?autoScroll=true' },
-        { id: 2, image: '/assets/icons/home/banner2.jpg', title: '特色活动', url: '/pages/activity/activity' },
-        { id: 3, image: '/assets/icons/home/banner3.jpg', title: '精彩游记', url: '/pages/travels/travels' }
-      ];
-      
-      // 优化轮播图URL
-      const optimizedBanners = mockBanners.map(banner => ({
-        ...banner,
-        image: imageOptimizer.getOptimizedImageUrl(banner.image)
-      }));
-      
+      // 模拟加载数据
       setTimeout(() => {
-        this.setData({ banners: optimizedBanners });
-      }, 300);
-    } catch (err) {
-      console.error('加载轮播图异常', err);
-    }
-  },
-  
-  // 加载公告
-  loadNotices() {
-    try {
-      // 模拟加载公告数据
-      const mockNotices = [
-        { id: 1, title: '景区五一期间优惠活动', date: '2023-04-20' },
-        { id: 2, title: '景区临时闭园通知', date: '2023-04-15' }
-      ];
-      
-      setTimeout(() => {
-        this.setData({ notices: mockNotices });
+        console.log('首页数据初始化完成');
       }, 500);
-    } catch (err) {
-      console.error('加载公告异常', err);
+    } catch (error) {
+      console.error('首页数据初始化失败:', error);
+      this.setData({ loadingTimeout: true });
     }
   },
-  
-  // 轮播图加载完成
-  onBannerImagesLoaded() {
+
+  // 轮播图相关事件
+  onBannerChange(e) {
     this.setData({
-      'imagesLoaded.banner': true
+      currentBannerIndex: e.detail.current
     });
   },
-  
-  // 天气图标加载完成
-  onWeatherIconLoaded() {
-    this.setData({
-      'imagesLoaded.weather': true
-    });
-  },
-  
-  // 模块图标加载完成
-  onModuleIconsLoaded() {
-    this.setData({
-      'imagesLoaded.modules': true
-    });
-  },
-  
-  // 预加载其它页面图片资源
-  preloadOtherPagesImages() {
-    try {
-      // 预加载导览页和票务页图片
-      const preloadImages = [
-        '/packages/guide/images/guide_header.jpg',
-        '/packages/ticket/images/ticket_header.jpg',
-        '/assets/icons/ticket/ticket.png',
-        '/assets/icons/guide/guide.png'
-      ];
-      
-      imageOptimizer.preloadImages(preloadImages)
-        .then(() => {
-          console.log('预加载其它页面图片完成');
-        })
-        .catch(err => {
-          console.warn('预加载其它页面图片部分失败', err);
-        });
-    } catch (err) {
-      console.error('预加载图片异常', err);
-    }
-  },
-  
-  // 处理超时重试
-  handleTimeoutRetry() {
-    this.setData({ loadingTimeout: false });
-    this.loadAllData();
-  },
-  
-  // 通用点击处理函数
-  onCommonTap(e) {
-    try {
-      const type = e.currentTarget.dataset.type;
-      console.log('点击类型:', type);
-      
-      // 显示加载提示
-      interaction.showLoading('加载中');
-      
-      setTimeout(() => {
-        let url = '';
-        let method = 'navigateTo';
-        
-        switch(type) {
-          case 'ticket':
-            url = '/packages/ticket/pages/ticket/ticket';
-            break;
-          case 'map':
-            url = '/pages/map/map';
-            break;
-          case 'parking':
-            url = '/packages/guide/pages/guide/parking/parking';
-            break;
-          case 'scan':
-            interaction.hideLoading();
-            this.scanCode(); // 使用专门的扫码功能
-            return;
-          case 'emergency':
-            interaction.hideLoading();
-            this.emergency(); // 使用专门的紧急求助功能
-            return;
-          case 'guide':
-            url = '/pages/guide/guide';
-            method = 'switchTab';
-            break;
-          case 'transport':
-            url = '/pages/guide/transport/transport';
-            break;
-          case 'all':
-            url = '/pages/guide/services/services';
-            break;
-          default:
-            interaction.hideLoading();
-            interaction.showToast('功能开发中');
-            return;
+
+  onBannerTap(e) {
+    const id = e.currentTarget.dataset.id;
+    const banner = this.data.bannerList.find(item => item.id === id);
+    if (banner && banner.linkUrl) {
+      wx.navigateTo({
+        url: banner.linkUrl,
+        fail: () => {
+          wx.switchTab({ url: banner.linkUrl });
         }
-        
-        // 执行页面跳转
-        try {
-          if (method === 'navigateTo') {
-            wx.navigateTo({
-              url,
-              complete: () => {
-                interaction.hideLoading();
+      });
+    }
+  },
+
+  onBannerImageLoad() {
+    console.log('Banner image loaded');
+  },
+
+  onBannerImageError() {
+    console.log('Banner image load error');
+  },
+
+  onIconError(e) {
+    console.log('Icon load error:', e);
+    // 可以在这里设置默认图标或进行其他处理
+  },
+
+  // 智慧服务点击事件
+  onServiceTap(e) {
+    const service = e.currentTarget.dataset.service;
+    const routes = {
+      'scan': '/pages/scan-verify/scan-verify',
+      'review': '/pages/review/review',
+      'coupon': '/pages/coupon/coupon',
+      'shopping': '/pages/shopping/shopping',
+      'audio-guide': '/pages/audio-guide/audio-guide',
+      'management': '/pages/management/management',
+      'merchant': '/pages/merchant/merchant'
+    };
+    
+    if (routes[service]) {
+      // 先尝试扫码进码功能
+      if (service === 'scan') {
+        this.startScan();
+      } else {
+        wx.navigateTo({
+          url: routes[service],
+          fail: (err) => {
+            console.error('页面跳转失败:', err);
+            interaction.showToast('页面正在开发中');
+          }
+        });
+      }
+    }
+  },
+
+  // 扫码功能
+  startScan() {
+    wx.scanCode({
+      onlyFromCamera: true,
+      success: (res) => {
+        console.log('扫码结果:', res);
+        // 跳转到验证页面
+        wx.navigateTo({
+          url: `/pages/scan-verify/scan-verify?scanType=${res.scanType}&result=${encodeURIComponent(res.result)}`
+        });
+      },
+      fail: (err) => {
+        console.error('扫码失败:', err);
+        if (err.errMsg !== 'scanCode:fail cancel') {
+          interaction.showToast('扫码失败，请重试');
+        }
+      }
+    });
+  },
+
+  // 通用点击事件
+  onCommonTap(e) {
+    const type = e.currentTarget.dataset.type;
+    console.log('点击类型:', type);
+    
+    switch (type) {
+      case 'ticket':
+        console.log('正在跳转到票务页面...');
+        wx.navigateTo({ 
+          url: '/pages/ticket/ticket',
+          success: () => {
+            console.log('票务页面跳转成功');
+          },
+          fail: (err) => {
+            console.error('票务页面跳转失败:', err);
+            // 尝试使用tabBar跳转
+            wx.switchTab({ 
+              url: '/pages/ticket/ticket',
+              success: () => {
+                console.log('票务页面(tab)跳转成功');
               },
-              fail: (err) => {
-                console.error('页面跳转失败', err);
-                interaction.showToast('页面跳转失败');
-              }
-            });
-          } else if (method === 'switchTab') {
-            wx.switchTab({
-              url,
-              complete: () => {
-                interaction.hideLoading();
-              },
-              fail: (err) => {
-                console.error('Tab跳转失败', err);
-                interaction.showToast('页面跳转失败');
+              fail: (tabErr) => {
+                console.error('票务页面(tab)跳转失败:', tabErr);
+                interaction.showToast('页面跳转失败，请重试');
               }
             });
           }
-        } catch (err) {
-          console.error('跳转异常:', err);
-          interaction.hideLoading();
-          interaction.showToast('页面跳转出错');
-        }
-      }, 200);
-    } catch (err) {
-      console.error('按钮点击处理异常', err);
-      interaction.hideLoading();
-      interaction.showToast('操作失败');
+        });
+        break;
+      case 'map':
+        wx.navigateTo({ url: '/pages/map/map' });
+        break;
+      case 'parking':
+        interaction.showToast('停车场功能开发中');
+        break;
+      case 'scan':
+        this.startScan();
+        break;
+      case 'emergency':
+        this.handleEmergency();
+        break;
+      case 'guide':
+        wx.navigateTo({ url: '/pages/guide/guide' });
+        break;
+      case 'transport':
+        interaction.showToast('交通信息功能开发中');
+        break;
+      case 'all':
+        interaction.showToast('更多设施功能开发中');
+        break;
+      default:
+        interaction.showToast('功能开发中');
     }
+  },
+
+  // 紧急求助
+  handleEmergency() {
+    wx.showModal({
+      title: '紧急求助',
+      content: '是否拨打景区救援电话？',
+      confirmText: '拨打',
+      cancelText: '取消',
+      success: (res) => {
+        if (res.confirm) {
+          wx.makePhoneCall({
+            phoneNumber: '400-123-4567',
+            fail: () => {
+              interaction.showToast('拨号失败');
+            }
+          });
+        }
+      }
+    });
   },
 
   // 查找附近设施
   findNearby(e) {
-    try {
-      const type = e.currentTarget.dataset.type;
-      let title = '';
-      
-      switch(type) {
-        case 'toilet':
-          title = '附近洗手间';
-          break;
-        case 'food':
-          title = '附近餐饮';
-          break;
-        case 'rest':
-          title = '附近休息区';
-          break;
-        case 'medical':
-          title = '附近医疗点';
-          break;
-        default:
-          title = '附近设施';
-      }
-      
-      // 显示加载
-      interaction.showLoading('加载中');
-      
-      setTimeout(() => {
-        try {
-          wx.navigateTo({
-            url: `/pages/guide/nearby/nearby?type=${type}&title=${title}`,
-            complete: () => {
-              interaction.hideLoading();
-            },
-            fail: (err) => {
-              console.error('附近设施页面跳转失败', err);
-              interaction.hideLoading();
-              
-              // 尝试备用路径
-              try {
-                wx.navigateTo({
-                  url: `/packages/guide/pages/guide/nearby/nearby?type=${type}&title=${title}`,
-                  complete: () => {
-                    interaction.hideLoading();
-                  },
-                  fail: (err2) => {
-                    console.error('备用路径跳转失败', err2);
-                    interaction.showToast('页面跳转失败');
-                  }
-                });
-              } catch (err2) {
-                console.error('备用路径异常', err2);
-                interaction.showToast('页面跳转出错');
-              }
-            }
-          });
-        } catch (err) {
-          console.error('跳转异常:', err);
-          interaction.hideLoading();
-          interaction.showToast('页面跳转出错');
-        }
-      }, 200);
-    } catch (err) {
-      console.error('附近设施功能异常', err);
-      interaction.hideLoading();
-      interaction.showToast('操作失败');
-    }
-  },
-  
-  onShareAppMessage() {
-    return {
-      title: '智慧景区',
-      path: '/pages/index/index'
-    };
-  },
-  
-  onHide() {
-    // 页面隐藏时清理计时器
-    if (this.loadingTimeoutTimer) {
-      clearTimeout(this.loadingTimeoutTimer);
-    }
+    const type = e.currentTarget.dataset.type;
+    console.log('查找附近设施:', type);
     
-    // 取消未完成的Worker任务
-    workerManager.terminate();
-  },
-  
-  onUnload() {
-    // 页面卸载时标记性能
-    performance.performanceMonitor.recordPageUnload('index');
-  },
-  
-  // 修复扫码功能
-  scanCode() {
-    try {
-      wx.scanCode({
-        success(res) {
-          console.log('扫码结果:', res);
-          // 处理扫码结果
-          interaction.showToast('扫码成功: ' + res.result.substring(0, 10) + '...');
-        },
-        fail() {
-          interaction.showToast('扫码失败');
-        }
-      });
-    } catch (e) {
-      console.error('扫码功能异常', e);
-      interaction.showToast('扫码功能异常');
-    }
-  },
-  
-  // 修复紧急求助
-  emergency() {
-    try {
-      wx.showModal({
-        title: '紧急求助',
-        content: '确定要拨打景区紧急求助电话吗？',
-        success(res) {
-          if (res.confirm) {
-            wx.makePhoneCall({
-              phoneNumber: '110', // 实际应为景区紧急联系电话
-              fail() {
-                interaction.showToast('拨号失败');
-              }
-            });
-          }
-        }
-      });
-    } catch (e) {
-      console.error('紧急求助功能异常', e);
-      interaction.showToast('紧急求助功能异常');
-    }
-  },
-  
-  // 备用组件加载方案
-  ensureComponentsLoaded() {
-    try {
-      const pages = getCurrentPages();
-      if (pages.length === 0) return false;
-      
-      const currentPage = pages[pages.length - 1];
-      
-      // 检查并创建Toast组件
-      const toast = currentPage.selectComponent('#toast');
-      if (!toast) {
-        console.warn('未找到Toast组件，尝试动态创建');
-        // 这里可以尝试动态创建组件
+    // 这里可以集成地图功能
+    wx.navigateTo({
+      url: `/pages/map/map?type=${type}`,
+      fail: () => {
+        interaction.showToast('地图功能开发中');
       }
-      
-      // 检查并创建Loading组件
-      const loading = currentPage.selectComponent('#loading');
-      if (!loading) {
-        console.warn('未找到Loading组件，尝试动态创建');
-        // 这里可以尝试动态创建组件
-      }
-      
-      return true;
-    } catch (e) {
-      console.error('组件加载检查失败', e);
-      return false;
-    }
-  },
-  
-  // 更新UI配置
-  updateUIConfig() {
-    try {
-      const defaultConfig = {
-        showActivities: true,
-        showCrowdLevel: true,
-        showWeather: true,
-        showQuickServices: true,
-        showFacilities: true
-      };
-      
-      // 获取缓存的配置或使用默认配置
-      const uiConfig = wx.getStorageSync('uiConfig') || defaultConfig;
-      
-      this.setData({ uiConfig });
-    } catch (err) {
-      console.error('更新UI配置异常', err);
-      // 使用默认配置
-      this.setData({
-        uiConfig: {
-          showActivities: true,
-          showCrowdLevel: true,
-          showWeather: true,
-          showQuickServices: true,
-          showFacilities: true
-        }
-      });
-    }
-  },
-  
-  // 加载轮播图数据
-  loadBannerList() {
-    try {
-      // 优先使用缓存数据快速渲染
-      const cachedBanners = cache.getCache('home_banners');
-      if (cachedBanners) {
-        this.setData({ 
-          bannerList: cachedBanners,
-          bannerLoaded: true 
-        });
-      }
-      
-      // 模拟从API获取轮播图数据
-      api.getBanners()
-        .then(res => {
-          if (res && res.code === 200 && res.data && res.data.length > 0) {
-            // 处理图片URL，使用CDN或WebP
-            const banners = res.data.map(banner => {
-              return {
-                ...banner,
-                url: imageOptimizer.getOptimizedImageUrl(banner.url)
-              };
-            });
-            
-            this.setData({ 
-              bannerList: banners,
-              bannerLoaded: true
-            });
-            
-            // 缓存轮播图数据
-            cache.setCache('home_banners', banners, 60 * 60); // 1小时缓存
-          } else {
-            // 使用默认数据
-            this.loadDefaultBanners();
-          }
-        })
-        .catch(err => {
-          console.error('获取轮播图数据失败', err);
-          // 使用默认数据
-          this.loadDefaultBanners();
-        });
-    } catch (err) {
-      console.error('加载轮播图数据异常', err);
-      // 降级处理，使用默认数据
-      this.loadDefaultBanners();
-    }
-  },
-  
-  // 轮播图切换事件
-  onBannerChange(e) {
-    try {
-      const currentIndex = e.detail.current;
-      this.setData({
-        currentBannerIndex: currentIndex
-      });
-    } catch (err) {
-      console.error('轮播图切换异常', err);
-    }
-  },
-  
-  // 轮播图图片加载成功
-  onBannerImageLoad(e) {
-    this.setData({
-      bannerLoaded: true
     });
   },
-  
-  // 轮播图图片加载失败
-  onBannerImageError(e) {
-    console.error('轮播图加载失败', e);
-    // 设置默认图片
-    const bannerList = this.data.bannerList.map(item => {
-      if (item.id === Number(e.currentTarget.dataset.id)) {
-        return {
-          ...item,
-          url: '/assets/images/banner_default.jpg'
-        };
-      }
-      return item;
-    });
+
+  // 活动点击
+  onActivityTap(e) {
+    const index = e.currentTarget.dataset.index;
+    const activity = this.data.activities[index];
+    console.log('点击活动:', activity);
     
-    this.setData({ bannerList });
-  },
-  
-  // 加载默认轮播图数据
-  loadDefaultBanners() {
-    const defaultBanners = [
-      { 
-        id: 1, 
-        url: '/assets/images/banner/banner1.jpg', 
-        title: '景区一日游特惠', 
-        linkUrl: '/packages/ticket/pages/ticket/ticket?type=daytour'
-      },
-      { 
-        id: 2, 
-        url: '/assets/images/banner/banner2.jpg', 
-        title: '花海美景正当时',
-        linkUrl: '/pages/guide/spot/spot?id=flower_sea'  
-      },
-      { 
-        id: 3, 
-        url: '/assets/images/banner/banner3.jpg', 
-        title: '民俗表演预约中',
-        linkUrl: '/pages/activity/detail?id=folk_show'
-      }
-    ];
-    
-    this.setData({ 
-      bannerList: defaultBanners,
-      bannerLoaded: true
+    wx.showModal({
+      title: activity.title.replace(/【.*?】/, ''),
+      content: activity.desc,
+      showCancel: false,
+      confirmText: '知道了'
     });
   },
-  
-  // 加载今日活动信息
-  loadActivities() {
-    try {
-      // 优先使用缓存数据
-      const cachedActivities = cache.getCache('home_activities');
-      if (cachedActivities) {
-        this.setData({ activities: cachedActivities });
-      }
-      
-      // 模拟从服务器获取活动数据
-      setTimeout(() => {
-        const activities = [
-          {
-            title: '【9:30】"探索自然"科普讲座',
-            desc: '游客中心二楼，免费参与'
-          },
-          {
-            title: '【14:00】民俗表演',
-            desc: '中心广场，持票可观看'
-          },
-          {
-            title: '公告：西区小路维修中',
-            desc: '请游客绕行，预计明日恢复'
-          }
-        ];
-        
-        this.setData({ activities });
-        
-        // 缓存活动数据
-        cache.setCache('home_activities', activities, 30 * 60); // 30分钟缓存
-      }, 500);
-    } catch (err) {
-      console.error('加载活动信息异常', err);
-    }
-  },
-  
-  // 刷新页面数据
+
+  // 刷新数据
   refreshHomeData() {
-    try {
-      interaction.showLoading('刷新中');
-      
-      // 清除相关缓存
-      cache.removeCache('weather_data');
-      cache.removeCache('crowd_data');
-      cache.removeCache('home_activities');
-      cache.removeCache('home_banners');
-      
-      // 重新加载数据
-      this.loadAllData();
-      
-      // 隐藏加载超时提示
-      this.setData({ loadingTimeout: false });
-      
-      setTimeout(() => {
-        interaction.hideLoading();
-        interaction.showSuccess('刷新成功');
-      }, 800);
-    } catch (err) {
-      console.error('刷新数据异常', err);
-      interaction.hideLoading();
-      interaction.showToast('刷新失败');
-    }
+    this.setData({ loadingTimeout: false });
+    this.initializeData();
   },
-  
-  // 处理下拉刷新
+
+  // 下拉刷新
   onPullDownRefresh() {
     this.refreshHomeData();
-    // 停止下拉刷新动画
     setTimeout(() => {
       wx.stopPullDownRefresh();
     }, 1000);
-  },
-  
-  // 处理活动点击
-  onActivityTap(e) {
-    try {
-      const index = e.currentTarget.dataset.index;
-      const activity = this.data.activities[index];
-      
-      if (activity) {
-        if (activity.title.includes('公告')) {
-          // 显示公告详情
-          wx.showModal({
-            title: '公告详情',
-            content: `${activity.title.replace('公告：', '')}\n${activity.desc}`,
-            showCancel: false
-          });
-        } else {
-          // 跳转到活动详情页
-          wx.navigateTo({
-            url: `/pages/activity/detail?title=${encodeURIComponent(activity.title)}`,
-            fail: () => {
-              interaction.showToast('活动详情正在准备中');
-            }
-          });
-        }
-      }
-    } catch (err) {
-      console.error('活动点击异常', err);
-      interaction.showToast('操作失败');
-    }
-  },
-  
-  // 轮播图点击
-  onBannerTap(e) {
-    try {
-      const id = e.currentTarget.dataset.id;
-      const banner = this.data.bannerList.find(item => item.id === Number(id));
-      
-      if (banner && banner.linkUrl) {
-        // 显示加载提示
-        interaction.showLoading('加载中');
-        
-        setTimeout(() => {
-          // 尝试跳转
-          wx.navigateTo({
-            url: banner.linkUrl,
-            complete: () => {
-              interaction.hideLoading();
-            },
-            fail: (err) => {
-              console.error('轮播图跳转失败', err);
-              interaction.showToast('页面跳转失败');
-              
-              // 尝试使用switchTab (如果是tab页面)
-              if (banner.linkUrl.includes('/pages/guide/') || 
-                  banner.linkUrl.includes('/pages/ticket/')) {
-                wx.switchTab({
-                  url: banner.linkUrl,
-                  fail: (err2) => {
-                    console.error('轮播图Tab跳转失败', err2);
-                    interaction.showToast('页面暂未开放');
-                  }
-                });
-              }
-            }
-          });
-        }, 200);
-      } else {
-        interaction.showToast('活动详情正在准备中');
-      }
-    } catch (err) {
-      console.error('轮播图点击异常', err);
-      interaction.showToast('操作失败');
-    }
-  },
-  
-  // 加载基本数据（作为备用）
-  loadBasicData() {
-    try {
-      this.setData({
-        weatherInfo: {
-          temperature: '23°C',
-          weather: '晴朗'
-        },
-        crowdInfo: {
-          level: '舒适',
-          levelValue: 2,
-          percentage: 45
-        },
-        openStatus: {
-          isOpen: true,
-          time: '09:00-17:30'
-        }
-      });
-    } catch (err) {
-      console.error('加载基本数据异常', err);
-    }
-  },
-})
+  }
+}); 

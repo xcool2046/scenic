@@ -6,6 +6,7 @@
   flex-direction: column;
   padding-bottom: 100rpx;
   box-sizing: border-box;
+  background: #FFFFFF;
 }
 
 /* 轮播图样式 */
@@ -89,14 +90,15 @@
 .info-panel {
   margin: -50rpx 30rpx 30rpx;
   padding: 30rpx;
-  background: linear-gradient(to right, #f8f8f8, #fff);
+  background: rgba(255, 255, 255, 0.95);
   border-radius: 12rpx;
-  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.08);
+  box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.1);
   display: flex;
   justify-content: space-between;
   align-items: center;
   position: relative;
   z-index: 10;
+  backdrop-filter: blur(10rpx);
 }
 
 .info-item {
@@ -140,7 +142,7 @@
   align-items: center;
   justify-content: center;
   color: #fff;
-  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.08);
+  box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.1);
   transition: transform 0.3s;
   background-position: center;
   background-size: cover;
@@ -174,12 +176,13 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  pointer-events: none;
 }
 
-.service-icon {
-  width: 60rpx;
-  height: 60rpx;
-  margin-bottom: 15rpx;
+.service-content view,
+.service-content text,
+.service-content image {
+  pointer-events: none;
 }
 
 .service-title {
@@ -188,252 +191,439 @@
   margin-bottom: 16rpx;
 }
 
-/* 图标圆圈 */
-.icon-circle {
-  background-color: rgba(255, 255, 255, 0.2);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 80rpx;
-  height: 80rpx;
-  margin-bottom: 16rpx;
-}
-
-.icon-primary {
-  background-color: rgba(26, 173, 25, 0.15);  /* 使用绿色，与图片中一致 */
-}
-
-.icon-circle .icon-image {
-  width: 60%;
-  height: 60%;
-}
-
-.service-action {
-  display: flex;
-  align-items: center;
-  background-color: rgba(255, 255, 255, 0.3);
-  padding: 6rpx 16rpx;
-  border-radius: 30rpx;
-  margin-top: 8rpx;
-}
-
-.action-text {
-  font-size: 22rpx;
-  color: #fff;
-  margin-right: 6rpx;
-}
-
-/* 公共section样式 */
-.section {
-  margin-bottom: 40rpx;
-  padding: 0 30rpx;
+/* 智慧服务样式 */
+.smart-services {
+  margin: 0 30rpx 40rpx;
 }
 
 .section-header {
-  margin-bottom: 20rpx;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  text-align: center;
+  margin-bottom: 30rpx;
 }
 
 .section-title {
-  font-size: 32rpx;
+  display: block;
+  font-size: 36rpx;
   font-weight: bold;
-  color: #333;
-  position: relative;
-  padding-left: 20rpx;
+  color: #ffffff;
+  margin-bottom: 10rpx;
+  text-shadow: 0 2rpx 4rpx rgba(0, 0, 0, 0.3);
 }
 
-.section-title:before {
+.section-subtitle {
+  display: block;
+  font-size: 24rpx;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* 主要服务卡片（扫码进码） */
+.service-row-main {
+  margin-bottom: 20rpx;
+}
+
+.service-main-item {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border-radius: 20rpx;
+  padding: 40rpx 30rpx;
+  box-shadow: 0 12rpx 40rpx rgba(102, 126, 234, 0.3);
+  transition: all 0.3s ease;
+}
+
+.service-main-item:active {
+  transform: translateY(2rpx);
+  box-shadow: 0 8rpx 30rpx rgba(102, 126, 234, 0.4);
+}
+
+.service-main-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.service-main-icon {
+  width: 80rpx;
+  height: 80rpx;
+  margin-right: 30rpx;
+  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+  border-radius: 20rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6rpx 24rpx rgba(255, 107, 107, 0.4);
+  position: relative;
+  overflow: hidden;
+}
+
+.service-main-icon::before {
   content: '';
   position: absolute;
-  left: 0;
-  top: 6rpx;
-  height: 30rpx;
-  width: 8rpx;
-  background-color: #1AAD19;
-  border-radius: 4rpx;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  animation: shine 2s infinite;
 }
 
-/* 活动列表样式 */
-.activity-list {
-  background-color: #fff;
+@keyframes shine {
+  0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+  100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+}
+
+.service-main-icon image {
+  width: 40rpx;
+  height: 40rpx;
+  filter: brightness(0) invert(1);
+}
+
+.service-main-info {
+  flex: 1;
+}
+
+.service-main-name {
+  display: block;
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #ffffff;
+  margin-bottom: 10rpx;
+}
+
+.service-main-desc {
+  display: block;
+  font-size: 26rpx;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* 服务行样式 */
+.service-row {
+  display: flex;
+  gap: 20rpx;
+  margin-bottom: 20rpx;
+}
+
+.service-item {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.95);
   border-radius: 16rpx;
-  overflow: hidden;
-  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.05);
+  padding: 25rpx 20rpx;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10rpx);
+}
+
+.service-item:active {
+  transform: translateY(2rpx);
+  box-shadow: 0 6rpx 20rpx rgba(0, 0, 0, 0.15);
+}
+
+.service-icon {
+  width: 50rpx;
+  height: 50rpx;
+  margin-right: 20rpx;
+  flex-shrink: 0;
+  border-radius: 12rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+/* 不同服务的图标颜色 */
+.service-item:nth-child(1) .service-icon {
+  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+  box-shadow: 0 4rpx 16rpx rgba(255, 107, 107, 0.3);
+}
+
+.service-item:nth-child(2) .service-icon {
+  background: linear-gradient(135deg, #4ecdc4 0%, #36b5aa 100%);
+  box-shadow: 0 4rpx 16rpx rgba(78, 205, 196, 0.3);
+}
+
+.service-row:nth-child(3) .service-item:nth-child(1) .service-icon {
+  background: linear-gradient(135deg, #45b7d1 0%, #3a9bc1 100%);
+  box-shadow: 0 4rpx 16rpx rgba(69, 183, 209, 0.3);
+}
+
+.service-row:nth-child(3) .service-item:nth-child(2) .service-icon {
+  background: linear-gradient(135deg, #96ceb4 0%, #85c1a3 100%);
+  box-shadow: 0 4rpx 16rpx rgba(150, 206, 180, 0.3);
+}
+
+.service-row:nth-child(4) .service-item:nth-child(1) .service-icon {
+  background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
+  box-shadow: 0 4rpx 16rpx rgba(255, 234, 167, 0.3);
+}
+
+.service-row:nth-child(4) .service-item:nth-child(2) .service-icon {
+  background: linear-gradient(135deg, #a29bfe 0%, #6c5ce7 100%);
+  box-shadow: 0 4rpx 16rpx rgba(162, 155, 254, 0.3);
+}
+
+.service-icon image {
+  width: 28rpx;
+  height: 28rpx;
+  filter: brightness(0) invert(1);
+}
+
+.service-info {
+  flex: 1;
+}
+
+.service-name {
+  display: block;
+  font-size: 28rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 8rpx;
+}
+
+.service-desc {
+  display: block;
+  font-size: 22rpx;
+  color: #666;
+  line-height: 1.4;
+}
+
+/* 图标样式 */
+.icon-base {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-responsive {
+  width: 80rpx;
+  height: 80rpx;
+}
+
+.icon-circle {
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.icon-primary {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+}
+
+.icon-image {
+  width: 40rpx;
+  height: 40rpx;
+}
+
+/* 今日活动样式 */
+.section {
+  margin: 0 30rpx 40rpx;
+}
+
+.today-activities .section-header {
+  text-align: left;
+  margin-bottom: 20rpx;
+}
+
+.today-activities .section-title {
+  font-size: 32rpx;
+  color: #ffffff;
+  text-align: left;
+}
+
+.activity-list {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 16rpx;
+  padding: 20rpx;
+  backdrop-filter: blur(10rpx);
 }
 
 .activity-item {
-  position: relative;
-  padding: 20rpx 30rpx;
-  background-color: #fff;
-  border-radius: 8rpx;
-  margin-bottom: 20rpx;
   display: flex;
-  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.05);
-  transition: all 0.3s;
+  align-items: center;
+  padding: 20rpx 0;
+  border-bottom: 1rpx solid #f0f0f0;
 }
 
-.activity-item:active {
-  background-color: #f9f9f9;
-  transform: scale(0.98);
+.activity-item:last-child {
+  border-bottom: none;
 }
 
 .activity-time {
   width: 100rpx;
-  font-size: 26rpx;
-  color: #666;
+  font-size: 22rpx;
+  color: #ff6b6b;
+  font-weight: 500;
   flex-shrink: 0;
 }
 
 .activity-content {
   flex: 1;
-  padding: 0 15rpx;
+  margin-left: 20rpx;
 }
 
 .activity-title {
-  font-size: 28rpx;
-  font-weight: 500;
+  font-size: 26rpx;
   color: #333;
-  margin-bottom: 6rpx;
+  font-weight: 500;
+  margin-bottom: 8rpx;
 }
 
 .activity-desc {
-  font-size: 24rpx;
+  font-size: 22rpx;
   color: #999;
 }
 
-.activity-item.notice .activity-title {
-  color: #ff4d4f;
+.icon-small {
+  width: 40rpx;
+  height: 40rpx;
+  margin-left: 15rpx;
 }
 
 /* 快捷服务样式 */
 .quick-services {
-  margin-bottom: 40rpx;
-  padding: 0 30rpx;
+  margin: 0 30rpx 40rpx;
 }
 
-.service-row {
+.quick-service-row {
   display: flex;
   justify-content: space-between;
+  gap: 20rpx;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 16rpx;
+  padding: 30rpx 20rpx;
+  backdrop-filter: blur(10rpx);
+  box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.08);
 }
 
 .quick-service-item {
+  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.quick-service-item:active {
+  transform: scale(0.95);
+}
+
+.quick-icon {
+  width: 60rpx;
+  height: 60rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16rpx;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.quick-service-item:nth-child(1) .quick-icon {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  box-shadow: 0 4rpx 16rpx rgba(102, 126, 234, 0.3);
+}
+
+.quick-service-item:nth-child(2) .quick-icon {
+  background: linear-gradient(135deg, #4ecdc4, #36b5aa);
+  box-shadow: 0 4rpx 16rpx rgba(78, 205, 196, 0.3);
+}
+
+.quick-service-item:nth-child(3) .quick-icon {
+  background: linear-gradient(135deg, #45b7d1, #3a9bc1);
+  box-shadow: 0 4rpx 16rpx rgba(69, 183, 209, 0.3);
+}
+
+.quick-service-item:nth-child(4) .quick-icon {
+  background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+  box-shadow: 0 4rpx 16rpx rgba(255, 107, 107, 0.3);
+}
+
+.quick-icon.emergency {
+  background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+  box-shadow: 0 4rpx 16rpx rgba(255, 107, 107, 0.3);
+}
+
+.quick-icon image {
+  width: 36rpx;
+  height: 36rpx;
 }
 
 .quick-service-name {
   font-size: 24rpx;
-  color: #666;
-  margin-top: 8rpx;
-  text-align: center;
+  color: #333;
+  font-weight: 500;
 }
 
-/* 便捷设施列表 */
-.facility-list {
-  display: flex;
-  flex-wrap: wrap;
-  margin: 0 -10rpx;
+/* 便捷设施样式 */
+.facility-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20rpx;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 16rpx;
+  padding: 30rpx 20rpx;
+  backdrop-filter: blur(10rpx);
+  box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.08);
 }
 
 .facility-item {
-  width: 33.33%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 30rpx;
-  padding: 0 10rpx;
-  box-sizing: border-box;
+  padding: 20rpx 10rpx;
+  border-radius: 12rpx;
+  transition: all 0.3s ease;
+}
+
+.facility-item:active {
+  background-color: rgba(102, 126, 234, 0.1);
+  transform: scale(0.95);
+}
+
+.facility-icon {
+  width: 50rpx;
+  height: 50rpx;
+  border-radius: 12rpx;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 15rpx;
+  box-shadow: 0 4rpx 16rpx rgba(102, 126, 234, 0.2);
+}
+
+.facility-icon image {
+  width: 30rpx;
+  height: 30rpx;
 }
 
 .facility-name {
-  font-size: 24rpx;
-  color: #666;
-  margin-top: 8rpx;
+  font-size: 22rpx;
+  color: #333;
   text-align: center;
+  font-weight: 500;
 }
 
-/* CDN图标样式优化 */
-.facility-icon .icon-image {
-  width: 100%;
-  height: 100%;
-  border-radius: 12rpx;
-  object-fit: contain;
-}
-
-/* 底部间隙 */
+/* 底部间距 */
 .bottom-gap {
-  height: 50rpx;
+  height: 100rpx;
 }
 
-/* 加载动画 */
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes slideUp {
-  from { transform: translateY(60rpx); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
-}
-
-.info-panel, .service-cards, .section {
-  animation: slideUp 0.5s ease-out forwards;
-}
-
-.service-cards {
-  animation-delay: 0.1s;
-}
-
-.section:nth-of-type(1) {
-  animation-delay: 0.2s;
-}
-
-.section:nth-of-type(2) {
-  animation-delay: 0.3s;
-}
-
-.quick-services {
-  animation: slideUp 0.5s ease-out 0.4s forwards;
-  opacity: 0;
-  animation-fill-mode: forwards;
-}
-
-/* 添加加载失败提示样式 */
+/* 加载状态 */
 .loading-timeout {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  background: rgba(255, 255, 255, 0.9);
-  padding: 30rpx;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  z-index: 999;
-  border-bottom: 1rpx solid #eee;
-}
-
-.loading-timeout text {
-  font-size: 28rpx;
-  color: #666;
-  margin-bottom: 20rpx;
+  text-align: center;
+  padding: 100rpx 0;
+  color: rgba(255, 255, 255, 0.8);
 }
 
 .retry-btn {
-  background-color: #1AAD19;
-  color: #fff;
-  padding: 10rpx 30rpx;
-  border-radius: 30rpx;
-  font-size: 26rpx;
-}
-
-/* 优化快捷服务项目 */
-.quick-service-item:active {
-  opacity: 0.8;
-  transform: scale(0.95);
+  margin-top: 20rpx;
+  padding: 20rpx 40rpx;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 25rpx;
+  color: #ffffff;
+  font-size: 24rpx;
+  display: inline-block;
 }

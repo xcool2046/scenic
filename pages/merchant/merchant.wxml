@@ -1,0 +1,70 @@
+<!--商家合作页面 - 极简焦点型设计-->
+<view class="merchant-container">
+  
+  <!-- 极简页面标题 -->
+  <view class="page-header">
+    <text class="page-title">码上合作</text>
+    <text class="page-subtitle">MERCHANT PARTNERSHIP</text>
+  </view>
+
+  <!-- 2x2 Bento Grid 商家卡片 -->
+  <view class="merchants-bento">
+    <view class="merchant-card"
+          wx:for="{{merchants}}"
+          wx:key="id"
+          data-id="{{item.id}}"
+          bindtap="viewMerchantActions">
+      
+      <!-- 商家图片背景 -->
+      <view class="merchant-image-container">
+        <image class="merchant-image" src="{{item.image}}" mode="aspectFill"></image>
+        <view class="image-overlay"></view>
+      </view>
+      
+      <!-- 评分焦点区域 - 巨大数字 -->
+      <view class="rating-hero">
+        <text class="rating-number">{{item.rating}}</text>
+        <view class="rating-stars">
+          <text class="star-icon" wx:for="{{5}}" wx:key="index">★</text>
+        </view>
+      </view>
+      
+      <!-- 商家核心信息 -->
+      <view class="merchant-info">
+        <text class="merchant-name">{{item.name}}</text>
+        <text class="merchant-desc">{{item.description}}</text>
+      </view>
+      
+      <!-- 微小距离标识 -->
+      <view class="distance-badge">
+        <text class="distance-text">{{item.distance}}</text>
+      </view>
+      
+      <!-- 快速操作区域 -->
+      <view class="action-zone">
+        <view class="action-primary" 
+              data-phone="{{item.phone}}" 
+              catchtap="callMerchant">
+          <image src="https://cdn.jsdelivr.net/npm/@tabler/icons@2.47.0/icons/phone.svg" mode="aspectFit"></image>
+        </view>
+        <view class="action-secondary" 
+              data-location="{{item.location}}" 
+              catchtap="navigateToMerchant">
+          <image src="/assets/icons/navigation/map_icon.png" mode="aspectFit"></image>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 极简空状态 -->
+  <view class="empty-hero" wx:if="{{merchants.length === 0 && !loading}}">
+    <text class="empty-title">暂无合作商家</text>
+    <view class="empty-action" bindtap="loadMerchants">
+      <text>重新加载</text>
+    </view>
+  </view>
+
+  <!-- 加载状态 -->
+  <loading wx:if="{{loading}}" />
+
+</view> 

@@ -1,0 +1,445 @@
+/* pages/review/review.wxss - Apple风格数字奢品设计 */
+
+/* 全局容器 */
+.review-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  padding: 0 0 60rpx 0;
+  position: relative;
+}
+
+/* 页面标题区 - Apple风格大标题 */
+.page-header {
+  padding: 120rpx 48rpx 80rpx;
+  text-align: center;
+  position: relative;
+  opacity: 0;
+  transform: translateY(40rpx);
+  transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.page-header.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.header-content {
+  position: relative;
+  z-index: 2;
+}
+
+.header-icon {
+  font-size: 120rpx;
+  margin-bottom: 32rpx;
+  filter: drop-shadow(0 8rpx 32rpx rgba(255, 215, 0, 0.3));
+  animation: gentle-float 3s ease-in-out infinite;
+}
+
+@keyframes gentle-float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+
+.header-title {
+  font-size: 64rpx;
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 16rpx;
+  letter-spacing: -0.5px;
+}
+
+.header-subtitle {
+  font-size: 32rpx;
+  color: #7f8c8d;
+  line-height: 1.4;
+  font-weight: 400;
+}
+
+/* 通用卡片样式 - Apple风格 */
+.card {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  margin: 32rpx 32rpx 0;
+  border-radius: 32rpx;
+  padding: 48rpx 40rpx;
+  box-shadow: 
+    0 8rpx 32rpx rgba(0, 0, 0, 0.08),
+    0 2rpx 8rpx rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  opacity: 0;
+  transform: translateY(40rpx) scale(0.95);
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card.visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.card:hover {
+  transform: translateY(-4rpx) scale(1.01);
+  box-shadow: 
+    0 16rpx 48rpx rgba(0, 0, 0, 0.12),
+    0 4rpx 16rpx rgba(0, 0, 0, 0.08);
+}
+
+/* 卡片标题 */
+.card-header {
+  margin-bottom: 48rpx;
+  text-align: center;
+}
+
+.card-title {
+  font-size: 42rpx;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 12rpx;
+  letter-spacing: -0.3px;
+}
+
+.card-subtitle {
+  font-size: 28rpx;
+  color: #7f8c8d;
+  font-weight: 400;
+}
+
+/* 评分卡片样式 */
+.rating-list {
+  display: flex;
+  flex-direction: column;
+  gap: 48rpx;
+}
+
+.rating-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24rpx 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.rating-item:last-child {
+  border-bottom: none;
+}
+
+.rating-info {
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+
+.rating-icon {
+  font-size: 40rpx;
+  margin-right: 24rpx;
+  filter: drop-shadow(0 2rpx 8rpx rgba(0, 0, 0, 0.1));
+}
+
+.rating-details {
+  flex: 1;
+}
+
+.rating-name {
+  font-size: 32rpx;
+  color: #2c3e50;
+  font-weight: 500;
+  margin-bottom: 8rpx;
+}
+
+.rating-desc {
+  font-size: 24rpx;
+  color: #95a5a6;
+  line-height: 1.3;
+}
+
+/* 星级评分 - Apple风格弹性动画 */
+.rating-stars {
+  display: flex;
+  gap: 8rpx;
+  align-items: center;
+}
+
+.star {
+  width: 48rpx;
+  height: 48rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40rpx;
+  color: #e0e6ed;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  border-radius: 50%;
+  position: relative;
+}
+
+.star:hover {
+  transform: scale(1.2);
+  color: #ffb347;
+}
+
+.star.active {
+  color: #ffd700 !important;
+  transform: scale(1.15);
+  filter: drop-shadow(0 4rpx 12rpx rgba(255, 215, 0, 0.4));
+  animation: star-bounce 0.4s ease-out;
+}
+
+.star:active {
+  transform: scale(0.9);
+}
+
+/* 星星激活动画 */
+@keyframes star-bounce {
+  0% { transform: scale(1.15); }
+  50% { transform: scale(1.3); }
+  100% { transform: scale(1.15); }
+}
+
+/* 快捷标签卡片 */
+.tags-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20rpx;
+}
+
+.tag-item {
+  padding: 24rpx 32rpx;
+  border: 2rpx solid rgba(52, 152, 219, 0.2);
+  border-radius: 24rpx;
+  font-size: 28rpx;
+  color: #34495e;
+  background: rgba(52, 152, 219, 0.05);
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-weight: 500;
+  backdrop-filter: blur(10px);
+}
+
+.tag-item:hover {
+  transform: translateY(-2rpx);
+  border-color: rgba(52, 152, 219, 0.4);
+  background: rgba(52, 152, 219, 0.1);
+}
+
+.tag-item.selected {
+  background: linear-gradient(135deg, #3498db, #2980b9);
+  color: #ffffff;
+  border-color: transparent;
+  transform: translateY(-4rpx) scale(1.02);
+  box-shadow: 
+    0 8rpx 24rpx rgba(52, 152, 219, 0.3),
+    0 2rpx 8rpx rgba(52, 152, 219, 0.2);
+}
+
+.tag-item:active {
+  transform: scale(0.96);
+}
+
+/* 详细评价卡片 */
+.textarea-container {
+  position: relative;
+}
+
+.review-textarea {
+  width: 100%;
+  min-height: 240rpx;
+  padding: 32rpx;
+  border: 2rpx solid rgba(52, 152, 219, 0.2);
+  border-radius: 20rpx;
+  font-size: 30rpx;
+  line-height: 1.6;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  color: #2c3e50;
+  transition: all 0.3s ease;
+  resize: none;
+}
+
+.review-textarea:focus {
+  border-color: #3498db;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 0 0 6rpx rgba(52, 152, 219, 0.1);
+}
+
+.textarea-placeholder {
+  color: #bdc3c7;
+  font-size: 28rpx;
+}
+
+.char-count {
+  text-align: right;
+  font-size: 24rpx;
+  color: #95a5a6;
+  margin-top: 16rpx;
+  font-weight: 400;
+}
+
+/* 提交按钮区域 */
+.submit-card {
+  margin: 48rpx 32rpx 0;
+  padding: 40rpx;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border-radius: 32rpx;
+  box-shadow: 
+    0 8rpx 32rpx rgba(0, 0, 0, 0.08),
+    0 2rpx 8rpx rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  opacity: 0;
+  transform: translateY(40rpx);
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.4s;
+}
+
+.submit-card.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.action-buttons {
+  display: flex;
+  gap: 24rpx;
+  margin-bottom: 32rpx;
+}
+
+.btn-secondary,
+.btn-primary {
+  flex: 1;
+  height: 96rpx;
+  border-radius: 48rpx;
+  font-size: 32rpx;
+  font-weight: 600;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-secondary {
+  background: rgba(236, 240, 241, 0.8);
+  color: #7f8c8d;
+  border: 2rpx solid rgba(189, 195, 199, 0.3);
+  backdrop-filter: blur(10px);
+}
+
+.btn-secondary:hover {
+  background: rgba(236, 240, 241, 1);
+  transform: translateY(-2rpx);
+}
+
+.btn-secondary:active {
+  transform: scale(0.98);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #3498db, #2980b9);
+  color: #ffffff;
+  box-shadow: 
+    0 8rpx 24rpx rgba(52, 152, 219, 0.3),
+    0 2rpx 8rpx rgba(52, 152, 219, 0.2);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2rpx);
+  box-shadow: 
+    0 12rpx 32rpx rgba(52, 152, 219, 0.4),
+    0 4rpx 12rpx rgba(52, 152, 219, 0.3);
+}
+
+.btn-primary:active {
+  transform: scale(0.98);
+}
+
+.btn-primary.loading {
+  opacity: 0.8;
+  pointer-events: none;
+}
+
+.btn-primary[disabled] {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+/* 历史评价链接 */
+.history-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24rpx 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.history-text {
+  font-size: 28rpx;
+  color: #3498db;
+  margin-right: 12rpx;
+  font-weight: 500;
+}
+
+.history-arrow {
+  font-size: 24rpx;
+  color: #3498db;
+  transition: transform 0.3s ease;
+}
+
+.history-link:hover .history-arrow {
+  transform: translateX(4rpx);
+}
+
+.history-link:active {
+  opacity: 0.7;
+}
+
+/* 响应式设计 */
+@media (max-width: 375px) {
+  .card {
+    margin: 24rpx 24rpx 0;
+    padding: 36rpx 32rpx;
+  }
+  
+  .header-title {
+    font-size: 56rpx;
+  }
+  
+  .card-title {
+    font-size: 36rpx;
+  }
+  
+  .tags-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* 深色模式适配 */
+@media (prefers-color-scheme: dark) {
+  .review-container {
+    background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+  }
+  
+  .card {
+    background: rgba(44, 62, 80, 0.95);
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+  
+  .card-title,
+  .rating-name {
+    color: #ecf0f1;
+  }
+  
+  .card-subtitle,
+  .rating-desc {
+    color: #bdc3c7;
+  }
+  
+  .review-textarea {
+    background: rgba(44, 62, 80, 0.8);
+    color: #ecf0f1;
+    border-color: rgba(52, 152, 219, 0.3);
+  }
+} 

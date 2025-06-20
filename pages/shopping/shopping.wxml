@@ -1,0 +1,116 @@
+<!--码上消费 - Apple风格极简版-->
+<view class="shopping-container">
+  
+  <!-- 顶部搜索栏 -->
+  <view class="header-section">
+    <view class="search-wrapper">
+      <view class="search-bar">
+        <view class="search-icon">🔍</view>
+        <input class="search-input" 
+               placeholder="搜索商品" 
+               value="{{searchKeyword}}"
+               bindinput="onSearchInput"
+               confirm-type="search"
+               bindconfirm="onSearch">
+        </input>
+      </view>
+      <view class="cart-button" bindtap="goToCart">
+        <view class="cart-icon">🛒</view>
+        <view class="cart-badge" wx:if="{{cartCount > 0}}">{{cartCount}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 精选横幅 -->
+  <view class="hero-banner">
+    <view class="hero-content">
+      <view class="hero-title">精选好物</view>
+      <view class="hero-subtitle">FEATURED PRODUCTS</view>
+      <view class="hero-description">发现景区独有的美好商品</view>
+    </view>
+  </view>
+
+  <!-- 商品分类 - 简化版 -->
+  <view class="categories-section">
+    <scroll-view class="categories-scroll" scroll-x="true" show-scrollbar="false">
+      <view class="category-list">
+        <view class="category-chip {{selectedCategory === item.id ? 'active' : ''}}" 
+              wx:for="{{categories}}" 
+              wx:key="id"
+              data-id="{{item.id}}"
+              bindtap="onCategoryTap">
+          <text class="category-text">{{item.name}}</text>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 精选商品 - Apple式单列布局 -->
+  <view class="products-section">
+    <view class="products-container">
+      <view class="product-card-large" 
+            wx:for="{{featuredProducts}}" 
+            wx:key="id"
+            data-product="{{item}}"
+            bindtap="viewProductDetail"
+            style="animation-delay: {{index * 100}}ms">
+        
+        <!-- 商品主图 -->
+        <view class="product-image-container">
+          <image class="product-image" 
+                 src="{{item.image}}" 
+                 mode="aspectFill"
+                 lazy-load="true">
+          </image>
+          <view class="product-badge" wx:if="{{item.badge}}">{{item.badge}}</view>
+        </view>
+        
+        <!-- 商品信息 -->
+        <view class="product-info-container">
+          <view class="product-header">
+            <view class="product-name">{{item.name}}</view>
+            <view class="product-description">{{item.description}}</view>
+          </view>
+          
+          <view class="product-footer">
+            <view class="price-container">
+              <view class="price-current">
+                <text class="price-symbol">¥</text>
+                <text class="price-value">{{item.price}}</text>
+              </view>
+              <view class="price-original" wx:if="{{item.originalPrice}}">
+                <text class="original-price">¥{{item.originalPrice}}</text>
+              </view>
+            </view>
+            
+            <view class="action-button" 
+                  data-product="{{item}}" 
+                  catchtap="addToCart">
+              <text class="action-text">添加</text>
+              <view class="action-icon">+</view>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 空状态 -->
+  <view class="empty-state" wx:if="{{featuredProducts.length === 0 && !loading}}">
+    <view class="empty-content">
+      <view class="empty-icon">🛍️</view>
+      <view class="empty-title">暂无商品</view>
+      <view class="empty-subtitle">NO PRODUCTS AVAILABLE</view>
+    </view>
+  </view>
+
+  <!-- 底部安全区域 -->
+  <view class="bottom-safe-area"></view>
+
+  <!-- 加载组件 -->
+  <loading wx:if="{{loading}}" />
+  
+  <!-- 提示组件 -->
+  <toast />
+
+</view> 

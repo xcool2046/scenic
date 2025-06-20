@@ -1,0 +1,376 @@
+/* 码上导游页面样式 - Apple Music风格数字奢品设计 */
+
+.audio-guide-container {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #1a1a1a 0%, #2d2d2d 100%);
+  color: #ffffff;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* 主播放器 - Apple Music风格 */
+.main-player {
+  padding: 60rpx 40rpx 80rpx;
+  text-align: center;
+}
+
+/* 艺术图区域 */
+.artwork-section {
+  margin-bottom: 60rpx;
+}
+
+.artwork-container {
+  position: relative;
+  width: 560rpx;
+  height: 560rpx;
+  margin: 0 auto;
+}
+
+.artwork-image {
+  width: 100%;
+  height: 100%;
+  border-radius: 24rpx;
+  box-shadow: 
+    0 40rpx 120rpx rgba(0,0,0,0.5),
+    0 16rpx 40rpx rgba(0,0,0,0.3);
+}
+
+.artwork-shadow {
+  position: absolute;
+  bottom: -40rpx;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80%;
+  height: 40rpx;
+  background: radial-gradient(ellipse, rgba(0,0,0,0.4) 0%, transparent 70%);
+  filter: blur(20rpx);
+}
+
+/* 音轨信息 */
+.track-info {
+  margin-bottom: 80rpx;
+}
+
+.track-title {
+  font-size: 56rpx;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 16rpx;
+  line-height: 1.2;
+  letter-spacing: -1rpx;
+}
+
+.track-artist {
+  font-size: 36rpx;
+  color: rgba(255,255,255,0.7);
+  font-weight: 500;
+  margin-bottom: 24rpx;
+}
+
+.track-description {
+  font-size: 28rpx;
+  color: rgba(255,255,255,0.6);
+  line-height: 1.4;
+  max-width: 600rpx;
+  margin: 0 auto;
+}
+
+/* 进度控制 */
+.progress-section {
+  margin-bottom: 80rpx;
+  padding: 0 20rpx;
+}
+
+.time-display {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 32rpx;
+}
+
+.current-time,
+.total-time {
+  font-size: 28rpx;
+  color: rgba(255,255,255,0.8);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.progress-slider {
+  width: 100%;
+  height: 6rpx;
+  margin: 0;
+}
+
+/* 播放控制 */
+.controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 80rpx;
+}
+
+.control-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+}
+
+.control-btn.secondary {
+  width: 96rpx;
+  height: 96rpx;
+  background: rgba(255,255,255,0.1);
+  backdrop-filter: blur(20rpx);
+}
+
+.control-btn.primary {
+  width: 144rpx;
+  height: 144rpx;
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  box-shadow: 
+    0 16rpx 48rpx rgba(0,0,0,0.3),
+    0 4rpx 16rpx rgba(0,0,0,0.2);
+}
+
+.control-btn:active {
+  transform: scale(0.95);
+}
+
+.control-icon {
+  font-size: 44rpx;
+  font-weight: 600;
+  color: rgba(255,255,255,0.9);
+}
+
+.control-btn.primary .control-icon {
+  font-size: 52rpx;
+  color: #1a1a1a;
+}
+
+/* 景点列表区域 */
+.spots-section {
+  background: rgba(255,255,255,0.05);
+  backdrop-filter: blur(20rpx);
+  border-radius: 32rpx 32rpx 0 0;
+  padding: 40rpx 32rpx;
+  min-height: 50vh;
+}
+
+.section-header {
+  margin-bottom: 40rpx;
+  text-align: center;
+}
+
+.section-title {
+  font-size: 42rpx;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 8rpx;
+  letter-spacing: -0.5rpx;
+}
+
+.section-subtitle {
+  font-size: 26rpx;
+  color: rgba(255,255,255,0.6);
+  font-weight: 500;
+}
+
+/* 景点列表 */
+.spots-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
+.spot-item {
+  display: flex;
+  align-items: center;
+  padding: 24rpx;
+  background: rgba(255,255,255,0.08);
+  border-radius: 20rpx;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.spot-item.playing {
+  background: rgba(255,255,255,0.15);
+  border: 1rpx solid rgba(255,255,255,0.2);
+}
+
+.spot-item:active {
+  transform: scale(0.98);
+  background: rgba(255,255,255,0.12);
+}
+
+.spot-thumbnail {
+  position: relative;
+  width: 96rpx;
+  height: 96rpx;
+  margin-right: 24rpx;
+  flex-shrink: 0;
+}
+
+.spot-image {
+  width: 100%;
+  height: 100%;
+  border-radius: 12rpx;
+}
+
+.play-indicator {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0,0,0,0.7);
+  border-radius: 50%;
+  width: 48rpx;
+  height: 48rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sound-wave {
+  display: flex;
+  gap: 4rpx;
+  align-items: center;
+}
+
+.wave-bar {
+  width: 4rpx;
+  background: #ffffff;
+  border-radius: 2rpx;
+  animation: wave 1s ease-in-out infinite;
+}
+
+.wave-bar:nth-child(1) { height: 8rpx; animation-delay: 0s; }
+.wave-bar:nth-child(2) { height: 12rpx; animation-delay: 0.2s; }
+.wave-bar:nth-child(3) { height: 8rpx; animation-delay: 0.4s; }
+
+@keyframes wave {
+  0%, 100% { transform: scaleY(1); }
+  50% { transform: scaleY(1.5); }
+}
+
+.spot-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.spot-name {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #ffffff;
+  margin-bottom: 8rpx;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.spot-duration {
+  font-size: 24rpx;
+  color: rgba(255,255,255,0.6);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+.spot-action {
+  width: 64rpx;
+  height: 64rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.1);
+  flex-shrink: 0;
+}
+
+.action-icon {
+  font-size: 28rpx;
+  color: rgba(255,255,255,0.8);
+  font-weight: 600;
+}
+
+/* 空状态 */
+.empty-state {
+  padding: 120rpx 40rpx;
+  text-align: center;
+}
+
+.empty-artwork {
+  margin-bottom: 48rpx;
+}
+
+.empty-circle {
+  width: 240rpx;
+  height: 240rpx;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.05);
+  border: 2rpx solid rgba(255,255,255,0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+}
+
+.empty-icon {
+  font-size: 80rpx;
+  opacity: 0.6;
+}
+
+.empty-text {
+  font-size: 36rpx;
+  font-weight: 600;
+  color: rgba(255,255,255,0.8);
+  margin-bottom: 16rpx;
+}
+
+.empty-subtitle {
+  font-size: 28rpx;
+  color: rgba(255,255,255,0.5);
+  margin-bottom: 48rpx;
+}
+
+.empty-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 80rpx;
+  padding: 0 48rpx;
+  background: rgba(255,255,255,0.1);
+  border-radius: 40rpx;
+  border: 1rpx solid rgba(255,255,255,0.2);
+}
+
+.empty-action:active {
+  transform: scale(0.95);
+  background: rgba(255,255,255,0.15);
+}
+
+.action-text {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+/* 响应式适配 */
+@media screen and (max-width: 375px) {
+  .artwork-container {
+    width: 480rpx;
+    height: 480rpx;
+  }
+  
+  .controls {
+    gap: 60rpx;
+  }
+  
+  .control-btn.secondary {
+    width: 80rpx;
+    height: 80rpx;
+  }
+  
+  .control-btn.primary {
+    width: 120rpx;
+    height: 120rpx;
+  }
+} 

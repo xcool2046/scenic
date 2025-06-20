@@ -1,12 +1,5 @@
 {
-  "usingComponents": {
-    "loading": "./components/loading/loading",
-    "toast": "./components/toast/toast",
-    "weather-card": "./components/weather-card/weather-card",
-    "crowd-info": "./components/crowd-info/crowd-info",
-    "spot-congestion": "./components/spot-congestion/spot-congestion"
-  },
   "enablePullDownRefresh": true,
   "backgroundTextStyle": "dark",
-  "backgroundColor": "#F8F8F8"
+  "backgroundColor": "#ffffff"
 }

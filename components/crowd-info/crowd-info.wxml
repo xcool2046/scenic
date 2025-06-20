@@ -23,7 +23,7 @@
   
   <view class="crowd-warning" wx:if="{{crowdInfo.warning}}">
     <view class="icon-base icon-small warning-icon">
-      <image class="icon-image" src="/assets/icons/warning.png"></image>
+              <image class="icon-image" src="https://img.icons8.com/fluency/96/warning-shield.png"></image>
     </view>
     <text class="warning-text">{{crowdInfo.warning}}</text>
   </view>

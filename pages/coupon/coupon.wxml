@@ -1,0 +1,111 @@
+<!--pages/coupon/coupon.wxml-->
+<view class="coupon-container">
+  
+  <!-- Tab切换 - 精简为两个核心状态 -->
+  <view class="tab-container">
+    <view class="tab-item {{selectedTab === 0 ? 'active' : ''}}" 
+          data-index="0" bindtap="switchTab">
+      <view class="tab-text">可领取</view>
+      <view class="tab-subtext">AVAILABLE</view>
+    </view>
+    <view class="tab-item {{selectedTab === 1 ? 'active' : ''}}" 
+          data-index="1" bindtap="switchTab">
+      <view class="tab-text">我的优惠券</view>
+      <view class="tab-subtext">MY COUPONS</view>
+    </view>
+  </view>
+
+  <!-- 优惠券列表 -->
+  <view class="coupon-list">
+    
+    <!-- 可领取优惠券 -->
+    <block wx:if="{{selectedTab === 0}}">
+      <view class="coupon-item available" 
+            wx:for="{{coupons}}" 
+            wx:key="id"
+            data-id="{{item.id}}"
+            bindtap="viewCouponDetail">
+        
+        <!-- 超大金额焦点区域 -->
+        <view class="coupon-amount-focus">
+          <view class="amount-display">
+            <text class="amount-symbol">{{item.showCurrency ? '¥' : ''}}</text>
+            <text class="amount-number">{{item.displayAmount}}</text>
+          </view>
+          <view class="amount-condition">满{{item.minAmount}}可用</view>
+        </view>
+        
+        <!-- 优惠券信息 -->
+        <view class="coupon-content">
+          <view class="coupon-title">{{item.title}}</view>
+          <view class="coupon-desc">{{item.description}}</view>
+          <view class="coupon-meta">
+            <view class="expire-info">有效期至 {{item.expireTime}}</view>
+            <view class="remain-count">剩余 {{item.remainCount}} 张</view>
+          </view>
+        </view>
+        
+        <!-- 操作按钮 -->
+        <view class="coupon-action">
+          <view class="claim-btn {{item.isClaimed ? 'claimed' : ''}}" 
+                data-id="{{item.id}}" 
+                catchtap="{{item.isClaimed ? '' : 'claimCoupon'}}">
+            {{item.isClaimed ? '已领取' : '领取'}}
+          </view>
+        </view>
+      </view>
+    </block>
+
+    <!-- 已领取优惠券 -->
+    <block wx:if="{{selectedTab === 1}}">
+      <view class="coupon-item claimed" 
+            wx:for="{{receivedCoupons}}" 
+            wx:key="id"
+            data-id="{{item.id}}"
+            bindtap="viewCouponDetail">
+        
+        <!-- 超大金额焦点区域 -->
+        <view class="coupon-amount-focus claimed">
+          <view class="amount-display">
+            <text class="amount-symbol">{{item.showCurrency ? '¥' : ''}}</text>
+            <text class="amount-number">{{item.displayAmount}}</text>
+          </view>
+          <view class="amount-condition">满{{item.minAmount}}可用</view>
+        </view>
+        
+        <!-- 优惠券信息 -->
+        <view class="coupon-content">
+          <view class="coupon-title">{{item.title}}</view>
+          <view class="coupon-desc">{{item.description}}</view>
+          <view class="coupon-meta">
+            <view class="expire-info">有效期至 {{item.expireTime}}</view>
+            <view class="status-badge claimed">已领取</view>
+          </view>
+        </view>
+        
+        <!-- 操作按钮 -->
+        <view class="coupon-action">
+          <view class="use-btn" 
+                data-id="{{item.id}}" 
+                catchtap="useCoupon">
+            使用
+          </view>
+        </view>
+      </view>
+    </block>
+  </view>
+
+  <!-- 空状态 -->
+  <view class="empty-state" wx:if="{{(selectedTab === 0 && coupons.length === 0) || (selectedTab === 1 && receivedCoupons.length === 0)}}">
+    <view class="empty-icon">🎫</view>
+    <view class="empty-text">{{selectedTab === 0 ? '暂无可领取优惠券' : '暂无已领取优惠券'}}</view>
+    <view class="empty-subtext">{{selectedTab === 0 ? 'NO AVAILABLE COUPONS' : 'NO CLAIMED COUPONS'}}</view>
+    <view class="empty-action" wx:if="{{selectedTab === 0}}" bindtap="refreshCoupons">
+      <text class="action-text">刷新优惠券</text>
+    </view>
+  </view>
+
+  <!-- 消息提示 -->
+  <toast />
+
+</view> 

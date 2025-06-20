@@ -1,8 +1,2 @@
-<!-- packages/guide/pages/guide/nearby/nearby.wxml -->
-<view class="container">
-  <view class="page-title">{{pageTitle}}</view>
-  <view class="content">
-    <!-- 附近设施页面内容 -->
-    <view class="placeholder">页面开发中...</view>
-  </view>
-</view>
+<!--packages/guide/pages/guide/nearby/nearby.wxml-->
+<text>packages/guide/pages/guide/nearby/nearby.wxml</text>

@@ -1,0 +1,133 @@
+<!--pages/user/help/feedback.wxml-->
+<view class="feedback-page">
+  <!-- 导航栏 -->
+  <view class="navbar">
+    <view class="nav-left" bindtap="goBack">
+      <image class="nav-icon" src="{{icons.ARROW_LEFT}}"></image>
+    </view>
+    <view class="nav-title">意见反馈</view>
+    <view class="nav-right"></view>
+  </view>
+
+  <!-- 反馈表单 -->
+  <view class="feedback-form">
+    <!-- 反馈类型选择 -->
+    <view class="form-section">
+      <view class="section-title">反馈类型</view>
+      <view class="feedback-types">
+        <view 
+          class="type-item {{selectedType === item.value ? 'selected' : ''}}"
+          wx:for="{{feedbackTypes}}"
+          wx:key="value"
+          bindtap="selectType"
+          data-type="{{item.value}}"
+        >
+          <view class="type-icon">
+            <image src="{{item.icon}}"></image>
+          </view>
+          <text class="type-label">{{item.label}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 问题描述 -->
+    <view class="form-section">
+      <view class="section-title">问题描述</view>
+      <view class="textarea-wrapper">
+        <textarea
+          class="feedback-textarea"
+          placeholder="请详细描述您遇到的问题或建议..."
+          maxlength="500"
+          value="{{feedbackContent}}"
+          bindinput="onContentInput"
+          auto-height
+        ></textarea>
+        <view class="char-count">{{feedbackContent.length}}/500</view>
+      </view>
+    </view>
+
+    <!-- 图片上传 -->
+    <view class="form-section">
+      <view class="section-title">添加图片 <text class="optional">(可选)</text></view>
+      <view class="image-upload">
+        <view class="uploaded-images">
+          <view 
+            class="image-item"
+            wx:for="{{uploadedImages}}"
+            wx:key="*this"
+          >
+            <image src="{{item}}" mode="aspectFill"></image>
+            <view class="delete-btn" bindtap="deleteImage" data-index="{{index}}">
+              <text>×</text>
+            </view>
+          </view>
+          
+          <view 
+            class="upload-btn"
+            wx:if="{{uploadedImages.length < 3}}"
+            bindtap="chooseImage"
+          >
+            <view class="upload-icon">+</view>
+            <text class="upload-text">添加图片</text>
+          </view>
+        </view>
+        <view class="upload-tip">最多可上传3张图片，每张不超过2MB</view>
+      </view>
+    </view>
+
+    <!-- 联系方式 -->
+    <view class="form-section">
+      <view class="section-title">联系方式 <text class="optional">(可选)</text></view>
+      <view class="contact-input">
+        <input
+          class="contact-field"
+          placeholder="手机号或微信号，便于我们联系您"
+          value="{{contactInfo}}"
+          bindinput="onContactInput"
+          maxlength="50"
+        />
+      </view>
+    </view>
+  </view>
+
+  <!-- 提交按钮 -->
+  <view class="submit-section">
+    <button 
+      class="submit-btn {{canSubmit ? 'enabled' : 'disabled'}}"
+      bindtap="submitFeedback"
+      disabled="{{!canSubmit || isSubmitting}}"
+    >
+      <text wx:if="{{!isSubmitting}}">提交反馈</text>
+      <text wx:else>提交中...</text>
+    </button>
+  </view>
+
+  <!-- 历史反馈 -->
+  <view class="history-section" wx:if="{{historyList.length > 0}}">
+    <view class="section-title">我的反馈</view>
+    <view class="feedback-list">
+      <view 
+        class="feedback-item"
+        wx:for="{{historyList}}"
+        wx:key="id"
+        bindtap="viewFeedbackDetail"
+        data-feedback="{{item}}"
+      >
+        <view class="feedback-content">
+          <view class="feedback-type-tag">{{item.typeName}}</view>
+          <view class="feedback-text">{{item.content}}</view>
+          <view class="feedback-time">{{item.createTime}}</view>
+        </view>
+        <view class="feedback-status {{item.status}}">
+          <text>{{item.statusText}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 加载状态 -->
+  <loading id="loading" text="加载中" mask="{{true}}" loading="{{false}}"></loading>
+  
+  <!-- 轻提示 -->
+  <toast id="toast"></toast>
+</view> 

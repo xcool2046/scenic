@@ -2,76 +2,328 @@
  * API工具模块，用于处理景区实时信息相关API请求
  */
 
-// 基础请求函数
-const request = (url, method = 'GET', data = {}, header = {}) => {
-  return new Promise((resolve, reject) => {
-    wx.request({
+const env = require('./env');
+const cache = require('./cache');
+
+// 请求配置
+const API_CONFIG = {
+  timeout: env.getRequestTimeout() || 10000,
+  retryCount: 3,
+  retryDelay: 1000
+};
+
+// 请求状态枚举
+const RequestStatus = {
+  PENDING: 'pending',
+  SUCCESS: 'success',
+  FAILED: 'failed',
+  TIMEOUT: 'timeout'
+};
+
+// 统一请求拦截器
+class RequestInterceptor {
+  constructor() {
+    this.requestQueue = new Map();
+    this.retryDelays = [1000, 2000, 3000]; // 递增延迟
+  }
+
+  // 生成请求ID
+  generateRequestId() {
+    return `req_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  }
+
+  // 统一的请求方法
+  async request(url, options = {}) {
+    const requestId = this.generateRequestId();
+    const config = {
+      method: 'GET',
+      data: {},
+      header: {},
+      timeout: API_CONFIG.timeout,
+      retryCount: API_CONFIG.retryCount,
+      cache: false,
+      cacheTime: 300,
+      ...options
+    };
+
+    // 检查缓存
+    if (config.cache && config.method === 'GET') {
+      const cacheKey = this.getCacheKey(url, config.data);
+      const cachedData = cache.getCache(cacheKey);
+      if (cachedData) {
+        env.debugLog(`使用缓存数据: ${url}`, cachedData);
+        return cachedData;
+      }
+    }
+
+    // 添加到请求队列
+    this.requestQueue.set(requestId, {
       url,
-      method,
-      data,
-      header: {
-        'content-type': 'application/json',
-        ...header
-      },
-      success: (res) => {
-        if (res.statusCode >= 200 && res.statusCode < 300) {
-          resolve(res.data);
-        } else {
-          reject(new Error(`请求失败: ${res.statusCode}`));
+      config,
+      status: RequestStatus.PENDING,
+      startTime: Date.now()
+    });
+
+    return this.executeRequest(requestId, url, config);
+  }
+
+  // 执行请求，支持重试
+  async executeRequest(requestId, url, config, retryCount = 0) {
+    const request = this.requestQueue.get(requestId);
+    
+    try {
+      const result = await this.performRequest(url, config);
+      
+      // 更新请求状态
+      if (request) {
+        request.status = RequestStatus.SUCCESS;
+        request.endTime = Date.now();
+        request.duration = request.endTime - request.startTime;
+      }
+      
+      // 缓存结果
+      if (config.cache && config.method === 'GET') {
+        const cacheKey = this.getCacheKey(url, config.data);
+        cache.setCache(cacheKey, result, config.cacheTime);
+      }
+      
+      // 记录成功日志
+      env.debugLog(`API请求成功: ${config.method} ${url}`, {
+        duration: request?.duration,
+        result: result
+      });
+      
+      // 清理请求队列
+      this.requestQueue.delete(requestId);
+      
+      return result;
+      
+    } catch (error) {
+      // 记录错误
+      env.errorLog('API请求失败', {
+        requestId,
+        url,
+        method: config.method,
+        retryCount,
+        error: error.message
+      });
+      
+      // 判断是否需要重试
+      if (retryCount < config.retryCount && this.shouldRetry(error)) {
+        const delay = this.retryDelays[retryCount] || API_CONFIG.retryDelay;
+        
+        env.debugLog(`API请求重试 (${retryCount + 1}/${config.retryCount}): ${url}`, {
+          delay,
+          error: error.message
+        });
+        
+        // 延迟后重试
+        await this.sleep(delay);
+        return this.executeRequest(requestId, url, config, retryCount + 1);
+      }
+      
+      // 更新请求状态
+      if (request) {
+        request.status = RequestStatus.FAILED;
+        request.endTime = Date.now();
+        request.error = error.message;
+      }
+      
+      throw error;
+    }
+  }
+
+  // 执行实际的网络请求
+  performRequest(url, config) {
+    return new Promise((resolve, reject) => {
+      const timeout = setTimeout(() => {
+        reject(new Error(`请求超时: ${config.timeout}ms`));
+      }, config.timeout);
+
+      wx.request({
+        url,
+        method: config.method,
+        data: config.data,
+        header: {
+          'content-type': 'application/json',
+          ...this.getCommonHeaders(),
+          ...config.header
+        },
+        success: (res) => {
+          clearTimeout(timeout);
+          
+          if (res.statusCode >= 200 && res.statusCode < 300) {
+            resolve(res.data);
+          } else {
+            const error = new Error(`HTTP错误: ${res.statusCode}`);
+            error.statusCode = res.statusCode;
+            error.data = res.data;
+            reject(error);
+          }
+        },
+        fail: (err) => {
+          clearTimeout(timeout);
+          reject(new Error(`网络请求失败: ${err.errMsg || err.message || '未知错误'}`));
         }
-      },
-      fail: (err) => {
-        reject(err);
+      });
+    });
+  }
+
+  // 获取通用请求头
+  getCommonHeaders() {
+    const headers = {};
+    
+    // 添加授权信息
+    const token = wx.getStorageSync('token');
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+    
+    // 添加设备信息
+    const systemInfo = wx.getStorageSync('systemInfo');
+    if (systemInfo) {
+      headers['X-Device-Info'] = JSON.stringify({
+        platform: systemInfo.platform,
+        version: systemInfo.version,
+        model: systemInfo.model
+      });
+    }
+    
+    // 添加请求ID用于追踪
+    headers['X-Request-ID'] = this.generateRequestId();
+    
+    return headers;
+  }
+
+  // 生成缓存键
+  getCacheKey(url, data) {
+    const dataStr = data ? JSON.stringify(data) : '';
+    return `api_${url}_${dataStr}`.replace(/[^a-zA-Z0-9]/g, '_');
+  }
+
+  // 判断是否应该重试
+  shouldRetry(error) {
+    // 网络错误、超时错误、5xx服务器错误应该重试
+    if (error.message.includes('超时') || 
+        error.message.includes('网络') ||
+        error.message.includes('fail')) {
+      return true;
+    }
+    
+    // HTTP 5xx 错误应该重试
+    if (error.statusCode && error.statusCode >= 500) {
+      return true;
+    }
+    
+    return false;
+  }
+
+  // 延迟函数
+  sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  // 获取请求统计
+  getRequestStats() {
+    const stats = {
+      total: 0,
+      pending: 0,
+      success: 0,
+      failed: 0,
+      avgDuration: 0
+    };
+    
+    let totalDuration = 0;
+    
+    this.requestQueue.forEach(request => {
+      stats.total++;
+      if (request.status === RequestStatus.PENDING) stats.pending++;
+      else if (request.status === RequestStatus.SUCCESS) stats.success++;
+      else if (request.status === RequestStatus.FAILED) stats.failed++;
+      
+      if (request.duration) {
+        totalDuration += request.duration;
       }
     });
+    
+    if (stats.success > 0) {
+      stats.avgDuration = Math.round(totalDuration / stats.success);
+    }
+    
+    return stats;
+  }
+}
+
+// 创建全局请求拦截器实例
+const requestInterceptor = new RequestInterceptor();
+
+// 便捷的请求方法
+const request = (url, method = 'GET', data = {}, options = {}) => {
+  return requestInterceptor.request(url, {
+    method,
+    data,
+    ...options
   });
 };
 
-// API基础URL
-const BASE_API_URL = 'https://api.yourscenic.com/v1'; // 实际项目中需要替换为真实的API地址
-
-// 获取请求头，添加授权信息
-const getHeaders = () => {
-  const token = wx.getStorageSync('token');
-  return token ? { 'Authorization': `Bearer ${token}` } : {};
+// GET请求（支持缓存）
+const get = (url, data = {}, options = {}) => {
+  return request(url, 'GET', data, {
+    cache: true,
+    cacheTime: 300,
+    ...options
+  });
 };
 
-// 高德地图天气API密钥
-const AMAP_KEY = 'ff4fe7650c6f228431922e91706b6ab5'; 
+// POST请求
+const post = (url, data = {}, options = {}) => {
+  return request(url, 'POST', data, options);
+};
+
+// PUT请求
+const put = (url, data = {}, options = {}) => {
+  return request(url, 'PUT', data, options);
+};
+
+// DELETE请求
+const del = (url, data = {}, options = {}) => {
+  return request(url, 'DELETE', data, options);
+};
+
+// 高德地图天气API配置
 const AMAP_WEATHER_URL = 'https://restapi.amap.com/v3/weather/weatherInfo';
 
-// 检查是否使用模拟数据（在开发环境中始终使用模拟数据）
+// 检查是否使用模拟数据
 const shouldUseMockData = () => {
-  // 在微信小程序中检测开发环境
-  const accountInfo = wx.getAccountInfoSync && wx.getAccountInfoSync();
-  const env = accountInfo && accountInfo.miniProgram ? accountInfo.miniProgram.envVersion : 'release';
-  
-  // 在开发环境中使用模拟数据
-  return env === 'develop' || env === 'trial';
+  return env.shouldUseMock();
 };
 
 // 获取实时天气信息
-const getWeather = (location) => {
-  // 始终使用模拟数据，确保小程序可以正常运行
+const getWeather = async (location) => {
+  // 使用模拟数据
   if (shouldUseMockData()) {
-    console.log('使用模拟天气数据');
-    return Promise.resolve(getMockWeather());
+    env.debugLog('使用模拟天气数据');
+    return getMockWeather();
   }
   
   // 解析位置信息，高德天气API需要城市编码或经纬度
   let city = location;
   
-  // 如果传入的是经纬度，需要先通过逆地理编码接口获取城市编码
+  // 如果传入的是经纬度，直接使用
   if (location.includes(',')) {
-    const [longitude, latitude] = location.split(',');
-    // 直接使用经纬度调用天气API，高德支持经纬度格式如：116.41,39.92
     city = location;
   }
   
-  // 使用高德地图天气API: https://lbs.amap.com/api/webservice/guide/api/weatherinfo
-  const url = `${AMAP_WEATHER_URL}?key=${AMAP_KEY}&city=${city}&extensions=base`;
+  // 使用高德地图天气API
+  const url = `${AMAP_WEATHER_URL}?key=${env.getAmapKey()}&city=${city}&extensions=base`;
   
-  return request(url).then(res => {
+  try {
+    const res = await get(url, {}, { 
+      cache: true, 
+      cacheTime: 1800, // 缓存30分钟
+      retryCount: 2 
+    });
+    
     // 转换高德天气API返回数据格式为应用所需格式
     if (res.status === '1' && res.lives && res.lives.length > 0) {
       return {
@@ -81,13 +333,13 @@ const getWeather = (location) => {
       };
     } else {
       // 如果API调用失败，返回模拟数据
-      console.warn('高德天气API返回异常，使用模拟数据');
+      env.errorLog('高德天气API返回异常，使用模拟数据', res);
       return getMockWeather();
     }
-  }).catch(err => {
-    console.error('获取天气数据失败', err);
+  } catch (err) {
+    env.errorLog('获取天气数据失败', err);
     return getMockWeather();
-  });
+  }
 };
 
 // 格式化高德天气数据为应用统一格式
@@ -132,7 +384,12 @@ const formatAmapWeather = (amapWeather) => {
 };
 
 // 获取天气预报（未来几天）
-const getWeatherForecast = (location) => {
+const getWeatherForecast = async (location) => {
+  // 使用模拟数据
+  if (shouldUseMockData()) {
+    return getMockWeatherForecast();
+  }
+  
   // 解析位置信息，同上
   let city = location;
   
@@ -141,14 +398,15 @@ const getWeatherForecast = (location) => {
   }
   
   // 使用高德地图天气预报API
-  const url = `${AMAP_WEATHER_URL}?key=${AMAP_KEY}&city=${city}&extensions=all`;
+  const url = `${AMAP_WEATHER_URL}?key=${env.getAmapKey()}&city=${city}&extensions=all`;
   
-  // 使用模拟数据
-  if (process.env.NODE_ENV === 'development' && false) { // 将false改为true可启用模拟数据
-    return Promise.resolve(getMockWeatherForecast());
-  }
-  
-  return request(url).then(res => {
+  try {
+    const res = await get(url, {}, { 
+      cache: true, 
+      cacheTime: 3600, // 缓存1小时
+      retryCount: 2 
+    });
+    
     // 转换高德天气预报API返回数据格式为应用所需格式
     if (res.status === '1' && res.forecasts && res.forecasts.length > 0 && res.forecasts[0].casts) {
       return {
@@ -158,13 +416,13 @@ const getWeatherForecast = (location) => {
       };
     } else {
       // 如果API调用失败，返回模拟数据
-      console.warn('高德天气预报API返回异常，使用模拟数据');
+      env.errorLog('高德天气预报API返回异常，使用模拟数据', res);
       return getMockWeatherForecast();
     }
-  }).catch(err => {
-    console.error('获取天气预报数据失败', err);
+  } catch (err) {
+    env.errorLog('获取天气预报数据失败', err);
     return getMockWeatherForecast();
-  });
+  }
 };
 
 // 格式化高德天气预报数据为应用统一格式
@@ -185,23 +443,45 @@ const formatAmapForecast = (amapForecasts) => {
 };
 
 // 获取景区人流量信息（需接入景区实际API）
-const getCrowdInfo = () => {
+const getCrowdInfo = async () => {
+  // 使用模拟数据以确保稳定运行
+  if (shouldUseMockData()) {
+    env.debugLog('使用模拟人流量数据');
+    return getMockCrowdInfo();
+  }
+  
   // 实际项目中应对接景区自己的API
   // const url = `${BASE_API_URL}/crowd/realtime`;
+  // try {
+  //   const result = await get(url, {}, { cache: true, cacheTime: 60 });
+  //   return result;
+  // } catch (error) {
+  //   env.errorLog('获取人流量数据失败', error);
+  //   return getMockCrowdInfo();
+  // }
   
-  // 始终使用模拟数据以确保稳定运行
-  console.log('使用模拟人流量数据');
-  return Promise.resolve(getMockCrowdInfo());
+  return getMockCrowdInfo();
 };
 
 // 获取景点拥堵信息（需接入景区实际API）
-const getSpotsCongestInfo = () => {
+const getSpotsCongestInfo = async () => {
+  // 使用模拟数据
+  if (shouldUseMockData()) {
+    env.debugLog('使用模拟拥堵数据');
+    return getMockSpotsCongestInfo();
+  }
+  
   // 实际项目中应对接景区自己的API
   // const url = `${BASE_API_URL}/spots/congestion`;
+  // try {
+  //   const result = await get(url, {}, { cache: true, cacheTime: 120 });
+  //   return result;
+  // } catch (error) {
+  //   env.errorLog('获取拥堵数据失败', error);
+  //   return getMockSpotsCongestInfo();
+  // }
   
-  // 使用模拟数据
-  console.log('使用模拟拥堵数据');
-  return Promise.resolve(getMockSpotsCongestInfo());
+  return getMockSpotsCongestInfo();
 };
 
 // ==========  订单和支付相关 API ==========
@@ -514,7 +794,7 @@ const getBanners = () => {
             id: 1, 
             url: '/assets/images/banner/banner1.jpg', 
             title: '景区一日游特惠', 
-            linkUrl: '/packages/ticket/pages/ticket/ticket?type=daytour'
+            linkUrl: '/pages/ticket/ticket?type=daytour'
           },
           { 
             id: 2, 
@@ -535,6 +815,15 @@ const getBanners = () => {
 };
 
 module.exports = {
+  // 基础请求方法
+  request,
+  get,
+  post,
+  put,
+  del,
+  // 请求拦截器实例
+  requestInterceptor,
+  // 业务API方法
   getWeather,
   getWeatherForecast,
   getCrowdInfo,
@@ -545,4 +834,4 @@ module.exports = {
   getUserOrders,
   refundTicketOrder,
   getBanners
-}; 
+};

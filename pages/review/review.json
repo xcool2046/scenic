@@ -1,0 +1,10 @@
+{
+  "navigationBarTitleText": "码上评价",
+  "navigationBarBackgroundColor": "#3498db",
+  "navigationBarTextStyle": "white",
+  "backgroundColor": "#f5f7fa",
+  "enablePullDownRefresh": false,
+  "disableScroll": false,
+  "usingComponents": {},
+  "onReachBottomDistance": 50
+} 

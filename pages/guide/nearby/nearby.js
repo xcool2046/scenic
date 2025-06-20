@@ -1,9 +1,11 @@
 // nearby.js
 const interaction = require('../../../utils/interaction');
 const performance = require('../../../utils/performance');
+const config = require('../../../utils/config');
 
 Page({
   data: {
+    config,
     type: '',
     title: '附近设施',
     facilities: [],
@@ -145,37 +147,37 @@ Page({
   // 获取厕所模拟数据
   getMockToilets() {
     return [
-      { id: 1, name: '游客中心卫生间', distance: 120, icon: '/assets/icons/toilet.png', open: true },
-      { id: 2, name: '中心广场卫生间', distance: 250, icon: '/assets/icons/toilet.png', open: true },
-      { id: 3, name: '东区卫生间', distance: 480, icon: '/assets/icons/toilet.png', open: true },
-      { id: 4, name: '西区卫生间', distance: 650, icon: '/assets/icons/toilet.png', open: false }
+      { id: 1, name: '游客中心卫生间', distance: 120, icon: config.CDN_ICONS.TOILET, open: true },
+        { id: 2, name: '中心广场卫生间', distance: 250, icon: config.CDN_ICONS.TOILET, open: true },
+        { id: 3, name: '东区卫生间', distance: 480, icon: config.CDN_ICONS.TOILET, open: true },
+        { id: 4, name: '西区卫生间', distance: 650, icon: config.CDN_ICONS.TOILET, open: false }
     ];
   },
   
   // 获取餐饮模拟数据
   getMockFoodOptions() {
     return [
-      { id: 1, name: '游客中心餐厅', distance: 150, icon: '/assets/icons/restaurant.png', rating: 4.5 },
-      { id: 2, name: '景区咖啡厅', distance: 200, icon: '/assets/icons/cafe.png', rating: 4.3 },
-      { id: 3, name: '东区小吃摊', distance: 350, icon: '/assets/icons/food_stall.png', rating: 4.0 },
-      { id: 4, name: '中心广场餐厅', distance: 500, icon: '/assets/icons/restaurant.png', rating: 4.2 }
+      { id: 1, name: '游客中心餐厅', distance: 150, icon: config.CDN_ICONS.RESTAURANT, rating: 4.5 },
+        { id: 2, name: '景区咖啡厅', distance: 200, icon: config.CDN_ICONS.CAFE, rating: 4.3 },
+        { id: 3, name: '东区小吃摊', distance: 350, icon: config.CDN_ICONS.FOOD_STALL, rating: 4.0 },
+        { id: 4, name: '中心广场餐厅', distance: 500, icon: config.CDN_ICONS.RESTAURANT, rating: 4.2 }
     ];
   },
   
   // 获取休息区模拟数据
   getMockRestAreas() {
     return [
-      { id: 1, name: '中心休息区', distance: 180, icon: '/assets/icons/rest.png', seats: 20 },
-      { id: 2, name: '湖边休息区', distance: 320, icon: '/assets/icons/rest.png', seats: 15 },
-      { id: 3, name: '东区凉亭', distance: 450, icon: '/assets/icons/pavilion.png', seats: 8 }
+      { id: 1, name: '中心休息区', distance: 180, icon: config.CDN_ICONS.REST, seats: 20 },
+        { id: 2, name: '湖边休息区', distance: 320, icon: config.CDN_ICONS.REST, seats: 15 },
+        { id: 3, name: '东区凉亭', distance: 450, icon: config.CDN_ICONS.PAVILION, seats: 8 }
     ];
   },
   
   // 获取医疗点模拟数据
   getMockMedicalPoints() {
     return [
-      { id: 1, name: '游客中心医疗站', distance: 120, icon: '/assets/icons/medical.png', level: '主要' },
-      { id: 2, name: '东区急救点', distance: 550, icon: '/assets/icons/first_aid.png', level: '辅助' }
+      { id: 1, name: '游客中心医疗站', distance: 120, icon: config.CDN_ICONS.MEDICAL, level: '主要' },
+        { id: 2, name: '东区急救点', distance: 550, icon: config.CDN_ICONS.FIRST_AID, level: '辅助' }
     ];
   },
   
@@ -221,4 +223,4 @@ Page({
       path: `/pages/guide/nearby/nearby?type=${this.data.type}&title=${this.data.title}`
     };
   }
-}) 
+})

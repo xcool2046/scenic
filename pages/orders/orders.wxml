@@ -1,0 +1,106 @@
+<view class="orders-container">
+  <!-- 加载状态 -->
+  <view class="loading-container" wx:if="{{loading}}">
+    <view class="loading-spinner"></view>
+    <text class="loading-text">加载中...</text>
+  </view>
+
+  <!-- 空状态 -->
+  <view class="empty-container" wx:elif="{{isEmpty}}">
+    <view class="empty-icon">📋</view>
+    <text class="empty-title">暂无订单</text>
+    <text class="empty-subtitle">快去购买景区门票吧！</text>
+    <view class="empty-action">
+      <view class="action-btn primary" bindtap="goToBuyTickets">
+        <text>立即购票</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 订单列表 -->
+  <view class="orders-list" wx:else>
+    <view class="order-card" 
+          wx:for="{{orders}}" 
+          wx:key="order_id">
+      
+      <!-- 订单头部 -->
+      <view class="order-header">
+        <view class="order-info">
+          <text class="order-number">订单 {{item.order_no || item.order_id}}</text>
+          <text class="order-date">{{item.create_time || item.order_date}}</text>
+        </view>
+        <view class="order-status {{getOrderStatusClass(item.status)}}">
+          <text>{{getOrderStatusText(item.status)}}</text>
+        </view>
+      </view>
+
+      <!-- 订单内容 -->
+      <view class="order-content" bindtap="viewOrderDetail" data-id="{{item.order_id}}">
+        <view class="ticket-info">
+          <text class="ticket-name">{{item.ticket_name}}</text>
+          <text class="ticket-details">
+            数量：{{item.quantity}}张 | 游览日期：{{item.visit_date}}
+          </text>
+          <text class="contact-info" wx:if="{{item.contact_name}}">
+            联系人：{{item.contact_name}} {{item.contact_phone}}
+          </text>
+        </view>
+        <view class="order-amount">
+          <text class="amount-label">实付</text>
+          <text class="amount-value">¥{{item.total_price}}</text>
+        </view>
+      </view>
+
+      <!-- 订单操作 -->
+      <view class="order-actions">
+        <!-- 待支付状态的操作 -->
+        <block wx:if="{{item.status === 'UNPAID'}}">
+          <view class="action-btn secondary small" 
+                bindtap="deleteOrder" 
+                data-id="{{item.order_id}}">取消订单</view>
+          <view class="action-btn primary small" 
+                bindtap="continuePay" 
+                data-id="{{item.order_id}}">继续支付</view>
+        </block>
+
+        <!-- 已支付状态的操作 -->
+        <block wx:elif="{{item.status === 'PAID'}}">
+          <view class="action-btn secondary small" 
+                bindtap="requestRefund" 
+                data-id="{{item.order_id}}">申请退款</view>
+          <view class="action-btn primary small" 
+                bindtap="viewTicketCode" 
+                data-order="{{item}}">查看票码</view>
+        </block>
+
+        <!-- 已使用状态的操作 -->
+        <block wx:elif="{{item.status === 'USED'}}">
+          <view class="action-btn secondary small" 
+                bindtap="viewOrderDetail" 
+                data-id="{{item.order_id}}">查看详情</view>
+        </block>
+
+        <!-- 退款中状态的操作 -->
+        <block wx:elif="{{item.status === 'REFUNDING'}}">
+          <view class="action-btn secondary small disabled">
+            <text>退款处理中</text>
+          </view>
+        </block>
+
+        <!-- 已退款/已取消状态的操作 -->
+        <block wx:elif="{{item.status === 'REFUNDED' || item.status === 'CANCELLED'}}">
+          <view class="action-btn secondary small" 
+                bindtap="deleteOrder" 
+                data-id="{{item.order_id}}">删除订单</view>
+          <view class="action-btn secondary small" 
+                bindtap="goToBuyTickets">再次购买</view>
+        </block>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部提示 -->
+  <view class="bottom-tips" wx:if="{{!loading && !isEmpty}}">
+    <text class="tips-text">下拉可以刷新订单状态</text>
+  </view>
+</view> 

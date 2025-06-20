@@ -26,7 +26,7 @@
       </view>
       <view class="facility-actions">
         <view class="navigate-btn" bindtap="navigateToFacility" data-id="{{item.id}}">
-          <image class="navigate-icon" src="/assets/icons/navigate.png" mode="aspectFit"></image>
+          <image class="navigate-icon" src="{{config.CDN_ICONS.NAVIGATE}}" mode="aspectFit"></image>
           <text>导航</text>
         </view>
       </view>
@@ -35,7 +35,7 @@
   
   <!-- 加载提示 -->
   <view class="loading" wx:if="{{loading}}">
-    <image class="loading-icon" src="/assets/icons/loading.gif" mode="aspectFit"></image>
+    <image class="loading-icon" src="{{config.CDN_ICONS.LOADING}}" mode="aspectFit"></image>
     <text>正在搜索{{title}}...</text>
   </view>
   
@@ -43,4 +43,4 @@
   <view class="footer-tip" wx:if="{{!loading && facilities.length > 0}}">
     <text>点击项目查看详情，点击导航按钮进行导航</text>
   </view>
-</view> 
+</view>

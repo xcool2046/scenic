@@ -1,0 +1,13 @@
+{
+  "usingComponents": {
+    "loading": "../../components/loading/loading",
+    "toast": "../../components/toast/toast"
+  },
+  "navigationBarTitleText": "码上合作",
+  "navigationBarBackgroundColor": "#ffffff",
+  "navigationBarTextStyle": "black",
+  "backgroundColor": "#ffffff",
+  "backgroundTextStyle": "dark",
+  "enablePullDownRefresh": true,
+  "onReachBottomDistance": 50
+} 

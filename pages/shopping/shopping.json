@@ -1,0 +1,12 @@
+{
+  "usingComponents": {
+    "loading": "../../components/loading/loading",
+    "toast": "../../components/toast/toast"
+  },
+  "navigationBarTitleText": "码上消费",
+  "navigationBarBackgroundColor": "#1AAD19",
+  "navigationBarTextStyle": "white",
+  "backgroundColor": "#ffffff",
+  "backgroundTextStyle": "dark",
+  "enablePullDownRefresh": true
+} 

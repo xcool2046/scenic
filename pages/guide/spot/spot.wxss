@@ -1,239 +1,282 @@
-/* pages/guide/spot/spot.wxss */
+/* pages/guide/spot/spot.wxss - Apple风格景点详情页 */
 .container {
-  padding-bottom: 120rpx;
-  background-color: #f8f8f8;
+  padding-bottom: 160rpx;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  min-height: 100vh;
 }
 
-/* 轮播图样式 */
+/* 轮播图样式 - 简洁现代 */
 .banner {
   width: 100%;
   height: 500rpx;
+  border-radius: 0 0 32rpx 32rpx;
+  overflow: hidden;
+  box-shadow: 0 8rpx 32rpx rgba(0,0,0,0.12);
 }
 
 .banner-image {
   width: 100%;
   height: 100%;
+  transition: transform 0.3s ease;
 }
 
-/* 实时人流量信息 */
+/* 实时人流量信息 - 卡片式设计 */
 .crowd-section {
-  margin-top: -10rpx;
-  padding: 30rpx;
-  background-color: #fff;
-  margin-bottom: 20rpx;
+  margin: 30rpx 30rpx 24rpx;
+  padding: 32rpx;
+  background: linear-gradient(135deg, #ffffff 0%, #fafbfc 100%);
+  border-radius: 24rpx;
+  box-shadow: 
+    0 8rpx 32rpx rgba(0,0,0,0.08),
+    0 2rpx 8rpx rgba(0,0,0,0.04);
+  border: 1rpx solid rgba(255,255,255,0.8);
 }
 
 .crowd-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20rpx;
+  margin-bottom: 24rpx;
 }
 
 .crowd-title {
-  font-size: 30rpx;
-  font-weight: bold;
-  color: #333;
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #1a1a1a;
+  letter-spacing: -0.3rpx;
 }
 
 .update-time {
   font-size: 24rpx;
-  color: #999;
+  color: #6c757d;
+  opacity: 0.8;
 }
 
 .crowd-content {
-  margin-bottom: 10rpx;
+  margin-bottom: 16rpx;
 }
 
 .crowd-status {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 15rpx;
+  margin-bottom: 20rpx;
 }
 
 .crowd-level {
-  padding: 8rpx 20rpx;
+  padding: 12rpx 24rpx;
   border-radius: 20rpx;
-  font-size: 24rpx;
+  font-size: 26rpx;
+  font-weight: 600;
+  letter-spacing: 0.3rpx;
 }
 
 .crowd-level.level-1 {
-  background-color: #e8f7e8;
-  color: #1AAD19;
+  background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+  color: #155724;
 }
 
 .crowd-level.level-2 {
-  background-color: #e8f5ff;
-  color: #1890ff;
+  background: linear-gradient(135deg, #cce7ff 0%, #b3d9ff 100%);
+  color: #004085;
 }
 
 .crowd-level.level-3 {
-  background-color: #fff7e8;
-  color: #fa8c16;
+  background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
+  color: #d68910;
 }
 
 .crowd-level.level-4 {
-  background-color: #fff1f0;
-  color: #f5222d;
+  background: linear-gradient(135deg, #fab1a0 0%, #e17055 100%);
+  color: #b02a37;
 }
 
 .wait-time {
-  font-size: 24rpx;
-  color: #666;
+  font-size: 26rpx;
+  color: #6c757d;
+  font-weight: 500;
 }
 
 .crowd-progress {
   position: relative;
   display: flex;
   align-items: center;
-  margin-top: 10rpx;
+  margin-top: 16rpx;
 }
 
 .progress-bg {
   flex: 1;
-  height: 16rpx;
-  background-color: #f0f0f0;
-  border-radius: 8rpx;
+  height: 20rpx;
+  background: #f1f3f4;
+  border-radius: 10rpx;
   overflow: hidden;
 }
 
 .progress-bar {
   height: 100%;
-  border-radius: 8rpx;
+  border-radius: 10rpx;
+  transition: width 0.3s ease;
 }
 
 .progress-bar.level-1 {
-  background-color: #1AAD19;
+  background: linear-gradient(90deg, #28a745 0%, #20c997 100%);
 }
 
 .progress-bar.level-2 {
-  background-color: #1890ff;
+  background: linear-gradient(90deg, #007bff 0%, #17a2b8 100%);
 }
 
 .progress-bar.level-3 {
-  background-color: #fa8c16;
+  background: linear-gradient(90deg, #ffc107 0%, #fd7e14 100%);
 }
 
 .progress-bar.level-4 {
-  background-color: #f5222d;
+  background: linear-gradient(90deg, #dc3545 0%, #e83e8c 100%);
 }
 
 .progress-text {
-  margin-left: 20rpx;
-  font-size: 24rpx;
-  color: #666;
+  margin-left: 24rpx;
+  font-size: 26rpx;
+  color: #495057;
+  font-weight: 600;
   width: 80rpx;
 }
 
-/* 最佳游览时间 */
+/* 最佳游览时间 - 简化设计 */
 .visit-time-section {
-  padding: 30rpx;
-  background-color: #fff;
-  margin-bottom: 20rpx;
+  margin: 0 30rpx 24rpx;
+  padding: 32rpx;
+  background: linear-gradient(135deg, #ffffff 0%, #fafbfc 100%);
+  border-radius: 24rpx;
+  box-shadow: 
+    0 8rpx 32rpx rgba(0,0,0,0.08),
+    0 2rpx 8rpx rgba(0,0,0,0.04);
+  border: 1rpx solid rgba(255,255,255,0.8);
 }
 
 .visit-time-list {
   display: flex;
   justify-content: space-between;
-  padding: 20rpx 0;
+  padding: 24rpx 0 0;
+  gap: 16rpx;
 }
 
 .visit-time-item {
   text-align: center;
-  width: 23%;
-  padding: 15rpx 0;
-  border-radius: 10rpx;
+  flex: 1;
+  padding: 20rpx 12rpx;
+  border-radius: 16rpx;
+  transition: all 0.2s ease;
 }
 
 .visit-time-item.status-best {
-  background-color: #e8f7e8;
-  border: 1rpx solid #1AAD19;
+  background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+  border: 2rpx solid #28a745;
 }
 
 .visit-time-item.status-good {
-  background-color: #e8f5ff;
-  border: 1rpx solid #1890ff;
+  background: linear-gradient(135deg, #cce7ff 0%, #b3d9ff 100%);
+  border: 2rpx solid #007bff;
 }
 
 .visit-time-item.status-normal {
-  background-color: #f9f9f9;
-  border: 1rpx solid #e0e0e0;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border: 2rpx solid #dee2e6;
 }
 
 .visit-period {
   font-size: 28rpx;
-  font-weight: bold;
-  color: #333;
-  margin-bottom: 10rpx;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 8rpx;
+  letter-spacing: -0.2rpx;
 }
 
 .visit-time {
-  font-size: 24rpx;
-  color: #666;
-  margin-bottom: 10rpx;
+  font-size: 22rpx;
+  color: #6c757d;
+  margin-bottom: 8rpx;
+  font-weight: 500;
 }
 
 .visit-status {
-  font-size: 22rpx;
+  font-size: 20rpx;
+  font-weight: 600;
+  letter-spacing: 0.2rpx;
 }
 
 .visit-time-item.status-best .visit-status {
-  color: #1AAD19;
+  color: #155724;
 }
 
 .visit-time-item.status-good .visit-status {
-  color: #1890ff;
+  color: #004085;
 }
 
 .visit-time-item.status-normal .visit-status {
-  color: #999;
+  color: #6c757d;
 }
 
-/* 景点基本信息区域 */
+/* 景点基本信息区域 - 现代卡片设计 */
 .info-section {
-  background-color: #fff;
-  padding: 30rpx;
-  margin-bottom: 20rpx;
+  margin: 0 30rpx 24rpx;
+  padding: 32rpx;
+  background: linear-gradient(135deg, #ffffff 0%, #fafbfc 100%);
+  border-radius: 24rpx;
+  box-shadow: 
+    0 8rpx 32rpx rgba(0,0,0,0.08),
+    0 2rpx 8rpx rgba(0,0,0,0.04);
+  border: 1rpx solid rgba(255,255,255,0.8);
 }
 
 .info-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20rpx;
+  align-items: flex-start;
+  margin-bottom: 24rpx;
 }
 
 .info-name-container {
   flex: 1;
-  display: flex;
-  align-items: center;
 }
 
 .spot-name {
-  font-size: 36rpx;
-  font-weight: bold;
-  color: #333;
-  margin-right: 20rpx;
+  font-size: 44rpx;
+  font-weight: 800;
+  color: #1a1a1a;
+  letter-spacing: -0.5rpx;
+  line-height: 1.2;
+  display: block;
+  margin-bottom: 12rpx;
 }
 
 .spot-type-tag {
-  padding: 6rpx 16rpx;
-  background-color: #e8f7e8;
-  border-radius: 20rpx;
-}
-
-.spot-type-tag text {
+  display: inline-flex;
+  align-items: center;
+  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+  color: #fff;
+  padding: 8rpx 16rpx;
+  border-radius: 16rpx;
   font-size: 22rpx;
-  color: #1AAD19;
+  font-weight: 600;
+  letter-spacing: 0.2rpx;
 }
 
 .like-btn {
-  width: 60rpx;
-  height: 60rpx;
+  width: 72rpx;
+  height: 72rpx;
   display: flex;
   align-items: center;
   justify-content: center;
+  background: rgba(255,255,255,0.8);
+  border-radius: 36rpx;
+  transition: all 0.2s ease;
+  box-shadow: 0 4rpx 16rpx rgba(0,0,0,0.1);
+}
+
+.like-btn:active {
+  transform: scale(0.95);
+  background: rgba(255,255,255,0.95);
 }
 
 .like-btn image {
@@ -241,108 +284,109 @@
   height: 40rpx;
 }
 
-.like-btn.liked image {
-  animation: like-animation 0.3s ease;
-}
-
-@keyframes like-animation {
-  0% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.3);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
-
 .rating-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding-top: 20rpx;
+  border-top: 1rpx solid rgba(0,0,0,0.05);
 }
 
 .rating {
   display: flex;
   align-items: center;
+  gap: 12rpx;
 }
 
 .rating-score {
-  font-size: 34rpx;
-  color: #ff6b6b;
-  font-weight: bold;
-  margin-right: 10rpx;
+  font-size: 56rpx;
+  font-weight: 800;
+  color: #007bff;
+  line-height: 1;
+  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .rating-stars {
   display: flex;
+  gap: 4rpx;
 }
 
 .star {
-  width: 30rpx;
-  height: 30rpx;
-  margin-right: 4rpx;
+  width: 24rpx;
+  height: 24rpx;
 }
 
 .location-text {
-  font-size: 24rpx;
-  color: #666;
+  font-size: 26rpx;
+  color: #6c757d;
+  font-weight: 500;
 }
 
-/* 景点标签样式 */
+/* 景点特色标签 - 简化设计 */
 .tags-section {
-  background-color: #fff;
-  padding: 30rpx;
-  margin-bottom: 20rpx;
+  margin: 0 30rpx 24rpx;
 }
 
 .tags-list {
   display: flex;
   flex-wrap: wrap;
-  gap: 20rpx;
+  gap: 12rpx;
 }
 
 .tag-item {
-  padding: 10rpx 20rpx;
-  background-color: #f0f0f0;
-  border-radius: 30rpx;
-}
-
-.tag-item text {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border: 1rpx solid rgba(0,0,0,0.1);
+  padding: 12rpx 20rpx;
+  border-radius: 20rpx;
   font-size: 24rpx;
-  color: #666;
+  color: #495057;
+  font-weight: 500;
+  transition: all 0.2s ease;
 }
 
-/* 信息项样式 */
+.tag-item:active {
+  transform: scale(0.98);
+  background: linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%);
+}
+
+/* 信息项目 - 统一卡片设计 */
 .info-item {
-  background-color: #fff;
-  padding: 30rpx;
-  margin-bottom: 20rpx;
+  margin: 0 30rpx 24rpx;
+  padding: 32rpx;
+  background: linear-gradient(135deg, #ffffff 0%, #fafbfc 100%);
+  border-radius: 24rpx;
+  box-shadow: 
+    0 8rpx 32rpx rgba(0,0,0,0.08),
+    0 2rpx 8rpx rgba(0,0,0,0.04);
+  border: 1rpx solid rgba(255,255,255,0.8);
 }
 
 .info-item-title {
   display: flex;
   align-items: center;
-  margin-bottom: 15rpx;
+  margin-bottom: 16rpx;
+  gap: 12rpx;
 }
 
 .info-item-title image {
-  width: 30rpx;
-  height: 30rpx;
-  margin-right: 10rpx;
+  width: 32rpx;
+  height: 32rpx;
 }
 
 .info-item-title text {
   font-size: 28rpx;
-  color: #333;
-  font-weight: bold;
+  font-weight: 700;
+  color: #1a1a1a;
+  letter-spacing: -0.2rpx;
 }
 
 .info-item-content {
   font-size: 26rpx;
-  color: #666;
-  line-height: 1.6;
+  color: #6c757d;
+  line-height: 1.5;
 }
 
 .location-content {
@@ -354,107 +398,124 @@
 .map-link {
   display: flex;
   align-items: center;
-  color: #1AAD19;
-}
-
-.map-link text {
-  font-size: 24rpx;
-  margin-right: 6rpx;
+  gap: 8rpx;
+  color: #007bff;
+  font-weight: 600;
+  transition: all 0.2s ease;
 }
 
 .map-link image {
-  width: 24rpx;
-  height: 24rpx;
+  width: 20rpx;
+  height: 20rpx;
 }
 
-/* 描述部分样式 */
+/* 景点详细介绍 */
 .desc-section {
-  background-color: #fff;
-  padding: 30rpx;
-  margin-bottom: 20rpx;
+  margin: 0 30rpx 24rpx;
+  padding: 32rpx;
+  background: linear-gradient(135deg, #ffffff 0%, #fafbfc 100%);
+  border-radius: 24rpx;
+  box-shadow: 
+    0 8rpx 32rpx rgba(0,0,0,0.08),
+    0 2rpx 8rpx rgba(0,0,0,0.04);
+  border: 1rpx solid rgba(255,255,255,0.8);
 }
 
 .section-title {
-  font-size: 30rpx;
-  font-weight: bold;
-  color: #333;
   margin-bottom: 20rpx;
-  display: flex;
-  align-items: center;
 }
 
-.section-title:before {
-  content: '';
-  display: inline-block;
-  width: 8rpx;
-  height: 30rpx;
-  background-color: #1AAD19;
-  margin-right: 15rpx;
-  border-radius: 4rpx;
+.section-title text {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #1a1a1a;
+  letter-spacing: -0.3rpx;
 }
 
 .desc-content {
   font-size: 28rpx;
-  color: #666;
-  line-height: 1.8;
+  color: #495057;
+  line-height: 1.7;
+  letter-spacing: 0.2rpx;
 }
 
-/* 附近景点样式 */
+/* 附近景点 - 横向滚动卡片 */
 .nearby-section {
-  background-color: #fff;
-  padding: 30rpx;
-  margin-bottom: 20rpx;
+  margin: 0 30rpx 24rpx;
+  padding: 32rpx;
+  background: linear-gradient(135deg, #ffffff 0%, #fafbfc 100%);
+  border-radius: 24rpx;
+  box-shadow: 
+    0 8rpx 32rpx rgba(0,0,0,0.08),
+    0 2rpx 8rpx rgba(0,0,0,0.04);
+  border: 1rpx solid rgba(255,255,255,0.8);
 }
 
 .nearby-scroll {
-  width: 100%;
+  margin-top: 20rpx;
 }
 
 .nearby-list {
   display: flex;
-  padding: 20rpx 0;
+  gap: 20rpx;
+  padding-bottom: 10rpx;
 }
 
 .nearby-item {
-  margin-right: 30rpx;
   width: 200rpx;
+  flex-shrink: 0;
+  text-align: center;
+  transition: all 0.2s ease;
+}
+
+.nearby-item:active {
+  transform: scale(0.98);
 }
 
 .nearby-image {
-  width: 200rpx;
-  height: 150rpx;
-  border-radius: 10rpx;
-  margin-bottom: 10rpx;
+  width: 100%;
+  height: 160rpx;
+  border-radius: 16rpx;
+  margin-bottom: 12rpx;
 }
 
 .nearby-name {
-  font-size: 26rpx;
-  color: #333;
-  display: block;
-  text-align: center;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  font-size: 24rpx;
+  color: #495057;
+  font-weight: 600;
+  line-height: 1.3;
 }
 
-/* 底部分享按钮 */
+/* 底部分享按钮 - Apple风格 */
 .share-btn {
   position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  padding: 20rpx 30rpx;
-  background-color: #fff;
-  box-shadow: 0 -2rpx 10rpx rgba(0, 0, 0, 0.05);
+  bottom: 60rpx;
+  left: 30rpx;
+  right: 30rpx;
+  z-index: 100;
 }
 
 .share-btn button {
-  background-color: #1AAD19;
+  width: 100%;
+  height: 88rpx;
+  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
   color: #fff;
+  border: none;
+  border-radius: 22rpx;
   font-size: 32rpx;
-  font-weight: bold;
-  border-radius: 45rpx;
-  margin: 0;
+  font-weight: 700;
+  letter-spacing: 0.5rpx;
+  box-shadow: 
+    0 8rpx 32rpx rgba(0,123,255,0.3),
+    0 4rpx 12rpx rgba(0,123,255,0.2);
+  transition: all 0.2s ease;
+}
+
+.share-btn button:active {
+  transform: scale(0.98);
+  box-shadow: 
+    0 4rpx 16rpx rgba(0,123,255,0.3),
+    0 2rpx 8rpx rgba(0,123,255,0.2);
 }
 
 /* 加载中样式 */

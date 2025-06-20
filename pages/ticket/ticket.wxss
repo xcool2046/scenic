@@ -1,19 +1,4 @@
-/* packages/ticket/pages/ticket/ticket.wxss */
-.container {
-  padding: 30rpx;
-  min-height: 100vh;
-  background-color: #f8f8f8;
-}
-
-/* 选项卡样式 */
-.tabs {
-  display: flex;
-  background-color: #fff;
-  border-radius: 12rpx;
-  margin-bottom: 30rpx;
-  overflow: hidden;
-  box-shadow: 0 2rpx 10rpx rgba(0,0,0,0.05);
-}
+/* 移除旧样式，使用新的Apple风格样式 */
 
 .tab {
   flex: 1;
@@ -371,4 +356,633 @@
   background-color: #fff;
   color: #e64340;
   border: 1rpx solid #e64340;
+}
+
+/* Apple风格票务页面样式 */
+.page-container {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
+  padding-bottom: 40rpx;
+}
+
+/* 页面头部 */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 30rpx 40rpx 20rpx;
+  background: transparent;
+}
+
+.header-title {
+  flex: 1;
+}
+
+.main-title {
+  display: block;
+  font-size: 48rpx;
+  font-weight: 700;
+  color: #1a1a1a;
+  letter-spacing: -0.5rpx;
+  margin-bottom: 8rpx;
+}
+
+.subtitle {
+  display: block;
+  font-size: 28rpx;
+  color: #666;
+  font-weight: 400;
+}
+
+.header-action {
+  display: flex;
+  align-items: center;
+}
+
+.order-btn {
+  padding: 16rpx 24rpx;
+  background: rgba(0, 122, 255, 0.1);
+  border: 2rpx solid rgba(0, 122, 255, 0.2);
+  border-radius: 20rpx;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.order-btn:active {
+  transform: scale(0.95);
+  background: rgba(0, 122, 255, 0.2);
+}
+
+.order-btn-text {
+  font-size: 26rpx;
+  color: #007AFF;
+  font-weight: 500;
+}
+
+.page-title {
+  font-size: 56rpx;
+  font-weight: 700;
+  color: #1a1a1a;
+  letter-spacing: -0.5rpx;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+}
+
+.action-btn {
+  padding: 16rpx 24rpx;
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 20rpx;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.action-btn:active {
+  transform: scale(0.95);
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.action-btn text {
+  font-size: 28rpx;
+  color: #666;
+  font-weight: 500;
+}
+
+/* 区域容器 */
+.section-container {
+  margin: 40rpx 40rpx 60rpx;
+}
+
+.section-title {
+  font-size: 38rpx;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin-bottom: 32rpx;
+  letter-spacing: -0.3rpx;
+}
+
+/* 票种网格布局 */
+.ticket-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12rpx;
+}
+
+/* 票种卡片 */
+.ticket-card {
+  position: relative;
+  background: #ffffff;
+  border-radius: 20rpx;
+  padding: 20rpx;
+  box-shadow: 
+    0 4rpx 20rpx rgba(0, 0, 0, 0.08),
+    0 1rpx 4rpx rgba(0, 0, 0, 0.04);
+  border: 3rpx solid transparent;
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  overflow: visible;
+}
+
+.ticket-card::before {
+  content: '';
+  position: absolute;
+  top: -3rpx;
+  left: -3rpx;
+  right: -3rpx;
+  bottom: -3rpx;
+  border-radius: 24rpx;
+  background: linear-gradient(135deg, #007AFF, #5856D6);
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.ticket-card.selected::before {
+  opacity: 1;
+}
+
+.ticket-card:active {
+  transform: scale(0.98);
+}
+
+.ticket-card.selected {
+  background: #ffffff;
+  border: none;
+  transform: translateY(-4rpx);
+  box-shadow: 
+    0 12rpx 40rpx rgba(0, 122, 255, 0.15),
+    0 4rpx 12rpx rgba(0, 122, 255, 0.1);
+}
+
+/* 票种头部 */
+.ticket-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12rpx;
+  position: relative;
+  z-index: 10;
+}
+
+.ticket-name {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #1a1a1a;
+  letter-spacing: -0.3rpx;
+}
+
+.ticket-price-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.current-price {
+  font-size: 38rpx;
+  font-weight: 800;
+  color: #007AFF;
+  letter-spacing: -0.5rpx;
+}
+
+.original-price {
+  font-size: 24rpx;
+  color: #999;
+  text-decoration: line-through;
+  margin-top: 4rpx;
+}
+
+/* 票种描述 */
+.ticket-description {
+  font-size: 26rpx;
+  color: #666;
+  line-height: 1.5;
+  margin-bottom: 12rpx;
+  position: relative;
+  z-index: 10;
+}
+
+/* 票种特性 */
+.ticket-features {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8rpx;
+  margin-bottom: 12rpx;
+  position: relative;
+  z-index: 10;
+}
+
+.feature-item {
+  padding: 6rpx 12rpx;
+  background: rgba(0, 122, 255, 0.1);
+  color: #007AFF;
+  font-size: 20rpx;
+  font-weight: 500;
+  border-radius: 10rpx;
+}
+
+/* 票种说明 */
+.ticket-notice {
+  font-size: 22rpx;
+  color: #999;
+  line-height: 1.4;
+  position: relative;
+  z-index: 10;
+}
+
+/* 优惠标签 */
+.discount-badge {
+  position: absolute;
+  top: 12rpx;
+  left: 12rpx;
+  padding: 4rpx 10rpx;
+  background: linear-gradient(135deg, #FF3B30, #FF2D92);
+  color: #ffffff;
+  font-size: 18rpx;
+  font-weight: 600;
+  border-radius: 8rpx;
+  box-shadow: 0 4rpx 12rpx rgba(255, 59, 48, 0.3);
+  z-index: 15;
+}
+
+/* 选中指示器 */
+.selection-indicator {
+  position: absolute;
+  bottom: 16rpx;
+  right: 16rpx;
+  width: 40rpx;
+  height: 40rpx;
+  background: linear-gradient(135deg, #007AFF, #5856D6);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4rpx 12rpx rgba(0, 122, 255, 0.3);
+  animation: bounceIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  z-index: 15;
+}
+
+.check-icon {
+  color: #ffffff;
+  font-size: 20rpx;
+  font-weight: 700;
+}
+
+/* 配置项 */
+.config-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 32rpx 40rpx;
+  background: #ffffff;
+  border-radius: 20rpx;
+  margin-bottom: 16rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.06);
+}
+
+.config-label {
+  font-size: 32rpx;
+  font-weight: 500;
+  color: #1a1a1a;
+}
+
+/* 数量控制 */
+.quantity-control {
+  display: flex;
+  align-items: center;
+  gap: 24rpx;
+}
+
+.quantity-btn {
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 16rpx;
+  background: #007AFF;
+  color: #ffffff;
+  font-size: 32rpx;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.quantity-btn:active {
+  transform: scale(0.9);
+}
+
+.quantity-btn.disabled {
+  background: #e5e5e7;
+  color: #999;
+}
+
+.quantity-display {
+  font-size: 36rpx;
+  font-weight: 600;
+  color: #1a1a1a;
+  min-width: 60rpx;
+  text-align: center;
+}
+
+/* 日期选择器 */
+.date-selector {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  padding: 16rpx 24rpx;
+  background: rgba(0, 122, 255, 0.05);
+  border-radius: 16rpx;
+  border: 2rpx solid rgba(0, 122, 255, 0.1);
+}
+
+.date-text {
+  font-size: 28rpx;
+  color: #007AFF;
+  font-weight: 500;
+}
+
+.arrow-icon {
+  font-size: 24rpx;
+  color: #007AFF;
+  font-weight: 600;
+}
+
+/* 购买区域 */
+.purchase-section {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #ffffff;
+  padding: 32rpx 40rpx;
+  border-top: 1rpx solid rgba(0, 0, 0, 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 -4rpx 20rpx rgba(0, 0, 0, 0.08);
+  z-index: 100;
+}
+
+.price-summary {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.price-label {
+  font-size: 24rpx;
+  color: #999;
+  margin-bottom: 8rpx;
+}
+
+.total-amount {
+  font-size: 48rpx;
+  font-weight: 800;
+  color: #1a1a1a;
+  letter-spacing: -0.5rpx;
+}
+
+.purchase-btn {
+  padding: 24rpx 48rpx;
+  background: linear-gradient(135deg, #007AFF, #5856D6);
+  border-radius: 28rpx;
+  box-shadow: 0 8rpx 24rpx rgba(0, 122, 255, 0.3);
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.purchase-btn:active {
+  transform: scale(0.95) translateY(2rpx);
+  box-shadow: 0 4rpx 12rpx rgba(0, 122, 255, 0.4);
+}
+
+.purchase-btn text {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #ffffff;
+  letter-spacing: 0.5rpx;
+}
+
+/* 弹窗样式 */
+.purchase-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.purchase-modal.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(10rpx);
+}
+
+.modal-content {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #ffffff;
+  border-radius: 40rpx 40rpx 0 0;
+  padding: 40rpx;
+  max-height: 80vh;
+  overflow-y: auto;
+  transform: translateY(100%);
+  transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.purchase-modal.show .modal-content {
+  transform: translateY(0);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 40rpx;
+}
+
+.modal-title {
+  font-size: 40rpx;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+.modal-close {
+  font-size: 48rpx;
+  color: #999;
+  font-weight: 300;
+}
+
+/* 表单样式 */
+.form-section {
+  margin-bottom: 40rpx;
+}
+
+.form-item {
+  margin-bottom: 32rpx;
+}
+
+.form-label {
+  display: block;
+  font-size: 28rpx;
+  font-weight: 500;
+  color: #1a1a1a;
+  margin-bottom: 16rpx;
+}
+
+.form-input {
+  width: 100%;
+  padding: 24rpx 32rpx;
+  background: #f8fafc;
+  border-radius: 16rpx;
+  border: 2rpx solid transparent;
+  font-size: 32rpx;
+  transition: all 0.3s ease;
+}
+
+.form-input:focus {
+  background: #ffffff;
+  border-color: #007AFF;
+  box-shadow: 0 0 0 6rpx rgba(0, 122, 255, 0.1);
+}
+
+/* 订单摘要 */
+.modal-summary {
+  background: #f8fafc;
+  border-radius: 20rpx;
+  padding: 32rpx;
+  margin-bottom: 40rpx;
+}
+
+.summary-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16rpx;
+}
+
+.summary-item:last-child {
+  margin-bottom: 0;
+}
+
+.summary-item.total {
+  padding-top: 16rpx;
+  border-top: 1rpx solid rgba(0, 0, 0, 0.1);
+  margin-top: 16rpx;
+}
+
+.summary-label {
+  font-size: 28rpx;
+  color: #666;
+}
+
+.summary-value {
+  font-size: 28rpx;
+  font-weight: 500;
+  color: #1a1a1a;
+}
+
+.summary-item.total .summary-value {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: #007AFF;
+}
+
+/* 弹窗操作按钮 */
+.modal-actions {
+  display: flex;
+  gap: 24rpx;
+}
+
+.modal-actions .action-btn {
+  flex: 1;
+  padding: 28rpx;
+  border-radius: 20rpx;
+  text-align: center;
+  font-size: 32rpx;
+  font-weight: 600;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.modal-actions .action-btn:active {
+  transform: scale(0.95);
+}
+
+.modal-actions .action-btn.secondary {
+  background: #f8fafc;
+  color: #666;
+}
+
+.modal-actions .action-btn.primary {
+  background: linear-gradient(135deg, #007AFF, #5856D6);
+  color: #ffffff;
+  box-shadow: 0 8rpx 24rpx rgba(0, 122, 255, 0.3);
+}
+
+/* 购票须知 */
+.notice-section {
+  margin-bottom: 160rpx; /* 为底部固定按钮留出空间 */
+}
+
+.notice-content {
+  background: #f8fafc;
+  border-radius: 20rpx;
+  padding: 32rpx;
+}
+
+.notice-item {
+  font-size: 26rpx;
+  color: #666;
+  line-height: 1.6;
+  margin-bottom: 16rpx;
+}
+
+.notice-item:last-child {
+  margin-bottom: 0;
+}
+
+/* 动画效果 */
+@keyframes bounceIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+  70% {
+    transform: scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* 响应式设计 */
+@media (max-width: 375px) {
+  .page-title {
+    font-size: 48rpx;
+  }
+  
+  .ticket-card {
+    padding: 32rpx;
+  }
+  
+  .section-container {
+    margin: 0 32rpx 48rpx;
+  }
 }

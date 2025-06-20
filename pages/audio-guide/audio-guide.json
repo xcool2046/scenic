@@ -1,0 +1,13 @@
+{
+  "usingComponents": {
+    "loading": "../../components/loading/loading",
+    "toast": "../../components/toast/toast"
+  },
+  "navigationBarTitleText": "码上导游",
+  "navigationBarBackgroundColor": "#1AAD19",
+  "navigationBarTextStyle": "white",
+  "backgroundColor": "#ffffff",
+  "backgroundTextStyle": "dark",
+  "enablePullDownRefresh": true,
+  "onReachBottomDistance": 50
+} 

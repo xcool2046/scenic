@@ -21,10 +21,10 @@ const preloader = {
   
   // 常用图片资源
   commonImages: [
-    '/assets/icons/home/banner1.jpg',
-    '/assets/icons/home/weather.png',
-    '/assets/icons/ticket/ticket.png',
-    '/assets/icons/guide/guide.png'
+    'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=750&q=80',
+    'https://img.icons8.com/fluency/96/sun.png',
+    'https://img.icons8.com/fluency/96/ticket.png',
+    'https://img.icons8.com/fluency/96/map-marker.png'
   ],
   
   /**

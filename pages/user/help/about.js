@@ -1,7 +1,9 @@
 // pages/user/help/about.js
+const config = require('../../../utils/config');
+
 Page({
   data: {
-    // 页面数据
+    config
   },
   
   onLoad: function (options) {
@@ -29,4 +31,4 @@ Page({
       }
     });
   }
-}) 
+})

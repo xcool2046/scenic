@@ -3,7 +3,7 @@
   <!-- 当前天气信息 -->
   <view class="current-weather">
     <view class="weather-icon-container">
-      <image class="weather-icon" src="{{weatherIcons[weatherData.text] || '/assets/icons/weather/unknown.png'}}"></image>
+      <image class="weather-icon" src="{{weatherIcons[weatherData.text] || 'https://img.icons8.com/fluency/96/question-mark.png'}}"></image>
     </view>
     <view class="weather-info">
       <view class="weather-temp">{{weatherData.temp}}°C</view>
@@ -35,7 +35,7 @@
       <view class="forecast-list">
         <view class="forecast-item" wx:for="{{forecastData}}" wx:key="fxDate">
           <view class="forecast-day">{{index === 0 ? '今天' : (index === 1 ? '明天' : item.fxDate)}}</view>
-          <image class="forecast-icon" src="{{weatherIcons[item.textDay] || '/assets/icons/weather/unknown.png'}}"></image>
+          <image class="forecast-icon" src="{{weatherIcons[item.textDay] || 'https://img.icons8.com/fluency/96/question-mark.png'}}"></image>
           <view class="forecast-temp">
             <text class="temp-max">{{item.tempMax}}°</text>
             <text class="temp-min">{{item.tempMin}}°</text>

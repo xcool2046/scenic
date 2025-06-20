@@ -1,0 +1,108 @@
+<!--码上导游页面 - 极简Apple风格播放器-->
+<view class="audio-guide-container">
+  
+  <!-- 主播放器 - Apple Music风格 -->
+  <view class="main-player" wx:if="{{currentAudio}}">
+    
+    <!-- 背景艺术图 -->
+    <view class="artwork-section">
+      <view class="artwork-container">
+        <image class="artwork-image" src="{{currentAudio.image}}" mode="aspectFill"></image>
+        <view class="artwork-shadow"></view>
+      </view>
+    </view>
+    
+    <!-- 音轨信息 -->
+    <view class="track-info">
+      <view class="track-title">{{currentAudio.title}}</view>
+      <view class="track-artist">景悦达导游</view>
+      <view class="track-description">{{currentAudio.description}}</view>
+    </view>
+    
+    <!-- 进度控制 -->
+    <view class="progress-section">
+      <view class="time-display">
+        <text class="current-time">{{formatTime(currentTime)}}</text>
+        <text class="total-time">{{formatTime(duration)}}</text>
+      </view>
+      <slider class="progress-slider" 
+              value="{{progress}}" 
+              min="0" 
+              max="100"
+              block-size="16"
+              backgroundColor="rgba(255,255,255,0.2)"
+              activeColor="#ffffff"
+              bindchange="onProgressChange">
+      </slider>
+    </view>
+    
+    <!-- 播放控制 -->
+    <view class="controls">
+      <view class="control-btn secondary" bindtap="playPrevious">
+        <text class="control-icon">⏮</text>
+      </view>
+      <view class="control-btn primary" bindtap="togglePlay">
+        <text class="control-icon">{{isPlaying ? '⏸' : '▶'}}</text>
+      </view>
+      <view class="control-btn secondary" bindtap="playNext">
+        <text class="control-icon">⏭</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 景点列表 - 极简卡片设计 -->
+  <view class="spots-section">
+    <view class="section-header">
+      <view class="section-title">导览景点</view>
+      <view class="section-subtitle">{{spotList.length}} 个音频导览</view>
+    </view>
+
+    <view class="spots-list">
+      <view class="spot-item {{currentSpotIndex === index ? 'playing' : ''}}" 
+            wx:for="{{spotList}}" 
+            wx:key="id"
+            wx:for-index="index"
+            data-index="{{index}}"
+            bindtap="onSpotTap">
+        
+        <view class="spot-thumbnail">
+          <image class="spot-image" src="{{item.image}}" mode="aspectFill"></image>
+          <view class="play-indicator" wx:if="{{currentSpotIndex === index && isPlaying}}">
+            <view class="sound-wave">
+              <view class="wave-bar"></view>
+              <view class="wave-bar"></view>
+              <view class="wave-bar"></view>
+            </view>
+          </view>
+        </view>
+        
+        <view class="spot-content">
+          <view class="spot-name">{{item.name}}</view>
+          <view class="spot-duration">{{formatDuration(item.audioDuration)}}</view>
+        </view>
+        
+        <view class="spot-action">
+          <text class="action-icon">{{currentSpotIndex === index ? (isPlaying ? '⏸' : '▶') : '▶'}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 空状态 - 极简设计 -->
+  <view class="empty-state" wx:if="{{spotList.length === 0 && !loading}}">
+    <view class="empty-artwork">
+      <view class="empty-circle">
+        <text class="empty-icon">🎧</text>
+      </view>
+    </view>
+    <view class="empty-text">暂无音频导览</view>
+    <view class="empty-subtitle">请稍后再试</view>
+  </view>
+
+  <!-- 加载状态 -->
+  <loading wx:if="{{loading}}" />
+  
+  <!-- 消息提示 -->
+  <toast />
+
+</view> 

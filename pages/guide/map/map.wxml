@@ -1,150 +1,41 @@
 <!--pages/guide/map/map.wxml-->
 <view class="map-container">
-  <!-- 微信原生地图组件 -->
-  <map
+  <!-- 返回按钮 -->
+  <view class="back-button" bindtap="navigateBack">
+    <text class="back-icon">‹</text>
+  </view>
+
+  <!-- 地图组件 -->
+  <map 
     id="guideMap"
+    class="map"
     latitude="{{latitude}}"
     longitude="{{longitude}}"
     scale="{{scale}}"
     markers="{{markers}}"
-    polyline="{{polyline}}"
-    style="width: 100%; height: {{showInfoPanel ? 'calc(100% - 200rpx)' : '100%'}};"
     show-location="{{showLocation}}"
     show-compass="{{showCompass}}"
-    enable-building="{{enableBuilding}}"
     enable-zoom="{{enableZoom}}"
     enable-scroll="{{enableScroll}}"
     enable-rotate="{{enableRotate}}"
-    show-scale="{{showScale}}"
-    subkey="6WNBZ-5IUK3-64A3K-RTYQS-CVYR2-R4FOQ"
-    bindmarkertap="markerTap"
-    bindtap="mapTap"
-    bindregionchange="onMapRegionChange"
-    bindcallouttap="onCalloutTap"
-    bindlabeltap="onLabelTap"
-    bindpoitap="onPoiTap"
-    bindupdated="onMapLoaded"
-  ></map>
-  
-  <!-- 顶部筛选栏 -->
-  <view class="filter-bar">
-    <scroll-view scroll-x="true" class="filter-scroll">
-      <view class="filter-list">
-        <block wx:for="{{spotTypes}}" wx:key="id">
-          <view 
-            class="filter-item {{activeSpotsFilter === item.id ? 'active' : ''}}" 
-            bindtap="filterMarkers" 
-            data-type="{{item.id}}"
-          >
-            <text>{{item.name}}</text>
-          </view>
-        </block>
-      </view>
-    </scroll-view>
-  </view>
-  
-  <!-- 路线选择 -->
-  <view class="route-selector">
-    <block wx:if="{{activeRouteId === 0}}">
-      <view class="route-btn" bindtap="showRoute" data-id="1">
-        <text>显示推荐路线</text>
-      </view>
-    </block>
-    <block wx:else>
-      <view class="route-btn active" bindtap="hideRoute">
-        <text>隐藏路线</text>
-      </view>
-    </block>
-  </view>
-  
-  <!-- 路线类型选择 -->
-  <view class="route-types" wx:if="{{polyline.length > 0}}">
-    <scroll-view scroll-x="true" class="route-type-scroll">
-      <view class="route-type-list">
-        <block wx:for="{{routeTypes}}" wx:key="id">
-          <view 
-            class="route-type-item {{currentRouteType === item.id ? 'active' : ''}}" 
-            bindtap="switchRouteType" 
-            data-type="{{item.id}}"
-          >
-            <text>{{item.name}}</text>
-          </view>
-        </block>
-      </view>
-    </scroll-view>
-  </view>
-  
-  <!-- 周边设施快捷按钮 -->
-  <view class="nearby-buttons">
-    <view class="nearby-btn toilet" bindtap="searchNearby" data-type="toilet">
-      <text>厕所</text>
-    </view>
-    <view class="nearby-btn food" bindtap="searchNearby" data-type="food">
-      <text>餐饮</text>
-    </view>
-    <view class="nearby-btn rest" bindtap="searchNearby" data-type="rest">
-      <text>休息区</text>
-    </view>
-  </view>
-  
-  <!-- 功能按钮 -->
-  <view class="function-buttons">
-    <view class="function-btn {{showTraffic ? 'active' : ''}}" bindtap="toggleTraffic">
-      <text>交通状况</text>
-    </view>
-    <view class="function-btn {{showIndoorMap ? 'active' : ''}}" bindtap="toggleIndoorMap">
-      <text>室内地图</text>
-    </view>
-  </view>
-  
-  <!-- 添加定位控件 -->
-  <view class="map-controls">
-    <view class="control-btn location" bindtap="moveToLocation">
-      <image src="/assets/icons/location.png"></image>
-    </view>
-  </view>
-  
-  <!-- 加载状态组件 -->
-  <loading id="loading" text="加载中" mask="{{true}}" loading="{{false}}"></loading>
-  
-  <!-- 轻提示组件 -->
-  <toast id="toast"></toast>
-  
+    bindmarkertap="onMarkerTap"
+    bindtap="hideInfoPanel"
+  >
+  </map>
+
   <!-- 底部景点信息面板 -->
   <view class="info-panel {{showInfoPanel ? 'show' : ''}}" wx:if="{{selectedSpot}}">
     <view class="info-header">
       <text class="info-title">{{selectedSpot.name}}</text>
-      <view class="close-btn" bindtap="closeInfoPanel">×</view>
+      <view class="close-btn" bindtap="hideInfoPanel">×</view>
     </view>
+    
     <view class="info-content">
-      <view class="info-meta">
-        <view class="info-type">
-          <text>{{
-            selectedSpot.type === 'scenery' ? '景点' :
-            selectedSpot.type === 'facility' ? '设施' :
-            selectedSpot.type === 'entrance' ? '出入口' :
-            selectedSpot.type === 'food' ? '餐饮' : '其他'
-          }}</text>
-        </view>
-        
-        <!-- 添加距离信息 -->
-        <view class="info-distance" wx:if="{{selectedSpot.distanceText}}">
-          <text>距离: {{selectedSpot.distanceText}} | 步行约{{selectedSpot.walkingTime}}</text>
-        </view>
-      </view>
-      
-      <view class="info-desc">
-        <text>这里是{{selectedSpot.name}}的简介，描述其特色、历史、文化等内容。在实际应用中，这部分内容应当从API或数据库获取。</text>
-      </view>
+      <text class="info-desc">{{selectedSpot.desc}}</text>
       
       <view class="info-actions">
-        <view class="action-btn detail" bindtap="navigateToSpotDetail">
-          <text>查看详情</text>
-        </view>
-        <view class="action-btn navigate" bindtap="navigateToSpot">
-          <text>到这去</text>
-        </view>
+        <view class="action-btn primary" bindtap="navigateToSpotDetail">查看详情</view>
       </view>
     </view>
   </view>
-</view> 
+</view>

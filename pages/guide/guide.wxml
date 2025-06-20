@@ -4,13 +4,13 @@
   <view class="map-container" bindtap="navigateToFullMap">
     <image class="map-preview" src="{{images.MAP_PREVIEW}}" mode="aspectFill"></image>
     <view class="map-overlay">
-      <text class="map-text">点击查看详细地图</text>
+      <text class="map-text">探索完整地图</text>
     </view>
   </view>
   
   <!-- 景点列表 -->
   <view class="section-title">
-    <text>景点列表</text>
+    <text>精选景点</text>
     <view class="sort-option" bindtap="toggleSortOption">
       <text>{{sortText}}</text>
       <view class="icon-base icon-small">
@@ -27,24 +27,18 @@
           <view class="spot-title">
             <text>{{item.name}}</text>
             <view class="spot-tag hot" wx:if="{{item.hot}}">
-              <view class="icon-base icon-small">
-                <image class="icon-image" src="{{icons.HOT_TAG}}"></image>
-              </view>
+              <text>热门</text>
             </view>
           </view>
           <text class="spot-desc">{{item.desc}}</text>
           <view class="spot-meta">
             <view class="spot-distance">
-              <view class="icon-base icon-small">
-                <image class="icon-image" src="{{icons.DISTANCE}}"></image>
-              </view>
-              <text>{{item.distance}}</text>
+              <text class="meta-number">{{item.distance}}</text>
+              <text class="meta-label">距离</text>
             </view>
             <view class="spot-duration">
-              <view class="icon-base icon-small">
-                <image class="icon-image" src="{{icons.TIME_ICON}}"></image>
-              </view>
-              <text>建议游览{{item.duration}}</text>
+              <text class="meta-number">{{item.duration}}</text>
+              <text class="meta-label">游览时长</text>
             </view>
           </view>
         </view>
@@ -59,7 +53,7 @@
   
   <view class="route-cards">
     <block wx:for="{{routes}}" wx:key="id">
-      <view class="route-card" bindtap="navigateToRouteDetail" data-id="{{item.id}}">
+      <view class="route-card" bindtap="showRouteDetail" data-id="{{item.id}}">
         <image class="route-image" src="{{item.image}}" mode="aspectFill"></image>
         <view class="route-card-overlay">
           <view class="route-card-content">
@@ -72,6 +66,30 @@
         </view>
       </view>
     </block>
+  </view>
+  
+  <!-- 路线详情弹窗 -->
+  <view class="route-modal" wx:if="{{showRouteModal}}" catchtap="hideRouteModal">
+    <view class="route-modal-content" catchtap="">
+      <view class="route-modal-header">
+        <text class="route-modal-title">{{selectedRoute.name}}</text>
+        <view class="route-modal-close" bindtap="hideRouteModal">×</view>
+      </view>
+      <view class="route-modal-body">
+        <image class="route-modal-image" src="{{selectedRoute.image}}" mode="aspectFill"></image>
+        <view class="route-modal-info">
+          <view class="route-modal-meta">
+            <text class="route-modal-spots">{{selectedRoute.spotCount}}个景点</text>
+            <text class="route-modal-duration">约{{selectedRoute.duration}}</text>
+          </view>
+          <text class="route-modal-desc">{{selectedRoute.description}}</text>
+        </view>
+      </view>
+      <view class="route-modal-footer">
+        <button class="route-modal-btn secondary" bindtap="hideRouteModal">关闭</button>
+        <button class="route-modal-btn primary" bindtap="navigateToNearby">查看设施</button>
+      </view>
+    </view>
   </view>
   
   <!-- 加载状态组件 -->

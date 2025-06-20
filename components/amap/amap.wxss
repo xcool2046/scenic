@@ -21,6 +21,12 @@
   font-size: 28rpx;
 }
 
+/* 确保地图组件填充容器 */
+map {
+  width: 100% !important;
+  height: 100% !important;
+}
+
 .map-simulate {
   width: 100%;
   height: 100%;

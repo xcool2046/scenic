@@ -78,7 +78,7 @@
         </view>
       </view>
       <view class="like-btn {{isLiked ? 'liked' : ''}}" bindtap="toggleLike">
-        <image src="{{isLiked ? '/assets/icons/heart_filled.png' : '/assets/icons/heart.png'}}"></image>
+                  <image src="{{isLiked ? 'https://img.icons8.com/fluency/96/heart-filled.png' : 'https://img.icons8.com/fluency/96/heart.png'}}"></image>
       </view>
     </view>
     
@@ -89,7 +89,7 @@
           <block wx:for="{{5}}" wx:key="*this">
             <image 
               class="star" 
-              src="{{index < Math.floor(spot.popularity) ? '/assets/icons/star_filled.png' : (index < spot.popularity ? '/assets/icons/star_half.png' : '/assets/icons/star.png')}}"
+              src="{{index < Math.floor(spot.popularity) ? 'https://img.icons8.com/fluency/96/star-filled.png' : (index < spot.popularity ? 'https://img.icons8.com/fluency/96/star-half-empty.png' : 'https://img.icons8.com/fluency/96/star.png')}}"
             ></image>
           </block>
         </view>
@@ -112,7 +112,7 @@
   <!-- 景点开放信息 -->
   <view class="info-item">
     <view class="info-item-title">
-      <image src="/assets/icons/time.png"></image>
+                <image src="https://img.icons8.com/fluency/96/time.png"></image>
       <text>开放时间</text>
     </view>
     <text class="info-item-content">{{spot.openTime}}</text>
@@ -121,14 +121,14 @@
   <!-- 景点位置 -->
   <view class="info-item">
     <view class="info-item-title">
-      <image src="/assets/icons/location.png"></image>
+                <image src="https://img.icons8.com/fluency/96/location.png"></image>
       <text>位置信息</text>
     </view>
     <view class="info-item-content location-content" bindtap="navigateToMap">
       <text>{{spot.location}}</text>
       <view class="map-link">
         <text>查看地图</text>
-        <image src="/assets/icons/arrow_right.png"></image>
+        <image src="https://img.icons8.com/fluency/96/right-arrow.png"></image>
       </view>
     </view>
   </view>

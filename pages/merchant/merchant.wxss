@@ -1,0 +1,335 @@
+/* 商家合作页面 - Apple极简焦点型设计 */
+
+.merchant-container {
+  min-height: 100vh;
+  background: #ffffff;
+  padding: 0 24rpx 40rpx;
+}
+
+/* ==================== 页面标题 ==================== */
+.page-header {
+  padding: 60rpx 0 48rpx;
+  text-align: center;
+}
+
+.page-title {
+  display: block;
+  font-size: 56rpx;
+  font-weight: 800;
+  color: #000000;
+  line-height: 1.1;
+  margin-bottom: 12rpx;
+  letter-spacing: -1rpx;
+}
+
+.page-subtitle {
+  display: block;
+  font-size: 18rpx;
+  color: #8E8E93;
+  font-weight: 500;
+  letter-spacing: 6rpx;
+  text-transform: uppercase;
+}
+
+/* ==================== Bento Grid 布局 ==================== */
+.merchants-bento {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16rpx;
+  margin-bottom: 40rpx;
+}
+
+.merchant-card {
+  position: relative;
+  background: #ffffff;
+  border-radius: 24rpx;
+  padding: 32rpx 28rpx;
+  border: 1rpx solid #F2F2F7;
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  overflow: hidden;
+  min-height: 280rpx;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.merchant-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(0,122,255,0.05) 0%, rgba(0,122,255,0) 100%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.merchant-card:active {
+  transform: translateY(-2rpx) scale(0.98);
+  border-color: #007AFF;
+  box-shadow: 0 20rpx 40rpx rgba(0,122,255,0.15);
+}
+
+.merchant-card:active::before {
+  opacity: 1;
+}
+
+/* ==================== 商家图片容器 ==================== */
+.merchant-image-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 24rpx;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.merchant-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.merchant-card:active .merchant-image {
+  transform: scale(1.05);
+}
+
+.image-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    135deg, 
+    rgba(255, 255, 255, 0.95) 0%, 
+    rgba(255, 255, 255, 0.85) 50%,
+    rgba(255, 255, 255, 0.92) 100%
+  );
+  backdrop-filter: blur(1rpx);
+}
+
+/* ==================== 评分焦点区域 ==================== */
+.rating-hero {
+  position: relative;
+  text-align: center;
+  margin-bottom: 24rpx;
+  z-index: 2;
+}
+
+.rating-number {
+  display: block;
+  font-size: 96rpx;
+  font-weight: 900;
+  color: #007AFF;
+  line-height: 1;
+  margin-bottom: 8rpx;
+  font-family: -apple-system, SF Pro Display, sans-serif;
+  letter-spacing: -2rpx;
+}
+
+.rating-stars {
+  display: flex;
+  justify-content: center;
+  gap: 2rpx;
+}
+
+.star-icon {
+  font-size: 16rpx;
+  color: #FFD60A;
+  line-height: 1;
+}
+
+/* ==================== 商家信息 ==================== */
+.merchant-info {
+  position: relative;
+  text-align: center;
+  margin-bottom: 20rpx;
+  z-index: 2;
+}
+
+.merchant-name {
+  display: block;
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #000000;
+  line-height: 1.2;
+  margin-bottom: 8rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.merchant-desc {
+  display: block;
+  font-size: 22rpx;
+  color: #8E8E93;
+  line-height: 1.3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ==================== 微小距离标识 ==================== */
+.distance-badge {
+  position: absolute;
+  top: 20rpx;
+  right: 20rpx;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 12rpx;
+  padding: 6rpx 12rpx;
+  backdrop-filter: blur(20rpx);
+  border: 1rpx solid rgba(255, 255, 255, 0.5);
+  z-index: 3;
+}
+
+.distance-text {
+  font-size: 18rpx;
+  color: #8E8E93;
+  font-weight: 600;
+}
+
+/* ==================== 快速操作区域 ==================== */
+.action-zone {
+  position: relative;
+  display: flex;
+  gap: 12rpx;
+  margin-top: auto;
+  z-index: 2;
+}
+
+.action-primary,
+.action-secondary {
+  flex: 1;
+  height: 56rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 16rpx;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.action-primary {
+  background: #007AFF;
+}
+
+.action-primary image {
+  width: 24rpx;
+  height: 24rpx;
+  filter: brightness(0) invert(1);
+}
+
+.action-primary:active {
+  background: #0056CC;
+  transform: scale(0.96);
+}
+
+.action-secondary {
+  background: #F2F2F7;
+  border: 1rpx solid #E5E5EA;
+}
+
+.action-secondary image {
+  width: 24rpx;
+  height: 24rpx;
+  opacity: 0.6;
+}
+
+.action-secondary:active {
+  background: #E5E5EA;
+  transform: scale(0.96);
+}
+
+/* ==================== 极简空状态 ==================== */
+.empty-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400rpx;
+  text-align: center;
+}
+
+.empty-title {
+  font-size: 28rpx;
+  color: #8E8E93;
+  font-weight: 500;
+  margin-bottom: 32rpx;
+}
+
+.empty-action {
+  background: #F2F2F7;
+  border-radius: 16rpx;
+  padding: 16rpx 32rpx;
+  transition: all 0.3s ease;
+}
+
+.empty-action:active {
+  background: #E5E5EA;
+  transform: scale(0.96);
+}
+
+.empty-action text {
+  font-size: 24rpx;
+  color: #007AFF;
+  font-weight: 600;
+}
+
+/* ==================== 响应式适配 ==================== */
+@media (max-width: 400px) {
+  .merchants-bento {
+    grid-template-columns: 1fr;
+    gap: 20rpx;
+  }
+  
+  .rating-number {
+    font-size: 80rpx;
+  }
+  
+  .merchant-name {
+    font-size: 28rpx;
+  }
+}
+
+/* ==================== 性能优化 ==================== */
+.merchant-card {
+  contain: layout style paint;
+  will-change: transform;
+}
+
+.rating-number {
+  will-change: transform;
+}
+
+/* ==================== 深色模式支持 ==================== */
+@media (prefers-color-scheme: dark) {
+  .merchant-container {
+    background: #000000;
+  }
+  
+  .page-title {
+    color: #ffffff;
+  }
+  
+  .page-subtitle {
+    color: #8E8E93;
+  }
+  
+  .merchant-card {
+    background: #1C1C1E;
+    border-color: #38383A;
+  }
+  
+  .merchant-name {
+    color: #ffffff;
+  }
+  
+  .action-secondary {
+    background: #2C2C2E;
+    border-color: #38383A;
+  }
+} 

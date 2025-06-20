@@ -1,115 +1,66 @@
 // packages/guide/pages/guide/map/map.js
 Page({
+
+  /**
+   * 页面的初始数据
+   */
   data: {
-    pageTitle: '景区地图',
-    scale: 14,
-    markers: [],
-    latitude: 39.915,
-    longitude: 116.404
+
   },
-  
+
+  /**
+   * 生命周期函数--监听页面加载
+   */
   onLoad(options) {
-    console.log('页面加载: map', options);
-    this.loadMapMarkers();
+
   },
-  
-  // 加载地图标记点
-  loadMapMarkers() {
-    // 模拟数据，实际项目中可从服务器获取
-    const markers = [
-      {
-        id: 1,
-        latitude: 39.915,
-        longitude: 116.404,
-        name: '中心景点',
-        iconPath: '/assets/icons/guide/marker.png',
-        width: 30,
-        height: 30
-      },
-      {
-        id: 2,
-        latitude: 39.918,
-        longitude: 116.407,
-        name: '休息区',
-        iconPath: '/assets/icons/facilities/rest_icon.png',
-        width: 30,
-        height: 30
-      },
-      {
-        id: 3,
-        latitude: 39.912,
-        longitude: 116.402,
-        name: '卫生间',
-        iconPath: '/assets/icons/facilities/toilet_icon.png',
-        width: 30,
-        height: 30
-      }
-    ];
-    
-    this.setData({ markers });
+
+  /**
+   * 生命周期函数--监听页面初次渲染完成
+   */
+  onReady() {
+
   },
-  
-  // 放大地图
-  zoomIn() {
-    let scale = this.data.scale;
-    if (scale < 18) {
-      this.setData({ scale: scale + 1 });
-    }
+
+  /**
+   * 生命周期函数--监听页面显示
+   */
+  onShow() {
+
   },
-  
-  // 缩小地图
-  zoomOut() {
-    let scale = this.data.scale;
-    if (scale > 5) {
-      this.setData({ scale: scale - 1 });
-    }
+
+  /**
+   * 生命周期函数--监听页面隐藏
+   */
+  onHide() {
+
   },
-  
-  // 定位到我的位置
-  showMyLocation() {
-    wx.getLocation({
-      type: 'gcj02',
-      success: (res) => {
-        this.setData({
-          latitude: res.latitude,
-          longitude: res.longitude
-        });
-      },
-      fail: () => {
-        wx.showToast({
-          title: '获取位置失败',
-          icon: 'error'
-        });
-      }
-    });
+
+  /**
+   * 生命周期函数--监听页面卸载
+   */
+  onUnload() {
+
   },
-  
-  // 点击标记点
-  markertap(e) {
-    const markerId = e.markerId;
-    const marker = this.data.markers.find(m => m.id === markerId);
-    
-    if (marker) {
-      wx.showActionSheet({
-        itemList: ['查看详情', '导航到这里'],
-        success: (res) => {
-          if (res.tapIndex === 0) {
-            // 查看详情
-            wx.showToast({
-              title: `查看${marker.name}详情`,
-              icon: 'none'
-            });
-          } else if (res.tapIndex === 1) {
-            // 导航
-            wx.openLocation({
-              latitude: marker.latitude,
-              longitude: marker.longitude,
-              name: marker.name,
-              scale: 18
-            });
-          }
-        }
-      });
-    }
+
+  /**
+   * 页面相关事件处理函数--监听用户下拉动作
+   */
+  onPullDownRefresh() {
+
+  },
+
+  /**
+   * 页面上拉触底事件的处理函数
+   */
+  onReachBottom() {
+
+  },
+
+  /**
+   * 用户点击右上角分享
+   */
+  onShareAppMessage() {
+
   }
 })

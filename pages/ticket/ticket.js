@@ -1,52 +1,76 @@
 // packages/ticket/pages/ticket/ticket.js
+const app = getApp();
+const env = require('../../utils/env');
+const { ticketManager } = require('../../utils/ticket');
+const { userManager } = require('../../utils/user');
+const api = require('../../utils/api');
+const config = require('../../utils/config');
 const performance = require('../../utils/performance');
 const payment = require('../../utils/payment');
 const interaction = require('../../utils/interaction');
 
 Page({
   data: {
+    config,
     pageTitle: '景区门票',
     activeTab: 'tickets', // tickets, orders
+    // 门票类型
+    ticketTypes: [],
     tickets: [
       {
-        id: 1,
+        id: 'adult',
         name: '成人票',
         price: 120,
         originalPrice: 150,
         discount: '8折',
         description: '适用于18-60周岁游客',
-        notice: '需提前一天预订',
-        selected: true
+        notice: '入园需出示有效身份证件',
+        selected: true,
+        features: ['所有景点', '免费停车', '免费WiFi']
       },
       {
-        id: 2,
+        id: 'student',
+        name: '学生票',
+        price: 90,
+        originalPrice: 150,
+        discount: '6折',
+        description: '全日制在校学生专享',
+        notice: '入园需出示学生证',
+        selected: false,
+        features: ['所有景点', '免费停车']
+      },
+      {
+        id: 'child',
         name: '儿童票',
         price: 60,
         originalPrice: 75,
         discount: '8折',
-        description: '适用于1.2米-1.5米儿童',
-        notice: '需提前一天预订',
-        selected: false
+        description: '6-17周岁儿童专享',
+        notice: '需成人陪同入园',
+        selected: false,
+        features: ['所有景点', '免费停车']
       },
       {
-        id: 3,
+        id: 'senior',
         name: '老人票',
         price: 60,
         originalPrice: 75,
         discount: '8折',
-        description: '适用于60周岁以上老人',
-        notice: '需提前一天预订',
-        selected: false
+        description: '60周岁以上老人专享',
+        notice: '入园需出示身份证或老年证',
+        selected: false,
+        features: ['所有景点', '免费停车', '优先通道']
       },
       {
-        id: 4,
+        id: 'family',
         name: '家庭套票',
-        price: 220,
-        originalPrice: 300,
-        discount: '7.3折',
-        description: '2大1小，最多省80元',
-        notice: '需提前一天预订',
-        selected: false
+        price: 280,
+        originalPrice: 360,
+        discount: '7.8折',
+        description: '2大1小家庭组合，畅享全景区',
+        notice: '限定3人同时入园',
+        selected: false,
+        features: ['所有景点', '免费停车', '家庭合影服务']
       }
     ],
     orders: [],
@@ -64,132 +88,79 @@ Page({
     showContactForm: false,
     
     // 支付相关
-    paymentInProgress: false
+    paymentInProgress: false,
+    selectedTicket: null,
+    showPurchaseForm: false,
+    contactInfo: {
+      name: '',
+      phone: ''
+    }
   },
   
   onLoad(options) {
-    console.log('页面加载: ticket', options);
-    
-    // 记录页面性能
-    performance.performanceMonitor.recordPagePerformance('ticket');
-    
-    // 如果有ticketId参数，选中对应门票
-    if (options.ticketId) {
-      this.selectTicket(options.ticketId);
-    }
-    
-    // 如果有tab参数，切换到对应标签页
-    if (options.tab) {
-      this.setData({
-        activeTab: options.tab
-      });
-    }
-    
-    // 如果要自动滚动
-    if (options.autoScroll === 'true') {
-      this.setData({
-        autoScroll: true
-      });
-    }
-    
-    // 获取今天日期并设置为默认游览日期
-    const today = new Date();
-    const tomorrow = new Date(today);
+    console.log('票务页面加载:', options);
+    this.initializePageData(options);
+  },
+  
+  // 初始化页面数据
+  initializePageData(options) {
+    // 设置默认游览日期（明天）
+    const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
+    const visitDate = tomorrow.toISOString().split('T')[0];
     
-    const year = tomorrow.getFullYear();
-    const month = String(tomorrow.getMonth() + 1).padStart(2, '0');
-    const day = String(tomorrow.getDate()).padStart(2, '0');
+    // 获取选中的票种
+    const selectedTicket = this.data.tickets.find(ticket => ticket.selected);
     
     this.setData({
-      visitDate: `${year}-${month}-${day}`
+      visitDate,
+      selectedTicket,
+      totalPrice: selectedTicket ? selectedTicket.price * this.data.quantity : 120
     });
     
-    // 获取用户信息并预填充联系人表单
-    this.loadUserInfo();
-    
-    // 加载订单数据
-    this.loadOrders();
-    
-    // 计算总价
-    this.calculateTotal();
-  },
-  
-  onShow() {
-    // 每次显示页面时刷新订单
-    if (this.data.activeTab === 'orders') {
-      this.loadOrders();
+    // 处理URL参数
+    if (options && options.type) {
+      this.selectTicketByType(options.type);
     }
   },
   
-  // 页面显示后自动滚动到选择区域
-  onReady() {
-    if (this.data.autoScroll) {
-      setTimeout(() => {
-        wx.pageScrollTo({
-          selector: '.ticket-selector',
-          duration: 300
-        });
-      }, 500);
-    }
+  // 选择票种
+  selectTicket(e) {
+    const ticketId = e.currentTarget.dataset.id;
+    const tickets = this.data.tickets.map(ticket => ({
+      ...ticket,
+      selected: ticket.id === ticketId
+    }));
+    
+    const selectedTicket = tickets.find(ticket => ticket.selected);
+    const totalPrice = selectedTicket.price * this.data.quantity;
+    
+    this.setData({
+      tickets,
+      selectedTicket,
+      totalPrice
+    });
+    
+    // 添加触觉反馈
+    wx.vibrateShort();
   },
   
-  // 加载用户信息
-  loadUserInfo() {
-    const userInfo = wx.getStorageSync('userInfo') || {};
+  // 根据类型选择票种
+  selectTicketByType(type) {
+    const tickets = this.data.tickets.map(ticket => ({
+      ...ticket,
+      selected: ticket.id === type
+    }));
     
-    if (userInfo.name && userInfo.phone) {
+    const selectedTicket = tickets.find(ticket => ticket.selected);
+    if (selectedTicket) {
+      const totalPrice = selectedTicket.price * this.data.quantity;
       this.setData({
-        contactName: userInfo.name || '',
-        contactPhone: userInfo.phone || '',
-        idCard: userInfo.idCard || ''
+        tickets,
+        selectedTicket,
+        totalPrice
       });
     }
-  },
-  
-  // 切换选项卡
-  switchTab(e) {
-    const tab = e.currentTarget.dataset.tab;
-    this.setData({
-      activeTab: tab
-    });
-    
-    if (tab === 'orders') {
-      this.loadOrders();
-    }
-  },
-  
-  // 选择门票
-  selectTicket(id) {
-    const ticketId = typeof id === 'object' ? id.currentTarget.dataset.id : id;
-    
-    const tickets = this.data.tickets.map(ticket => {
-      return {
-        ...ticket,
-        selected: ticket.id == ticketId
-      };
-    });
-    
-    this.setData({ tickets }, () => {
-      this.calculateTotal();
-    });
-  },
-  
-  // 加载订单
-  loadOrders() {
-    interaction.showLoading('加载订单中');
-    
-    // 从本地缓存加载订单或从服务器同步
-    payment.loadUserOrders().then(orders => {
-      this.setData({ orders });
-      interaction.hideLoading();
-    }).catch(err => {
-      console.error('加载订单失败', err);
-      interaction.hideLoading();
-      
-      // 如果加载失败使用空数组
-      this.setData({ orders: [] });
-    });
   },
   
   // 修改数量
@@ -203,225 +174,142 @@ Page({
       quantity++;
     }
     
-    this.setData({ quantity }, () => {
-      this.calculateTotal();
+    const totalPrice = this.data.selectedTicket.price * quantity;
+    
+    this.setData({
+      quantity,
+      totalPrice
     });
+    
+    // 添加触觉反馈
+    wx.vibrateShort();
   },
   
-  // 选择日期
+  // 选择游览日期
   bindDateChange(e) {
     this.setData({
       visitDate: e.detail.value
     });
   },
   
-  // 输入联系人信息
-  onContactNameInput(e) {
+  // 立即购买
+  buyNow() {
+    // 检查登录状态
+    if (!userManager.getCurrentUser()) {
+      this.showLoginPrompt();
+      return;
+    }
+    
+    // 显示购买表单
     this.setData({
-      contactName: e.detail.value
+      showPurchaseForm: true
     });
   },
   
-  onContactPhoneInput(e) {
-    this.setData({
-      contactPhone: e.detail.value
+  // 显示登录提示
+  showLoginPrompt() {
+    wx.showModal({
+      title: '提示',
+      content: '请先登录后购买门票',
+      confirmText: '去登录',
+      success: (res) => {
+        if (res.confirm) {
+          wx.switchTab({
+            url: '/pages/user/user'
+          });
+        }
+      }
     });
   },
   
-  onIdCardInput(e) {
+  // 联系人信息输入
+  onContactInput(e) {
+    const field = e.currentTarget.dataset.field;
+    const value = e.detail.value;
+    
     this.setData({
-      idCard: e.detail.value
+      [`contactInfo.${field}`]: value
     });
   },
   
-  // 计算总价
-  calculateTotal() {
-    const selectedTicket = this.data.tickets.find(ticket => ticket.selected);
-    if (selectedTicket) {
-      this.setData({
-        totalPrice: selectedTicket.price * this.data.quantity
-      });
-    }
-  },
-  
-  // 验证手机号
-  validatePhone(phone) {
-    const phoneReg = /^1[3-9]\d{9}$/;
-    return phoneReg.test(phone);
-  },
-  
-  // 验证身份证
-  validateIdCard(idCard) {
-    // 简单验证18位身份证，实际可能需要更复杂的验证
-    const idCardReg = /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/;
-    return idCardReg.test(idCard);
-  },
-  
-  // 提交订单
-  submitOrder() {
-    const selectedTicket = this.data.tickets.find(ticket => ticket.selected);
+  // 确认支付
+  async confirmPayment() {
+    const { selectedTicket, quantity, visitDate, totalPrice, contactInfo } = this.data;
     
-    if (!selectedTicket) {
-      interaction.showToast('请选择门票');
+    // 简单验证
+    if (!contactInfo.name || !contactInfo.phone) {
+      interaction.showToast('请填写联系人信息');
       return;
     }
     
-    if (!this.data.visitDate) {
-      interaction.showToast('请选择游览日期');
+    if (!this.isValidPhone(contactInfo.phone)) {
+      interaction.showToast('请输入正确的手机号');
       return;
     }
-    
-    // 如果未显示联系人表单，则显示表单
-    if (!this.data.showContactForm) {
-      this.setData({
-        showContactForm: true
-      });
-      
-      // 滚动到表单区域
-      setTimeout(() => {
-        wx.pageScrollTo({
-          selector: '.contact-form',
-          duration: 300
-        });
-      }, 300);
-      
-      return;
-    }
-    
-    // 验证联系人信息
-    if (!this.data.contactName) {
-      interaction.showToast('请输入联系人姓名');
-      return;
-    }
-    
-    if (!this.data.contactPhone) {
-      interaction.showToast('请输入联系电话');
-      return;
-    }
-    
-    if (!this.validatePhone(this.data.contactPhone)) {
-      interaction.showToast('手机号格式不正确');
-      return;
-    }
-    
-    if (this.data.idCard && !this.validateIdCard(this.data.idCard)) {
-      interaction.showToast('身份证号格式不正确');
-      return;
-    }
-    
-    // 保存联系人信息
-    const userInfo = {
-      name: this.data.contactName,
-      phone: this.data.contactPhone,
-      idCard: this.data.idCard
-    };
-    wx.setStorageSync('userInfo', userInfo);
     
     // 构建订单数据
     const orderData = {
       ticketId: selectedTicket.id,
       ticketName: selectedTicket.name,
-      quantity: this.data.quantity,
+      quantity,
       unitPrice: selectedTicket.price,
-      totalPrice: this.data.totalPrice,
-      visitDate: this.data.visitDate,
-      contactName: this.data.contactName,
-      contactPhone: this.data.contactPhone,
-      idCard: this.data.idCard
+      totalPrice,
+      visitDate,
+      contactName: contactInfo.name,
+      contactPhone: contactInfo.phone
     };
     
-    // 显示确认框
-    wx.showModal({
-      title: '确认订单',
-      content: `您选择了${selectedTicket.name} × ${this.data.quantity}，游览日期: ${this.data.visitDate}，总价: ¥${this.data.totalPrice}`,
-      success: (res) => {
-        if (res.confirm) {
-          this.processPayment(orderData);
-        }
+    try {
+      // 调用支付流程
+      const result = await payment.payOrder(orderData);
+      
+      if (result.success) {
+        // 支付成功，跳转到订单页面
+        wx.redirectTo({
+          url: `/pages/orders/orders?success=true&orderId=${result.orderId}`
+        });
+      } else if (result.cancelled) {
+        // 用户取消支付
+        interaction.showToast('支付已取消');
+      } else {
+        // 支付失败
+        interaction.showToast(result.message || '支付失败，请重试');
       }
-    });
-  },
-  
-  // 处理支付流程
-  processPayment(orderData) {
-    // 防止重复点击
-    if (this.data.paymentInProgress) {
-      return;
+    } catch (error) {
+      console.error('支付过程出错:', error);
+      interaction.showToast('支付过程中出现错误，请重试');
     }
-    
-    this.setData({ paymentInProgress: true });
-    
-    // 调用支付流程
-    payment.payOrder(orderData)
-      .then(result => {
-        this.setData({ paymentInProgress: false });
-        
-        if (result.success) {
-          // 支付成功
-          // 跳转到成功页面
-          wx.navigateTo({
-            url: `/packages/ticket/pages/ticket/success/success?orderId=${result.orderId}&ticketName=${orderData.ticketName}&quantity=${orderData.quantity}&totalPrice=${orderData.totalPrice}&visitDate=${orderData.visitDate}`
-          });
-        } else if (result.cancelled) {
-          // 用户取消支付
-          interaction.showToast('支付已取消');
-        } else {
-          // 支付失败
-          interaction.showToast(result.message || '支付失败，请重试');
-        }
-      })
-      .catch(err => {
-        this.setData({ paymentInProgress: false });
-        interaction.showToast('支付过程中出现错误');
-        console.error('支付错误', err);
-      });
   },
   
-  // 查看票码
-  viewTicketCode(e) {
-    const order = e.currentTarget.dataset.order;
-    wx.navigateTo({
-      url: `/packages/ticket/pages/ticket/code/code?id=${order.id}&code=${order.qrCode}`
-    });
-  },
-  
-  // 查看订单详情
-  viewOrderDetail(e) {
-    const orderId = e.currentTarget.dataset.id;
-    wx.navigateTo({
-      url: `/packages/ticket/pages/ticket/detail/detail?id=${orderId}`
-    });
-  },
-  
-  // 申请退款
-  requestRefund(e) {
-    const orderId = e.currentTarget.dataset.id;
-    
-    wx.showModal({
-      title: '申请退款',
-      content: '确定要申请退款吗？',
-      success: (res) => {
-        if (res.confirm) {
-          // 显示退款原因选择
-          wx.showActionSheet({
-            itemList: ['计划有变', '重复购买', '其他原因'],
-            success: (result) => {
-              const reasons = ['计划有变', '重复购买', '其他原因'];
-              const reason = reasons[result.tapIndex];
-              
-              // 申请退款
-              payment.requestRefund(orderId, reason)
-                .then(() => {
-                  // 刷新订单列表
-                  this.loadOrders();
-                })
-                .catch(err => {
-                  console.error('退款申请失败', err);
-                });
-            }
-          });
-        }
+  // 取消购买
+  cancelPurchase() {
+    this.setData({
+      showPurchaseForm: false,
+      contactInfo: {
+        name: '',
+        phone: ''
       }
     });
+  },
+  
+  // 查看我的订单
+  viewMyOrders() {
+    wx.navigateTo({
+      url: '/pages/orders/orders'
+    });
+  },
+  
+  // 验证手机号
+  isValidPhone(phone) {
+    return /^1[3-9]\d{9}$/.test(phone);
+  },
+  
+  // 页面分享
+  onShareAppMessage() {
+    return {
+      title: '景区门票预订',
+      path: '/pages/ticket/ticket',
+      imageUrl: '/assets/images/cards/ticket_card.jpg'
+    };
   }
 });

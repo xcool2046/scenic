@@ -1,8 +1,2 @@
-<!-- packages/ticket/pages/ticket/success/success.wxml -->
-<view class="container">
-  <view class="page-title">{{pageTitle}}</view>
-  <view class="content">
-    <!-- 购票成功页面内容 -->
-    <view class="placeholder">页面开发中...</view>
-  </view>
-</view>
+<!--packages/ticket/pages/ticket/success/success.wxml-->
+<text>packages/ticket/pages/ticket/success/success.wxml</text>

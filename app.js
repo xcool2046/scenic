@@ -1,58 +1,396 @@
 // app.js
-const preloader = require('./utils/preloader');
+const env = require('./utils/env');
 const performance = require('./utils/performance');
-const cache = require('./utils/cache');
+const preloader = require('./utils/preloader');
+
+// 管理器状态枚举
+const ManagerState = {
+  PENDING: 'pending',
+  LOADING: 'loading', 
+  READY: 'ready',
+  FAILED: 'failed'
+};
+
+// 全局管理器实例
+let managers = {
+  user: null,
+  ticket: null,
+  map: null
+};
+
+// 管理器状态跟踪
+let managerStates = {
+  user: ManagerState.PENDING,
+  ticket: ManagerState.PENDING,
+  map: ManagerState.PENDING
+};
 
 App({
-  // 全局数据
-  globalData: {
-    userInfo: null,
-    hasLogin: false,
-    systemInfo: null,
-    loadingStatus: {
-      isPreloaded: false,
-      preloadTime: 0
-    },
-    networkType: 'unknown',
-    isConnected: true,
-    isWeakNetwork: false,
-    offlineData: {},
-    // 全局性能配置
-    performanceConfig: {
-      enableImageLazyLoad: true,     // 启用图片懒加载
-      enablePreload: true,           // 启用预加载
-      enableDataCache: true,         // 启用数据缓存
-      maxCacheAge: 30 * 60 * 1000,   // 缓存最大时间(30分钟)
-      batchRender: true,             // 启用批量渲染
-      listRenderBatchSize: 10,       // 列表每批渲染数量
-      monitorPerformance: true       // 启用性能监控
+  async onLaunch() {
+    try {
+      // 性能监控开始
+      performance.mark('app_launch_start');
+      
+      // 按职责分离的初始化流程
+      await this.initializeEnvironment();
+      await this.initializeCloudDevelopment();
+      await this.initializeStorage();
+      await this.initializeSystemInfo();
+      await this.initializeManagers();
+      await this.initializeUpdates();
+      
+      // 性能监控结束
+      performance.mark('app_launch_end');
+      performance.measure('app_launch', 'app_launch_start', 'app_launch_end');
+      
+      console.log('应用启动完成');
+    } catch (error) {
+      console.error('应用启动失败:', error);
+      this.handleLaunchError(error);
     }
   },
   
-  // 应用初始化
-  onLaunch: function(options) {
-    console.log('App onLaunch', options);
+  // 初始化环境配置
+  async initializeEnvironment() {
+    try {
+      env.init();
+      console.log('环境配置初始化完成');
+    } catch (error) {
+      console.error('环境配置初始化失败:', error);
+      // 环境配置失败不应阻止应用启动
+    }
+  },
+  
+  // 初始化云开发环境
+  async initializeCloudDevelopment() {
+    try {
+      if (!wx.cloud) {
+        console.warn('当前微信版本不支持云开发');
+        this.globalData.cloudEnabled = false;
+        return;
+      }
+
+      // 初始化云开发
+      wx.cloud.init({
+        env: env.getCloudEnv(), // 从环境配置中获取云环境ID
+        traceUser: true
+      });
+
+      // 验证云开发连接
+      const result = await wx.cloud.callFunction({
+        name: 'userLogin',
+        data: { test: true }
+      }).catch(() => null);
+
+      if (result) {
+        console.log('云开发初始化成功');
+        this.globalData.cloudEnabled = true;
+      } else {
+        console.warn('云开发连接验证失败，使用本地模拟模式');
+        this.globalData.cloudEnabled = false;
+      }
+    } catch (error) {
+      console.error('云开发初始化失败:', error);
+      this.globalData.cloudEnabled = false;
+      // 云开发失败不应阻止应用启动，可以降级到本地模式
+    }
+  },
+  
+  // 初始化本地存储
+  async initializeStorage() {
+    try {
+      // 展示本地存储能力
+      const logs = wx.getStorageSync('logs') || [];
+      logs.unshift(Date.now());
+      wx.setStorageSync('logs', logs);
+      
+      console.log('本地存储初始化完成');
+    } catch (error) {
+      console.error('本地存储初始化失败:', error);
+      // 存储失败不应阻止应用启动
+    }
+  },
+  
+  // 初始化系统信息 
+  async initializeSystemInfo() {
+    try {
+      // 使用新的API替换废弃的wx.getSystemInfoSync
+      const [deviceInfo, windowInfo, appBaseInfo] = await Promise.all([
+        new Promise((resolve) => {
+          try {
+            resolve(wx.getDeviceInfo ? wx.getDeviceInfo() : {});
+          } catch (e) {
+            resolve({});
+          }
+        }),
+        new Promise((resolve) => {
+          try {
+            resolve(wx.getWindowInfo ? wx.getWindowInfo() : {});
+          } catch (e) {
+            resolve({});
+          }
+        }),
+        new Promise((resolve) => {
+          try {
+            resolve(wx.getAppBaseInfo ? wx.getAppBaseInfo() : {});
+          } catch (e) {
+            resolve({});
+          }
+        })
+      ]);
+      
+      // 合并系统信息
+      const systemInfo = {
+        ...deviceInfo,
+        ...windowInfo,
+        ...appBaseInfo
+      };
+      
+      this.globalData.systemInfo = systemInfo;
+      console.log('系统信息获取完成:', systemInfo);
+      
+      // 记录性能相关参数
+      if (performance.recordSystemInfo) {
+        performance.recordSystemInfo(systemInfo);
+      }
+    } catch (error) {
+      console.error('获取系统信息失败:', error);
+      // 设置默认系统信息
+      this.globalData.systemInfo = {
+        platform: 'unknown',
+        version: '0.0.0',
+        model: 'unknown'
+      };
+    }
+  },
+  
+  // 初始化管理器
+  async initializeManagers() {
+    // 异步初始化各个管理模块（不阻塞应用启动）
+    this.initializeManagersAsync();
+  },
+  
+  // 初始化更新检查
+  async initializeUpdates() {
+    try {
+      this.checkForUpdates();
+      console.log('更新检查初始化完成');
+    } catch (error) {
+      console.error('更新检查初始化失败:', error);
+      // 更新检查失败不应阻止应用启动
+    }
+  },
+  
+  // 简化的管理器初始化逻辑
+  async initializeManagersAsync() {
+    // 管理器配置表 - 统一管理所有管理器的导入路径和类名
+    const managerConfigs = [
+      { name: 'user', path: './utils/user', className: 'UserManager' },
+      { name: 'ticket', path: './utils/ticket', className: 'TicketManager' },
+      { name: 'map', path: './utils/map', className: 'MapManager' }
+    ];
+
+    // 单个管理器初始化函数
+    const initSingleManager = async (config) => {
+      try {
+        managerStates[config.name] = ManagerState.LOADING;
+        
+        // 标准化的导入逻辑
+        const ManagerModule = require(config.path);
+        let managerInstance = null;
+
+        // 按优先级尝试不同的导出格式
+        if (ManagerModule[config.className]) {
+          // 标准类导出 (推荐)
+          managerInstance = new ManagerModule[config.className]();
+        } else if (typeof ManagerModule === 'function') {
+          // 函数/类直接导出
+          managerInstance = new ManagerModule();
+        } else if (ManagerModule.default) {
+          // ES6 默认导出
+          managerInstance = new ManagerModule.default();
+        } else {
+          throw new Error(`${config.name}管理器未找到有效的导出格式`);
+        }
+
+        // 调用初始化方法（如果存在）
+        if (managerInstance.init && typeof managerInstance.init === 'function') {
+          await managerInstance.init();
+        }
+
+        managers[config.name] = managerInstance;
+        managerStates[config.name] = ManagerState.READY;
+        console.log(`${config.name}管理器初始化成功`);
+
+      } catch (error) {
+        console.error(`${config.name}管理器初始化失败:`, error);
+        managerStates[config.name] = ManagerState.FAILED;
+        managers[config.name] = this.createFallbackManager(config.name);
+      }
+    };
+
+    // 延迟启动，避免阻塞应用启动
+    setTimeout(async () => {
+      try {
+        // 并行初始化所有管理器
+        await Promise.allSettled(
+          managerConfigs.map(config => initSingleManager(config))
+        );
+
+        // 统计初始化结果
+        const results = managerConfigs.reduce((acc, config) => {
+          const state = managerStates[config.name];
+          acc[state === ManagerState.READY ? 'success' : 'failed'].push(config.name);
+          return acc;
+        }, { success: [], failed: [] });
+
+        // 输出结果日志
+        if (results.failed.length > 0) {
+          console.warn(`管理器初始化失败: ${results.failed.join(', ')}`);
+        }
+        if (results.success.length > 0) {
+          console.log(`管理器初始化成功: ${results.success.join(', ')}`);
+        }
+
+        // 设置全局状态
+        this.globalData.managersReady = true;
+        this.globalData.managerStates = { ...managerStates };
+
+      } catch (error) {
+        console.error('管理器批量初始化过程出错:', error);
+      }
+    }, 100);
+  },
+
+  // 创建降级管理器
+  createFallbackManager(managerName) {
+    const fallbackManagers = {
+      user: {
+        checkLoginStatus: () => false,
+        validateToken: () => Promise.resolve(false),
+        getCurrentUser: () => null,
+        isLoggedIn: false,
+        userInfo: null,
+        login: () => Promise.resolve({ success: false, message: '用户管理器不可用' }),
+        logout: () => Promise.resolve({ success: true })
+      },
+      ticket: {
+        getTicketTypes: () => Promise.resolve({ success: false, message: '票务管理器不可用' }),
+        createOrder: () => Promise.resolve({ success: false, message: '票务管理器不可用' }),
+        getOrders: () => Promise.resolve({ success: false, data: [] })
+      },
+      map: {
+        initialize: () => Promise.resolve(false),
+        getCurrentLocation: () => Promise.resolve(null),
+        searchNearby: () => Promise.resolve([])
+      }
+    };
     
-    // 记录应用启动性能
-    performance.performanceMonitor.recordAppLaunch();
+    return fallbackManagers[managerName] || {};
+  },
+
+  // 安全获取管理器实例，带状态检查
+  getUserManager() {
+    if (managerStates.user === ManagerState.READY && managers.user) {
+      return managers.user;
+    }
     
-    // 获取系统信息
-    this.getSystemInfo();
+    // 如果管理器未就绪，返回降级管理器
+    if (!managers.user) {
+      managers.user = this.createFallbackManager('user');
+    }
     
-    // 启动预加载
-    this.startPreload();
+    return managers.user;
+  },
+
+  getTicketManager() {
+    if (managerStates.ticket === ManagerState.READY && managers.ticket) {
+      return managers.ticket;
+    }
     
-    // 检查用户登录状态
-    this.checkLoginStatus();
+    if (!managers.ticket) {
+      managers.ticket = this.createFallbackManager('ticket');
+    }
     
-    // 检查网络状态
-    this.checkNetworkStatus();
+    return managers.ticket;
+  },
+
+  getMapManager() {
+    if (managerStates.map === ManagerState.READY && managers.map) {
+      return managers.map;
+    }
     
-    // 设置性能监控
-    this.setupPerformanceMonitor();
+    if (!managers.map) {
+      managers.map = this.createFallbackManager('map');
+    }
     
-    // 预加载页面和资源
-    this.preloadPages();
+    return managers.map;
+  },
+
+  // 检查管理器是否就绪
+  isManagerReady(managerName) {
+    return managerStates[managerName] === ManagerState.READY;
+  },
+
+  // 等待管理器就绪
+  waitForManager(managerName, timeout = 5000) {
+    return new Promise((resolve, reject) => {
+      if (this.isManagerReady(managerName)) {
+        resolve(managers[managerName]);
+        return;
+      }
+      
+      const startTime = Date.now();
+      const checkInterval = setInterval(() => {
+        if (this.isManagerReady(managerName)) {
+          clearInterval(checkInterval);
+          resolve(managers[managerName]);
+        } else if (Date.now() - startTime > timeout) {
+          clearInterval(checkInterval);
+          reject(new Error(`等待${managerName}管理器超时`));
+        }
+      }, 100);
+    });
+  },
+  
+  checkForUpdates() {
+    if (wx.canIUse('getUpdateManager')) {
+      const updateManager = wx.getUpdateManager();
+      
+      updateManager.onCheckForUpdate((res) => {
+        if (res.hasUpdate) {
+          console.log('发现新版本');
+        }
+      });
+      
+      updateManager.onUpdateReady(() => {
+        wx.showModal({
+          title: '更新提示',
+          content: '新版本已经准备好，是否重启应用？',
+          success: (res) => {
+            if (res.confirm) {
+              updateManager.applyUpdate();
+            }
+          }
+        });
+      });
+      
+      updateManager.onUpdateFailed(() => {
+        console.error('新版本下载失败');
+      });
+    }
+  },
+  
+  handleLaunchError(error) {
+    // 记录错误
+    console.error('启动错误:', error);
+    
+    // 显示错误提示
+    wx.showToast({
+      title: '启动异常，请重试',
+      icon: 'error',
+      duration: 3000
+    });
   },
   
   // 预加载应用资源
@@ -87,16 +425,28 @@ App({
   
   // 获取设备系统信息
   getSystemInfo() {
-    try {
-      const systemInfo = wx.getSystemInfoSync();
-      this.globalData.systemInfo = systemInfo;
-      console.log('系统信息:', systemInfo);
-      
-      // 记录性能相关参数
-      performance.performanceMonitor.recordSystemInfo(systemInfo);
-    } catch (e) {
-      console.error('获取系统信息失败', e);
+    if (!this.globalData.systemInfo) {
+      try {
+        // 使用新的API替换废弃的wx.getSystemInfoSync
+        const deviceInfo = wx.getDeviceInfo ? wx.getDeviceInfo() : {};
+        const windowInfo = wx.getWindowInfo ? wx.getWindowInfo() : {};
+        const appBaseInfo = wx.getAppBaseInfo ? wx.getAppBaseInfo() : {};
+        
+        this.globalData.systemInfo = {
+          ...deviceInfo,
+          ...windowInfo,
+          ...appBaseInfo
+        };
+      } catch (error) {
+        console.error('获取系统信息失败:', error);
+        this.globalData.systemInfo = {
+          platform: 'unknown',
+          screenWidth: 375,
+          screenHeight: 667
+        };
+      }
     }
+    return this.globalData.systemInfo;
   },
   
   // 检查用户登录状态
@@ -131,7 +481,7 @@ App({
             const mockUserInfo = {
               id: 'user_' + Date.now(),
               nickname: '游客' + Math.floor(Math.random() * 1000),
-              avatar: '/assets/icons/default_avatar.png'
+              avatar: 'https://img.icons8.com/fluency/96/user-male-circle.png'
             };
             
             // 保存用户信息
@@ -168,134 +518,94 @@ App({
     if (callback) callback(true);
   },
   
-  // 应用显示事件
-  onShow: function(options) {
-    console.log('App onShow', options);
+  onShow() {
+    // 应用从后台进入前台时触发
+    if (performance && performance.mark) {
+      performance.mark('app_show');
+    }
     
-    // 记录应用显示性能
-    performance.performanceMonitor.recordAppShow();
+    // 检查用户登录状态 - 添加安全检查
+    try {
+      const userManager = this.getUserManager();
+      if (userManager && userManager.checkLoginStatus) {
+        const token = wx.getStorageSync('user_token');
+        if (token && userManager.validateToken) {
+          userManager.validateToken(token);
+        }
+      }
+    } catch (error) {
+      console.log('用户状态检查失败:', error);
+    }
   },
   
-  // 应用隐藏事件
-  onHide: function() {
-    console.log('App onHide');
+  onHide() {
+    // 应用从前台进入后台时触发
+    performance.mark('app_hide');
     
-    // 记录应用隐藏性能
-    performance.performanceMonitor.recordAppHide();
+    // 同步离线数据到服务器
+    this.syncOfflineData();
   },
   
-  // 应用错误事件
-  onError: function(err) {
-    console.error('App onError', err);
+  async syncOfflineData() {
+    try {
+      const offlineData = this.globalData.offlineData;
+      if (offlineData.length > 0 && this.getUserManager().checkLoginStatus()) {
+        // TODO: 实现离线数据同步逻辑
+        console.log('同步离线数据:', offlineData.length, '条');
+        
+        // 清空已同步的数据
+        this.globalData.offlineData = [];
+      }
+    } catch (error) {
+      console.error('离线数据同步失败:', error);
+    }
+  },
+  
+  onError(error) {
+    // 应用发生脚本错误或 API 调用报错时触发
+    console.error('应用错误:', error);
     
     // 记录错误信息
-    performance.performanceMonitor.recordError('app', err);
-  },
-  
-  // 页面不存在事件
-  onPageNotFound: function(res) {
-    console.error('App onPageNotFound', res);
-    
-    // 记录页面不存在错误
-    performance.performanceMonitor.recordError('pageNotFound', res.path);
-    
-    // 导航到首页
-    wx.switchTab({
-      url: '/pages/index/index'
+    performance.recordError({
+      type: 'app_error',
+      message: error,
+      timestamp: Date.now()
     });
   },
   
-  // 预加载重要页面模板
-  preloadPages() {
-    // 预加载核心子包
-    if (this.globalData.performanceConfig.enablePreload) {
-      performance.renderOptimizer.preloadSubpackages(['ticket', 'guide']);
-      
-      // 预加载关键图片
-      const criticalImages = [
-        '/assets/images/banner.jpg',
-        '/assets/images/map_preview.jpg'
-      ];
-      
-      performance.imageOptimizer.preloadImages(criticalImages)
-        .then(results => {
-          console.log('预加载关键图片完成', results);
-        });
-    }
+  globalData: {
+    userInfo: null,
+    hasLogin: false,
+    offlineData: [],
+    systemInfo: null,
+    networkType: 'unknown',
+    loadingStatus: {
+      isPreloaded: false,
+      preloadTime: 0
+    },
+    managersReady: false,
+    managerStates: {},
+    cloudEnabled: false
   },
   
-  // 设置性能监控
-  setupPerformanceMonitor() {
-    // 记录到本地性能数据，便于后续分析
-    performance.performanceMonitor.mark('app_cold_start');
-    
-    // 记录首屏渲染时间
-    setTimeout(() => {
-      performance.performanceMonitor.mark('app_first_render');
-      const duration = performance.performanceMonitor.measure('app_cold_start', 'app_first_render');
-      console.log(`首屏渲染耗时: ${duration}ms`);
-    }, 1000);
-    
-    // 5分钟后上报一次性能数据
-    setTimeout(() => {
-      performance.performanceMonitor.reportPerformanceData();
-    }, 5 * 60 * 1000);
-  },
-  
-  // 检查网络状态并缓存
-  checkNetworkStatus() {
+  // 获取网络状态
+  getNetworkType() {
     wx.getNetworkType({
-      success: res => {
+      success: (res) => {
         this.globalData.networkType = res.networkType;
-        
-        // 如果是弱网络，预先提示用户并加载离线资源
-        if (res.networkType === '2g' || res.networkType === 'none') {
-          this.globalData.isWeakNetwork = true;
-          // 加载离线数据
-          this.loadOfflineData();
-        }
+      },
+      fail: (error) => {
+        console.error('获取网络状态失败:', error);
       }
     });
-    
-    // 监听网络状态变化
-    wx.onNetworkStatusChange(res => {
-      this.globalData.networkType = res.networkType;
-      this.globalData.isConnected = res.isConnected;
-      
-      // 网络恢复后，同步本地数据
-      if (res.isConnected && this.globalData.isWeakNetwork) {
-        this.globalData.isWeakNetwork = false;
-        this.syncOfflineData();
-      }
+    return this.globalData.networkType;
+  },
+  
+  // 添加离线数据
+  addOfflineData(data) {
+    this.globalData.offlineData.push({
+      ...data,
+      timestamp: Date.now()
     });
-  },
-  
-  // 加载离线数据
-  loadOfflineData() {
-    // 从本地缓存加载基础数据
-    const cachedData = wx.getStorageSync('offlineData') || {};
-    this.globalData.offlineData = cachedData;
-    console.log('已加载离线数据缓存');
-  },
-  
-  // 恢复网络后同步本地数据
-  syncOfflineData() {
-    const offlineActions = wx.getStorageSync('offlineActions') || [];
-    
-    // 如果有离线操作，提示用户
-    if (offlineActions.length > 0) {
-      wx.showModal({
-        title: '网络已恢复',
-        content: '是否同步离线期间的操作？',
-        success: (res) => {
-          if (res.confirm) {
-            // TODO: 同步离线数据到服务器
-            console.log('同步离线数据', offlineActions);
-            // 同步完成后清除
-            wx.removeStorageSync('offlineActions');
-          }
-        }
-      });
-    }
   }
 })

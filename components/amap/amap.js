@@ -86,15 +86,36 @@ Component({
   methods: {
     // 初始化地图
     initMap() {
-      const query = wx.createSelectorQuery().in(this);
-      query.select('#' + this.data.mapId).boundingClientRect();
-      query.exec((res) => {
-        if (res[0]) {
-          this.createMapContext(res[0].width, res[0].height);
-        } else {
-          // 如果未能获取到容器尺寸，使用默认尺寸
-          this.createMapContext(300, 300);
-        }
+      // 直接设置地图加载完成状态
+      this.setData({
+        mapLoaded: true
+      });
+      
+      // 尝试获取当前位置
+      if (this.properties.showLocation) {
+        wx.getLocation({
+          type: 'gcj02',
+          success: (res) => {
+            this.setData({
+              latitude: res.latitude,
+              longitude: res.longitude
+            });
+            // 更新标记点
+            this.updateMarkers();
+          },
+          fail: (err) => {
+            console.error('获取位置失败', err);
+          }
+        });
+      } else {
+        // 更新标记点
+        this.updateMarkers();
+      }
+      
+      // 触发地图加载完成事件
+      this.triggerEvent('mapLoaded', {
+        latitude: this.properties.latitude,
+        longitude: this.properties.longitude
       });
     },
     

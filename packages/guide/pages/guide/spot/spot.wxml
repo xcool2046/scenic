@@ -1,8 +1,2 @@
-<!-- packages/guide/pages/guide/spot/spot.wxml -->
-<view class="container">
-  <view class="page-title">{{pageTitle}}</view>
-  <view class="content">
-    <!-- 景点详情页面内容 -->
-    <view class="placeholder">页面开发中...</view>
-  </view>
-</view>
+<!--packages/guide/pages/guide/spot/spot.wxml-->
+<text>packages/guide/pages/guide/spot/spot.wxml</text>

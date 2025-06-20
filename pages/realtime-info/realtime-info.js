@@ -1,12 +1,14 @@
 // pages/realtime-info/realtime-info.js
 const api = require('../../utils/api');
 const interaction = require('../../utils/interaction');
+const config = require('../../utils/config');
 
 Page({
   /**
    * 页面的初始数据
    */
   data: {
+    config,
     weatherData: {},
     weatherForecast: [],
     crowdInfo: {},
@@ -194,4 +196,4 @@ Page({
     
     interaction.navigateTo(`/pages/guide/spot/spot?id=${spot.id}`);
   }
-}); 
+});

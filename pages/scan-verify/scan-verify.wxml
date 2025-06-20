@@ -1,0 +1,149 @@
+<!-- pages/scan-verify/scan-verify.wxml -->
+<view class="container">
+  <!-- 状态指示区 -->
+  <view class="status-section">
+    <view class="status-icon">
+      <image 
+        src="{{statusIcons[verifyStatus]}}" 
+        mode="aspectFit"
+        class="status-image {{verifyStatus === 'verifying' ? 'rotating' : ''}}"
+      ></image>
+    </view>
+    
+    <view class="status-message">{{verifyMessage}}</view>
+    
+    <!-- 验证成功时显示欢迎信息 -->
+    <view wx:if="{{verifyStatus === 'success'}}" class="welcome-info">
+      <view class="welcome-text">欢迎来到景悦达景区</view>
+      <view class="entry-time">入园时间：{{entryInfo.entryTime}}</view>
+    </view>
+  </view>
+
+  <!-- 票务信息卡片 -->
+  <view wx:if="{{ticketInfo}}" class="ticket-card">
+    <view class="card-header">
+      <view class="ticket-type">{{ticketInfo.type || '门票'}}</view>
+      <view class="ticket-status status-{{ticketInfo.status}}">
+        {{ticketInfo.status === 'valid' ? '有效' : 
+          ticketInfo.status === 'used' ? '已使用' : 
+          ticketInfo.status === 'expired' ? '已过期' : '未知'}}
+      </view>
+    </view>
+    
+    <view class="card-content">
+      <view class="ticket-name">{{ticketInfo.name || '景区门票'}}</view>
+      <view class="ticket-info-list">
+        <view class="info-item">
+          <view class="info-label">票务编号</view>
+          <view class="info-value">{{ticketInfo.ticketNo || ticketInfo.id}}</view>
+        </view>
+        <view class="info-item" wx:if="{{ticketInfo.price}}">
+          <view class="info-label">票价</view>
+          <view class="info-value">¥{{ticketInfo.price}}</view>
+        </view>
+        <view class="info-item" wx:if="{{ticketInfo.validDate}}">
+          <view class="info-label">有效期</view>
+          <view class="info-value">{{ticketInfo.validDate}}</view>
+        </view>
+        <view class="info-item" wx:if="{{ticketInfo.purchaseTime}}">
+          <view class="info-label">购买时间</view>
+          <view class="info-value">{{ticketInfo.purchaseTime}}</view>
+        </view>
+      </view>
+    </view>
+    
+    <!-- 入园信息 -->
+    <view wx:if="{{verifyStatus === 'success' && entryInfo}}" class="entry-info">
+      <view class="entry-title">入园信息</view>
+      <view class="entry-details">
+        <view class="entry-item">
+          <view class="entry-label">入园时间</view>
+          <view class="entry-value">{{entryInfo.entryTime}}</view>
+        </view>
+        <view class="entry-item">
+          <view class="entry-label">入园通道</view>
+          <view class="entry-value">{{entryInfo.gateName}}</view>
+        </view>
+        <view class="entry-item">
+          <view class="entry-label">验证方式</view>
+          <view class="entry-value">{{entryInfo.staffName}}</view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 扫码结果信息 -->
+  <view class="scan-info">
+    <view class="scan-label">扫码内容</view>
+    <view class="scan-result">{{scanResult}}</view>
+  </view>
+
+  <!-- 操作按钮区 -->
+  <view class="action-section">
+    <!-- 验证成功时的操作 -->
+    <block wx:if="{{verifyStatus === 'success'}}">
+      <view class="action-btn primary" bindtap="onBackHome">
+        <image src="{{config.CDN_ICONS.HOME}}" class="btn-icon"></image>
+        <text>返回首页</text>
+      </view>
+      <view class="action-btn secondary" bindtap="onViewTicketDetail" wx:if="{{ticketInfo.id}}">
+        <image src="{{config.CDN_ICONS.TICKET}}" class="btn-icon"></image>
+        <text>查看详情</text>
+      </view>
+    </block>
+    
+    <!-- 验证失败时的操作 -->
+    <block wx:if="{{verifyStatus === 'failed'}}">
+      <view class="action-btn primary" bindtap="onRetry" wx:if="{{showRetry}}">
+        <image src="{{config.CDN_ICONS.PULL}}" class="btn-icon"></image>
+        <text>重试验证</text>
+      </view>
+      <view class="action-btn secondary" bindtap="onScanAgain">
+        <image src="{{config.CDN_ICONS.SCAN}}" class="btn-icon"></image>
+        <text>重新扫码</text>
+      </view>
+      <view class="action-btn warning" bindtap="onContactService">
+        <image src="{{config.CDN_ICONS.SERVICE}}" class="btn-icon"></image>
+        <text>联系客服</text>
+      </view>
+    </block>
+    
+    <!-- 已使用或已过期时的操作 -->
+    <block wx:if="{{verifyStatus === 'used' || verifyStatus === 'expired'}}">
+      <view class="action-btn secondary" bindtap="onScanAgain">
+        <image src="{{config.CDN_ICONS.SCAN}}" class="btn-icon"></image>
+        <text>重新扫码</text>
+      </view>
+      <view class="action-btn warning" bindtap="onContactService">
+        <image src="{{config.CDN_ICONS.SERVICE}}" class="btn-icon"></image>
+        <text>联系客服</text>
+      </view>
+      <view class="action-btn primary" bindtap="onBackHome">
+        <image src="{{config.CDN_ICONS.HOME}}" class="btn-icon"></image>
+        <text>返回首页</text>
+      </view>
+    </block>
+    
+    <!-- 验证中时显示提示 -->
+    <block wx:if="{{verifyStatus === 'verifying'}}">
+      <view class="loading-tips">
+        <view class="tip-text">正在与服务器验证票务信息...</view>
+        <view class="tip-text">请稍候片刻</view>
+      </view>
+    </block>
+  </view>
+
+  <!-- 温馨提示 -->
+  <view class="tips-section">
+    <view class="tips-title">温馨提示</view>
+    <view class="tips-content">
+      <view class="tip-item">• 每张票仅限使用一次，请妥善保管</view>
+      <view class="tip-item">• 如遇问题可联系现场工作人员</view>
+      <view class="tip-item">• 入园后请遵守景区相关规定</view>
+      <view class="tip-item" wx:if="{{verifyStatus === 'success'}}">• 祝您游玩愉快！</view>
+    </view>
+  </view>
+
+  <!-- 底部安全间距 -->
+  <view class="bottom-safe-area"></view>
+</view> 

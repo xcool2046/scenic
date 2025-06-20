@@ -1,0 +1,10 @@
+{
+  "navigationBarTitleText": "意见反馈",
+  "navigationBarBackgroundColor": "#ffffff",
+  "navigationBarTextStyle": "black",
+  "backgroundColor": "#f8f9fa",
+  "usingComponents": {
+    "loading": "/components/loading/loading",
+    "toast": "/components/toast/toast"
+  }
+} 
