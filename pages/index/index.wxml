@@ -1,189 +1,251 @@
 <!--index.wxml-->
-<view class="container">
-  <!-- 轮播图 -->
-  <view class="banner-container">
-    <swiper 
-      class="banner-swiper" 
-      indicator-dots="{{indicatorDots}}"
-      indicator-color="rgba(255, 255, 255, 0.5)"
-      indicator-active-color="#ffffff"
-      autoplay="{{autoplay}}" 
-      interval="{{interval}}" 
-      duration="{{duration}}"
-      circular="{{circular}}"
-      previous-margin="{{previousMargin}}"
-      next-margin="{{nextMargin}}"
-      easing-function="easeInOutCubic"
-      bindchange="onBannerChange"
-    >
-      <block wx:for="{{bannerList}}" wx:key="id">
-        <swiper-item>
-          <view class="banner-item {{currentBannerIndex === index ? 'active' : ''}}">
-            <image 
-              src="{{item.url}}" 
-              class="banner-image" 
-              mode="aspectFill"
-              bindtap="onBannerTap"
-              data-id="{{item.id}}"
-              bindload="onBannerImageLoad"
-              binderror="onBannerImageError"
-            ></image>
-            <view class="banner-title" wx:if="{{item.title}}">{{item.title}}</view>
-          </view>
-        </swiper-item>
-      </block>
-    </swiper>
-    
-    <!-- 自定义指示器 -->
-    <view class="banner-indicator" wx:if="{{!indicatorDots && bannerList.length > 1}}">
-      <block wx:for="{{bannerList}}" wx:key="id">
-        <view class="indicator-dot {{currentBannerIndex === index ? 'active' : ''}}"></view>
-      </block>
-    </view>
-  </view>
-
-  <!-- 基本信息面板 -->
-  <view class="info-panel">
-    <view class="info-item" wx:if="{{uiConfig.showWeather}}">
-      <view class="info-label">天气</view>
-      <view class="info-value">{{weatherInfo.temperature}} · {{weatherInfo.weather}}</view>
-    </view>
-    <view class="info-divider" wx:if="{{uiConfig.showWeather && uiConfig.showCrowdLevel}}"></view>
-    <view class="info-item" wx:if="{{uiConfig.showCrowdLevel}}">
-      <view class="info-label">人流量</view>
-      <view class="info-value">{{crowdInfo.level}}</view>
-    </view>
-    <view class="info-divider"></view>
-    <view class="info-item">
-      <view class="info-label">开放时间</view>
-      <view class="info-value">{{openStatus.time}}{{!openStatus.isOpen ? ' (已闭园)' : ''}}</view>
-    </view>
-  </view>
-
-  <!-- 核心服务卡片 -->
-  <view class="service-cards">
-    <view class="service-card ticket" bindtap="onCommonTap" data-type="ticket" style="background-image: url('{{images.CARDS.TICKET}}')">
-      <view class="service-content">
-        <view class="icon-base icon-responsive icon-circle icon-primary">
-          <image class="icon-image" src="{{icons.CDN_ICONS.TICKET}}"></image>
-        </view>
-        <text class="service-title">电子门票</text>
-      </view>
-    </view>
-    <view class="service-card map" bindtap="onCommonTap" data-type="map" style="background-image: url('{{images.CARDS.MAP}}')">
-      <view class="service-content">
-        <view class="icon-base icon-responsive icon-circle icon-primary">
-          <image class="icon-image" src="{{icons.CDN_ICONS.MAP}}"></image>
-        </view>
-        <text class="service-title">景区地图</text>
-      </view>
-    </view>
-  </view>
-
-  <!-- 7个码上服务 -->
-  <view class="smart-services">
-    <view class="section-header">
-      <text class="section-title">智慧服务</text>
-      <text class="section-subtitle">一码通行 · 智享服务</text>
-    </view>
-    
-    <!-- 第一行：扫码进码（大卡片，跨两列） -->
-    <view class="service-row-main">
-      <view class="service-main-item" bindtap="onServiceTap" data-service="scan">
-        <view class="service-main-content">
-          <view class="service-main-icon">
-            <image src="https://cdn.jsdelivr.net/npm/@tabler/icons@latest/icons/qrcode.svg" mode="aspectFit"></image>
-          </view>
-          <view class="service-main-info">
-            <text class="service-main-name">扫码进码</text>
-            <text class="service-main-desc">二维码验票入园</text>
-          </view>
-        </view>
-      </view>
-    </view>
-    
-    <!-- 第二行：码上评价 + 码上惠客 -->
-    <view class="service-row">
-      <view class="service-item" bindtap="onServiceTap" data-service="review">
-        <view class="service-icon">
-          <image src="https://cdn.jsdelivr.net/npm/@tabler/icons@latest/icons/star.svg" mode="aspectFit"></image>
-        </view>
-        <view class="service-info">
-          <text class="service-name">码上评价</text>
-          <text class="service-desc">服务评价反馈</text>
-        </view>
-      </view>
-      
-      <view class="service-item" bindtap="onServiceTap" data-service="coupon">
-        <view class="service-icon">
-          <image src="https://cdn.jsdelivr.net/npm/@tabler/icons@latest/icons/discount-2.svg" mode="aspectFit"></image>
-        </view>
-        <view class="service-info">
-          <text class="service-name">码上惠客</text>
-          <text class="service-desc">优惠券与积分</text>
-        </view>
-      </view>
-    </view>
-    
-    <!-- 第三行：码上消费 + 码上导游 -->
-    <view class="service-row">
-      <view class="service-item" bindtap="onServiceTap" data-service="shopping">
-        <view class="service-icon">
-          <image src="https://cdn.jsdelivr.net/npm/@tabler/icons@latest/icons/shopping-cart.svg" mode="aspectFit"></image>
-        </view>
-        <view class="service-info">
-          <text class="service-name">码上消费</text>
-          <text class="service-desc">在线购买服务</text>
-        </view>
-      </view>
-      
-      <view class="service-item" bindtap="onServiceTap" data-service="audio-guide">
-        <view class="service-icon">
-          <image src="https://cdn.jsdelivr.net/npm/@tabler/icons@latest/icons/headphones.svg" mode="aspectFit"></image>
-        </view>
-        <view class="service-info">
-          <text class="service-name">码上导游</text>
-          <text class="service-desc">智能语音导览</text>
-        </view>
-      </view>
-    </view>
-    
-    <!-- 第四行：码上监管 + 码上合作 -->
-    <view class="service-row">
-      <view class="service-item" bindtap="onServiceTap" data-service="management">
-        <view class="service-icon">
-          <image src="https://cdn.jsdelivr.net/npm/@tabler/icons@latest/icons/shield-check.svg" mode="aspectFit"></image>
-        </view>
-        <view class="service-info">
-          <text class="service-name">码上监管</text>
-          <text class="service-desc">服务质量监控</text>
-        </view>
-      </view>
-      
-      <view class="service-item" bindtap="onServiceTap" data-service="merchant">
-        <view class="service-icon">
-          <image src="https://cdn.jsdelivr.net/npm/@tabler/icons@2.47.0/icons/building-store.svg" mode="aspectFit" binderror="onIconError"></image>
-        </view>
-        <view class="service-info">
-          <text class="service-name">码上合作</text>
-          <text class="service-desc">商家入驻合作</text>
-        </view>
-      </view>
-    </view>
-  </view>
-
-
-
-
-
-
-
-  <!-- 底部空白区域，防止内容被底部tab遮挡 -->
-  <view class="bottom-gap"></view>
+<view class="page-container">
+  <!-- 顶部状态栏背景 -->
+  <view class="status-bar-bg"></view>
   
-  <!-- 加载中提示 -->
-  <view class="loading-timeout" wx:if="{{loadingTimeout}}">
-    <text>数据加载失败</text>
-    <view class="retry-btn" bindtap="refreshHomeData">重新加载</view>
+  <!-- Hero区域 -->
+  <view class="hero-wrapper">
+    <!-- 背景轮播图 -->
+    <view class="hero-background">
+      <swiper 
+        class="hero-swiper" 
+        indicator-dots="{{false}}"
+        autoplay="{{autoplay}}" 
+        interval="{{interval}}" 
+        duration="{{duration}}"
+        circular="{{circular}}"
+        easing-function="easeInOutCubic"
+        bindchange="onBannerChange"
+      >
+        <block wx:for="{{bannerList}}" wx:key="id">
+          <swiper-item>
+            <view class="hero-slide">
+              <image 
+                src="{{item.url}}" 
+                class="hero-image" 
+                mode="aspectFill"
+                bindtap="onBannerTap"
+                data-id="{{item.id}}"
+                bindload="onBannerImageLoad"
+                binderror="onBannerImageError"
+              ></image>
+              <!-- 深度渐变遮罩 -->
+              <view class="hero-gradient"></view>
+            </view>
+          </swiper-item>
+        </block>
+      </swiper>
+      
+      <!-- 轮播指示器 -->
+      <view class="hero-indicators">
+        <block wx:for="{{bannerList}}" wx:key="id">
+          <view class="hero-dot {{currentBannerIndex === index ? 'active' : ''}}"></view>
+        </block>
+      </view>
+    </view>
+    
+    <!-- Hero内容层 -->
+    <view class="hero-content">
+      <!-- 顶部标题区域 -->
+      <view class="hero-header">
+        <text class="hero-title">景悦达</text>
+        <text class="hero-subtitle">智慧景区服务平台</text>
+      </view>
+      
+      <!-- 实时信息卡片 - 真正的毛玻璃效果 -->
+      <view class="status-cards">
+        <view class="status-card weather-card">
+          <view class="card-glass-bg"></view>
+          <view class="card-content">
+            <view class="status-icon weather-icon">☀️</view>
+            <view class="status-info">
+              <text class="status-label">实时天气</text>
+              <text class="status-value">{{weatherInfo.temperature}} {{weatherInfo.weather}}</text>
+            </view>
+          </view>
+        </view>
+        
+        <view class="status-card crowd-card">
+          <view class="card-glass-bg"></view>
+          <view class="card-content">
+            <view class="status-icon crowd-icon">👥</view>
+            <view class="status-info">
+              <text class="status-label">人流状况</text>
+              <text class="status-value">{{crowdInfo.level}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+      
+      <!-- 开放时间信息 -->
+      <view class="opening-info">
+        <view class="opening-glass-bg"></view>
+        <view class="opening-content">
+          <view class="opening-icon">🕐</view>
+          <text class="opening-text">今日开放时间：{{openStatus.time}}</text>
+          <view class="opening-status {{openStatus.isOpen ? 'open' : 'closed'}}">
+            {{openStatus.isOpen ? '营业中' : '已闭园'}}
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+  
+  <!-- 主要内容区域 -->
+  <view class="main-content">
+    <!-- 快速入园 - 超级卡片 -->
+    <view class="super-card-container">
+      <view class="super-card" bindtap="onServiceTap" data-service="scan">
+        <view class="super-card-bg">
+          <view class="super-gradient"></view>
+          <view class="super-pattern"></view>
+        </view>
+        <view class="super-content">
+          <view class="super-icon-wrapper">
+            <view class="super-icon">
+              <image src="https://cdn.jsdelivr.net/npm/@tabler/icons@latest/icons/qrcode.svg" mode="aspectFit"></image>
+            </view>
+            <view class="super-glow"></view>
+          </view>
+          <view class="super-text">
+            <text class="super-title">扫码进码</text>
+            <text class="super-desc">二维码验票，快速入园</text>
+          </view>
+          <view class="super-action">
+            <text class="action-btn">立即扫码</text>
+            <view class="action-arrow">→</view>
+          </view>
+        </view>
+      </view>
+    </view>
+    
+    <!-- 必备服务区域 -->
+    <view class="services-section">
+      <view class="section-title-wrapper">
+        <text class="section-main-title">必备服务</text>
+        <text class="section-desc">门票购买 · 智能导览</text>
+      </view>
+      
+      <!-- 必备服务卡片 -->
+      <view class="essential-services">
+        <view class="service-card-essential service-card-ticket" bindtap="onCommonTap" data-type="ticket">
+          <view class="service-bg" style="background-image: url('{{images.CARDS.TICKET}}')"></view>
+          <view class="service-overlay service-overlay-ticket"></view>
+          <view class="service-content-essential">
+            <view class="service-icon-essential">
+              <image src="{{icons.CDN_ICONS.TICKET}}" mode="aspectFit"></image>
+            </view>
+            <view class="service-text-essential">
+              <text class="service-title-essential">电子门票</text>
+              <text class="service-subtitle-essential">便捷购票 即买即用</text>
+            </view>
+          </view>
+        </view>
+        
+        <view class="service-card-essential service-card-map" bindtap="onCommonTap" data-type="map">
+          <view class="service-bg" style="background-image: url('{{images.CARDS.MAP}}')"></view>
+          <view class="service-overlay service-overlay-map"></view>
+          <view class="service-content-essential">
+            <view class="service-icon-essential">
+              <image src="{{icons.CDN_ICONS.MAP}}" mode="aspectFit"></image>
+            </view>
+            <view class="service-text-essential">
+              <text class="service-title-essential">景区地图</text>
+              <text class="service-subtitle-essential">智能导览 路线规划</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+    
+    <!-- 智慧服务网格 -->
+    <view class="smart-grid-section">
+      <view class="section-title-wrapper">
+        <text class="section-main-title">智慧服务</text>
+        <text class="section-desc">六大便民服务 码上体验</text>
+      </view>
+      
+      <view class="smart-grid">
+        <!-- 第一行 -->
+        <view class="grid-row">
+          <view class="grid-card" bindtap="onServiceTap" data-service="review">
+            <view class="grid-icon review-icon">
+              <image src="https://cdn.jsdelivr.net/npm/@tabler/icons@latest/icons/star.svg" mode="aspectFit"></image>
+            </view>
+            <view class="grid-text-content">
+              <text class="grid-title">码上评价</text>
+              <text class="grid-desc">服务评价反馈</text>
+            </view>
+          </view>
+          
+          <view class="grid-card" bindtap="onServiceTap" data-service="coupon">
+            <view class="grid-icon coupon-icon">
+              <image src="https://cdn.jsdelivr.net/npm/@tabler/icons@latest/icons/discount-2.svg" mode="aspectFit"></image>
+            </view>
+            <view class="grid-text-content">
+              <text class="grid-title">码上惠客</text>
+              <text class="grid-desc">优惠券与积分</text>
+            </view>
+          </view>
+        </view>
+        
+        <!-- 第二行 -->
+        <view class="grid-row">
+          <view class="grid-card" bindtap="onServiceTap" data-service="shopping">
+            <view class="grid-icon shopping-icon">
+              <image src="https://cdn.jsdelivr.net/npm/@tabler/icons@latest/icons/shopping-cart.svg" mode="aspectFit"></image>
+            </view>
+            <view class="grid-text-content">
+              <text class="grid-title">码上消费</text>
+              <text class="grid-desc">在线购买服务</text>
+            </view>
+          </view>
+          
+          <view class="grid-card" bindtap="onServiceTap" data-service="audio-guide">
+            <view class="grid-icon guide-icon">
+              <image src="https://cdn.jsdelivr.net/npm/@tabler/icons@latest/icons/headphones.svg" mode="aspectFit"></image>
+            </view>
+            <view class="grid-text-content">
+              <text class="grid-title">码上导游</text>
+              <text class="grid-desc">智能语音导览</text>
+            </view>
+          </view>
+        </view>
+        
+        <!-- 第三行 -->
+        <view class="grid-row">
+          <view class="grid-card" bindtap="onServiceTap" data-service="management">
+            <view class="grid-icon management-icon">
+              <image src="https://cdn.jsdelivr.net/npm/@tabler/icons@latest/icons/shield-check.svg" mode="aspectFit"></image>
+            </view>
+            <view class="grid-text-content">
+              <text class="grid-title">码上监管</text>
+              <text class="grid-desc">服务质量监控</text>
+            </view>
+          </view>
+          
+          <view class="grid-card" bindtap="onServiceTap" data-service="merchant">
+            <view class="grid-icon merchant-icon">
+              <image src="https://cdn.jsdelivr.net/npm/@tabler/icons@2.47.0/icons/building-store.svg" mode="aspectFit" binderror="onIconError"></image>
+            </view>
+            <view class="grid-text-content">
+              <text class="grid-title">码上合作</text>
+              <text class="grid-desc">商家入驻合作</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+    
+    <!-- 底部安全区域 -->
+    <view class="bottom-spacer"></view>
+  </view>
+  
+  <!-- 加载状态 -->
+  <view class="loading-overlay" wx:if="{{loadingTimeout}}">
+    <view class="loading-modal">
+      <text class="loading-message">数据加载失败</text>
+      <view class="loading-retry" bindtap="refreshHomeData">重新加载</view>
+    </view>
   </view>
 </view>

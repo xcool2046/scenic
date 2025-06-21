@@ -240,14 +240,10 @@ Page({
     wx.vibrateShort({ type: 'light' });
     
     wx.showActionSheet({
-      itemList: ['在线客服', '电话咨询', '意见反馈'],
+      itemList: ['电话咨询', '意见反馈'],
       success: (res) => {
         switch (res.tapIndex) {
           case 0:
-            // 在线客服 - 可以集成客服SDK或跳转到客服小程序
-            this.showToast('在线客服功能开发中');
-            break;
-          case 1:
             // 电话咨询
             wx.makePhoneCall({
               phoneNumber: '400-123-4567',
@@ -256,7 +252,7 @@ Page({
               }
             });
             break;
-          case 2:
+          case 1:
             // 意见反馈
             this.provideFeedback();
             break;

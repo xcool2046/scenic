@@ -89,14 +89,20 @@ Page({
         // 更新页面数据
         this.updateCartData(cartItems);
         
-        // 触觉反馈
-        wx.vibrateShort();
+        // 增强触觉反馈
+        wx.vibrateShort({
+          type: 'light'
+        });
+        
+        // 成功提示音（轻微）
+        wx.playVoice && wx.createInnerAudioContext().play();
       }
     } catch (error) {
       console.error('增加数量失败:', error);
       wx.showToast({
         title: '操作失败',
-        icon: 'error'
+        icon: 'error',
+        duration: 1500
       });
     }
   },
@@ -121,30 +127,40 @@ Page({
         // 更新页面数据
         this.updateCartData(cartItems);
         
-        // 触觉反馈
-        wx.vibrateShort();
+        // 轻柔触觉反馈
+        wx.vibrateShort({
+          type: 'light'
+        });
       }
     } catch (error) {
       console.error('减少数量失败:', error);
       wx.showToast({
         title: '操作失败',
-        icon: 'error'
+        icon: 'error',
+        duration: 1500
       });
     }
   },
 
   /**
-   * 移除商品
+   * 移除商品 - 优化确认弹窗
    */
   removeItem: function(e) {
     const productId = e.currentTarget.dataset.id;
     if (!productId) return;
 
+    // 触觉反馈
+    wx.vibrateShort({
+      type: 'medium'
+    });
+
     wx.showModal({
       title: '确认移除',
-      content: '确定要从购物车中移除这件商品吗？',
+      content: '确定要移除这件商品吗？',
       confirmText: '移除',
       confirmColor: '#FF3B30',
+      cancelText: '取消',
+      cancelColor: '#007AFF',
       success: (res) => {
         if (res.confirm) {
           try {
@@ -156,15 +172,22 @@ Page({
             // 更新页面数据
             this.updateCartData(cartItems);
             
+            // 成功反馈
+            wx.vibrateShort({
+              type: 'success'
+            });
+            
             wx.showToast({
               title: '已移除',
-              icon: 'success'
+              icon: 'success',
+              duration: 1200
             });
           } catch (error) {
             console.error('移除商品失败:', error);
             wx.showToast({
               title: '操作失败',
-              icon: 'error'
+              icon: 'error',
+              duration: 1500
             });
           }
         }
@@ -196,49 +219,85 @@ Page({
   },
 
   /**
-   * 结算
+   * 结算 - 优化体验
    */
   checkout: function() {
-    if (this.data.totalQuantity === 0) {
-      wx.showToast({
-        title: '购物车为空',
-        icon: 'none'
-      });
+    if (this.data.checking || this.data.totalQuantity === 0) {
       return;
     }
 
-    if (this.data.checking) return;
+    // 触觉反馈
+    wx.vibrateShort({
+      type: 'medium'
+    });
 
     this.setData({
       checking: true
     });
 
-    // 模拟结算过程
+    // 模拟结算处理
     setTimeout(() => {
-      this.setData({
-        checking: false
-      });
-
       wx.showModal({
         title: '结算成功',
-        content: `订单总金额：¥${this.data.totalAmount}`,
+        content: `共 ${this.data.totalQuantity} 件商品，合计 ¥${this.data.totalAmount}`,
         showCancel: false,
         confirmText: '确定',
+        confirmColor: '#007AFF',
         success: () => {
           // 清空购物车
-          cache.setCartItems([]);
+          cache.clearCartItems();
           this.setData({
             cartItems: [],
             totalQuantity: 0,
-            totalAmount: 0
+            totalAmount: 0,
+            checking: false
           });
           
-          // 返回商品页面
-          wx.navigateBack({
-            delta: 1
+          // 成功反馈
+          wx.vibrateShort({
+            type: 'success'
           });
+          
+          // 返回购物页面
+          setTimeout(() => {
+            wx.navigateBack({
+              delta: 1
+            });
+          }, 1000);
         }
       });
-    }, 2000);
+    }, 1500);
+  },
+
+  /**
+   * 图片加载失败处理
+   */
+  onImageError: function(e) {
+    const productId = e.currentTarget.dataset.id;
+    const cartItems = [...this.data.cartItems];
+    const itemIndex = cartItems.findIndex(item => item.id === productId);
+    
+    if (itemIndex >= 0) {
+      cartItems[itemIndex].imageError = true;
+      this.setData({
+        cartItems: cartItems
+      });
+    }
+  },
+
+  /**
+   * 图片加载成功处理
+   */
+  onImageLoad: function(e) {
+    const productId = e.currentTarget.dataset.id;
+    const cartItems = [...this.data.cartItems];
+    const itemIndex = cartItems.findIndex(item => item.id === productId);
+    
+    if (itemIndex >= 0) {
+      cartItems[itemIndex].imageError = false;
+      this.setData({
+        cartItems: cartItems
+      });
+    }
   }
 }); 

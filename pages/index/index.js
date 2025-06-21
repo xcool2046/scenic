@@ -236,16 +236,15 @@ Page({
   },
 
   onBannerImageLoad() {
-    console.log('Banner image loaded');
+    // Banner加载完成
   },
 
   onBannerImageError() {
-    console.log('Banner image load error');
+    // Banner加载失败处理
   },
 
   onIconError(e) {
-    console.log('Icon load error:', e);
-    // 可以在这里设置默认图标或进行其他处理
+    // 图标加载失败处理，可以在这里设置默认图标
   },
 
   // 智慧服务点击事件
@@ -282,14 +281,12 @@ Page({
     wx.scanCode({
       onlyFromCamera: true,
       success: (res) => {
-        console.log('扫码结果:', res);
         // 跳转到验证页面
         wx.navigateTo({
           url: `/pages/scan-verify/scan-verify?scanType=${res.scanType}&result=${encodeURIComponent(res.result)}`
         });
       },
       fail: (err) => {
-        console.error('扫码失败:', err);
         if (err.errMsg !== 'scanCode:fail cancel') {
           interaction.showToast('扫码失败，请重试');
         }
@@ -300,26 +297,16 @@ Page({
   // 通用点击事件
   onCommonTap(e) {
     const type = e.currentTarget.dataset.type;
-    console.log('点击类型:', type);
     
     switch (type) {
       case 'ticket':
-        console.log('正在跳转到票务页面...');
         wx.navigateTo({ 
           url: '/pages/ticket/ticket',
-          success: () => {
-            console.log('票务页面跳转成功');
-          },
           fail: (err) => {
-            console.error('票务页面跳转失败:', err);
             // 尝试使用tabBar跳转
             wx.switchTab({ 
               url: '/pages/ticket/ticket',
-              success: () => {
-                console.log('票务页面(tab)跳转成功');
-              },
               fail: (tabErr) => {
-                console.error('票务页面(tab)跳转失败:', tabErr);
                 interaction.showToast('页面跳转失败，请重试');
               }
             });
@@ -375,7 +362,6 @@ Page({
   // 查找附近设施
   findNearby(e) {
     const type = e.currentTarget.dataset.type;
-    console.log('查找附近设施:', type);
     
     // 这里可以集成地图功能
     wx.navigateTo({
@@ -390,7 +376,6 @@ Page({
   onActivityTap(e) {
     const index = e.currentTarget.dataset.index;
     const activity = this.data.activities[index];
-    console.log('点击活动:', activity);
     
     wx.showModal({
       title: activity.title.replace(/【.*?】/, ''),

@@ -10,6 +10,8 @@
     </view>
   </view>
 
+  <!-- 调试信息已移除，功能已完善 -->
+
   <!-- 评分卡片 - Apple风格大卡片 -->
   <view class="rating-card card {{animationStates.ratingVisible ? 'visible' : ''}}">
     <view class="card-header">
@@ -21,24 +23,26 @@
       <view 
         class="rating-item" 
         wx:for="{{ratingDimensions}}" 
+        wx:for-item="dimension"
         wx:key="key"
       >
         <view class="rating-info">
-          <view class="rating-icon">{{item.icon}}</view>
+          <view class="rating-icon">{{dimension.icon}}</view>
           <view class="rating-details">
-            <view class="rating-name">{{item.name}}</view>
-            <view class="rating-desc">{{item.description}}</view>
+            <view class="rating-name">{{dimension.name}}</view>
+            <view class="rating-desc">{{dimension.description}}</view>
           </view>
         </view>
         
         <view class="rating-stars">
           <view 
-            class="star star-{{item.key}} {{rating[item.key] >= index + 1 ? 'active' : ''}}"
+            class="star {{starIndex < rating[dimension.key] ? 'active' : ''}}"
             wx:for="{{[1,2,3,4,5]}}" 
-            wx:for-index="index"
-            wx:key="index"
-            data-dimension="{{item.key}}"
-            data-value="{{index + 1}}"
+            wx:for-index="starIndex"
+            wx:for-item="starNum"
+            wx:key="star{{starIndex}}"
+            data-dimension="{{dimension.key}}"
+            data-value="{{starIndex + 1}}"
             bindtap="onRatingTap"
           >★</view>
         </view>
@@ -55,12 +59,14 @@
     
     <view class="tags-grid">
       <view 
-        class="tag-item {{selectedTags.indexOf(item) > -1 ? 'selected' : ''}}"
+        class="tag-item {{tagItem.selected ? 'selected' : ''}}"
         wx:for="{{quickTags}}" 
-        wx:key="*this"
-        data-tag="{{item}}"
+        wx:for-item="tagItem"
+        wx:for-index="tagIndex"
+        wx:key="tag{{tagItem.id}}"
+        data-tagid="{{tagItem.id}}"
         bindtap="onTagTap"
-      >{{item}}</view>
+      >{{tagItem.text}}</view>
     </view>
   </view>
 

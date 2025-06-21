@@ -8,11 +8,14 @@
     "pages/map/map",
     "pages/scan-verify/scan-verify",
     "pages/review/review",
+    "pages/review/history/history",
     "pages/coupon/coupon",
     "pages/audio-guide/audio-guide",
     "pages/management/management",
     "pages/merchant/merchant",
-    "pages/shopping/shopping"
+    "pages/shopping/shopping",
+    "pages/shopping/cart/cart",
+    "pages/shopping/detail/detail"
   ],
   "subpackages": [
     {
@@ -28,7 +31,6 @@
       "root": "packages/guide",
       "name": "guide",
       "pages": [
-        "pages/guide/map/map",
         "pages/guide/spot/spot",
         "pages/guide/parking/parking",
         "pages/guide/nearby/nearby",

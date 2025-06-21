@@ -1,27 +1,13 @@
 <!--商品详情页-->
 <view class="detail-container">
   
-  <!-- 商品图片轮播 -->
+  <!-- 商品图片 - 单图显示 -->
   <view class="image-section">
-    <swiper class="product-swiper" 
-            indicator-dots="true" 
-            indicator-color="rgba(255,255,255,0.5)"
-            indicator-active-color="#ffffff"
-            bindchange="onImageChange">
-      <swiper-item wx:for="{{productImages}}" wx:key="*this">
-        <image class="product-image" 
-               src="{{item}}" 
-               mode="aspectFill"
-               data-index="{{index}}"
-               bindtap="previewImage">
-        </image>
-      </swiper-item>
-    </swiper>
-    
-    <!-- 图片指示器 -->
-    <view class="image-indicator" wx:if="{{productImages.length > 1}}">
-      <text class="indicator-text">{{currentImageIndex + 1}} / {{productImages.length}}</text>
-    </view>
+    <image class="product-image" 
+           src="{{product.image}}" 
+           mode="aspectFill"
+           bindtap="previewImage">
+    </image>
   </view>
 
   <!-- 商品信息 -->

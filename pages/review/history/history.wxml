@@ -1,0 +1,145 @@
+<!-- pages/review/history/history.wxml -->
+<view class="history-container">
+  
+  <!-- 页面标题区 - Apple风格 -->
+  <view class="page-header {{animationStates.headerVisible ? 'visible' : ''}}">
+    <view class="header-content">
+      <view class="header-icon">📝</view>
+      <view class="header-title">我的评价历史</view>
+      <view class="header-subtitle">回顾您的珍贵点评时光</view>
+    </view>
+  </view>
+
+  <!-- 统计信息卡片 -->
+  <view class="stats-card card {{animationStates.statsVisible ? 'visible' : ''}}" wx:if="{{stats.totalReviews > 0}}">
+    <view class="stats-grid">
+      <view class="stats-item">
+        <view class="stats-number">{{stats.totalReviews}}</view>
+        <view class="stats-label">总评价数</view>
+      </view>
+      <view class="stats-item">
+        <view class="stats-number">{{stats.averageRating}}</view>
+        <view class="stats-label">平均评分</view>
+      </view>
+      <view class="stats-item">
+        <view class="stats-number">{{stats.bestRating}}</view>
+        <view class="stats-label">最高评分</view>
+      </view>
+      <view class="stats-item">
+        <view class="stats-number">{{stats.worstRating}}</view>
+        <view class="stats-label">最低评分</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 筛选栏 -->
+  <view class="filter-bar card {{animationStates.statsVisible ? 'visible' : ''}}" wx:if="{{stats.totalReviews > 0}}">
+    <view class="filter-title">筛选评分</view>
+    <view class="filter-buttons">
+      <view 
+        class="filter-btn {{filterRating === 0 ? 'active' : ''}}"
+        data-rating="0"
+        bindtap="onFilterRating"
+      >全部</view>
+      <view 
+        class="filter-btn {{filterRating === index + 1 ? 'active' : ''}}"
+        wx:for="{{[1,2,3,4,5]}}" 
+        wx:key="filter{{item}}"
+        data-rating="{{item}}"
+        bindtap="onFilterRating"
+      >{{item}}星</view>
+    </view>
+  </view>
+
+
+
+  <!-- 评价列表 -->
+  <view class="review-list {{animationStates.listVisible ? 'visible' : ''}}">
+    <!-- 加载状态 -->
+    <view class="loading-card card" wx:if="{{loading}}">
+      <view class="loading-content">
+        <view class="loading-icon">⏳</view>
+        <view class="loading-text">加载中...</view>
+      </view>
+    </view>
+
+    <!-- 空状态 -->
+    <view class="empty-card card" wx:if="{{!loading && reviewList.length === 0}}">
+      <view class="empty-content">
+        <view class="empty-icon">📭</view>
+        <view class="empty-title">暂无评价记录</view>
+        <view class="empty-subtitle">快去留下您的第一个评价吧</view>
+        <button class="btn-primary" bindtap="onNewReview">
+          立即评价
+        </button>
+      </view>
+    </view>
+
+    <!-- 评价卡片列表 -->
+    <view wx:for="{{reviewList}}" wx:key="id" class="review-item-card card">
+      <!-- 卡片头部 -->
+      <view class="review-header">
+        <view class="review-date-time">
+          <view class="review-date">{{item.date}}</view>
+          <view class="review-time">{{item.time}}</view>
+        </view>
+        <view class="review-average">
+          <view class="average-score">{{item.averageRating}}</view>
+          <view class="average-label">平均分</view>
+        </view>
+      </view>
+
+      <!-- 三维度评分 -->
+      <view class="review-ratings">
+        <view class="rating-dimension">
+          <view class="dimension-name">总体满意度 ({{item.overallRating}}分)</view>
+          <view class="dimension-stars">
+            <text class="mini-star {{index < item.overallRating ? 'active' : ''}}" wx:for="{{[1,2,3,4,5]}}" wx:key="*this">☆</text>
+          </view>
+        </view>
+        <view class="rating-dimension">
+          <view class="dimension-name">服务质量 ({{item.serviceRating}}分)</view>
+          <view class="dimension-stars">
+            <text class="mini-star {{index < item.serviceRating ? 'active' : ''}}" wx:for="{{[1,2,3,4,5]}}" wx:key="*this">☆</text>
+          </view>
+        </view>
+        <view class="rating-dimension">
+          <view class="dimension-name">环境设施 ({{item.environmentRating}}分)</view>
+          <view class="dimension-stars">
+            <text class="mini-star {{index < item.environmentRating ? 'active' : ''}}" wx:for="{{[1,2,3,4,5]}}" wx:key="*this">☆</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 标签显示 -->
+      <view class="review-tags" wx:if="{{item.tags && item.tags.length > 0}}">
+        <view class="tag-label">标签：</view>
+        <view class="tags-container">
+          <text class="review-tag" wx:for="{{item.tags}}" wx:key="*this">{{item}}</text>
+        </view>
+      </view>
+
+      <!-- 文字评价 -->
+      <view class="review-text" wx:if="{{item.textReview}}">
+        <view class="text-label">评价内容：</view>
+        <view class="text-content">{{item.textReview}}</view>
+      </view>
+
+      <!-- 操作按钮 -->
+      <view class="review-actions">
+        <button class="btn-delete" data-id="{{item.id}}" bindtap="onDeleteReview">删除</button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部操作区 -->
+  <view class="bottom-actions" wx:if="{{!loading}}">
+    <button class="btn-secondary" bindtap="onBackToReview">
+      返回评价
+    </button>
+    <button class="btn-primary" bindtap="onNewReview">
+      新建评价
+    </button>
+  </view>
+
+</view> 

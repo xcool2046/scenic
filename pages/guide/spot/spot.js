@@ -248,7 +248,7 @@ Page({
     if (!spot) return;
     
     wx.navigateTo({
-      url: `/pages/guide/map/map?spotId=${spot.id}`
+      url: `/pages/map/map?spotId=${spot.id}`
     });
   },
 

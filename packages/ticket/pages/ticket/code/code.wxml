@@ -1,2 +1,126 @@
-<!--packages/ticket/pages/ticket/code/code.wxml-->
-<text>packages/ticket/pages/ticket/code/code.wxml</text>
+<!-- 电子票码页面 - 专业扫码界面 -->
+<view class="code-page">
+  <!-- 加载状态 -->
+  <view class="loading-container" wx:if="{{loading}}">
+    <view class="loading-spinner"></view>
+    <text class="loading-text">正在加载电子票...</text>
+  </view>
+
+  <!-- 电子票内容 -->
+  <view class="ticket-content" wx:else>
+    <!-- 页面标题 -->
+    <view class="page-header">
+      <text class="page-title">电子门票</text>
+      <text class="ticket-status {{orderInfo.ticket_status === 'VALID' ? 'valid' : 'invalid'}}">
+        {{orderInfo.ticket_status === 'VALID' ? '有效' : '已使用'}}
+      </text>
+    </view>
+
+    <!-- 二维码区域 -->
+    <view class="qr-code-section">
+      <view class="qr-code-container">
+        <!-- 二维码 -->
+        <view class="qr-code-wrapper">
+          <image class="qr-code-placeholder" src="data:image/svg+xml;base64,{{qrCodeBase64}}" wx:if="{{qrCodeBase64}}" />
+          <view class="qr-code-text" wx:else>
+            <text class="qr-text">{{qrCode}}</text>
+          </view>
+        </view>
+        
+        <!-- 扫码提示 -->
+        <text class="scan-tip">请将此码出示给检票员扫描</text>
+      </view>
+      
+      <!-- 亮度调节 -->
+      <view class="brightness-control">
+        <text class="brightness-label">亮度</text>
+        <slider class="brightness-slider" 
+                value="{{brightness}}" 
+                min="0.1" 
+                max="1" 
+                step="0.1"
+                bindchange="adjustBrightness" />
+      </view>
+    </view>
+
+    <!-- 票务信息卡片 -->
+    <view class="ticket-info-card">
+      <view class="info-header">
+        <text class="ticket-name">{{orderInfo.ticket_name}}</text>
+        <text class="ticket-quantity">×{{orderInfo.quantity}}</text>
+      </view>
+      
+      <view class="info-details">
+        <view class="detail-item">
+          <text class="detail-label">订单号</text>
+          <text class="detail-value">{{orderInfo.order_id}}</text>
+        </view>
+        <view class="detail-item">
+          <text class="detail-label">游览日期</text>
+          <text class="detail-value">{{orderInfo.visit_date}}</text>
+        </view>
+        <view class="detail-item">
+          <text class="detail-label">支付金额</text>
+          <text class="detail-value price">¥{{orderInfo.total_price}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 扩展信息 -->
+    <view class="expand-section" wx:if="{{showOrderDetail}}">
+      <view class="expand-content">
+        <view class="detail-item">
+          <text class="detail-label">购买时间</text>
+          <text class="detail-value">{{orderInfo.create_time}}</text>
+        </view>
+        <view class="detail-item">
+          <text class="detail-label">支付状态</text>
+          <text class="detail-value">{{orderInfo.pay_status === 'SUCCESS' ? '已支付' : '未支付'}}</text>
+        </view>
+        <view class="detail-item">
+          <text class="detail-label">票务状态</text>
+          <text class="detail-value">{{orderInfo.ticket_status === 'VALID' ? '有效' : '已使用'}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 操作按钮 -->
+    <view class="action-buttons">
+      <!-- 主要操作 -->
+      <view class="primary-actions">
+        <view class="action-btn primary" bindtap="saveQrCode">
+          <text>保存到相册</text>
+        </view>
+        <view class="action-btn secondary" bindtap="toggleOrderDetail">
+          <text>{{showOrderDetail ? '收起' : '详情'}}</text>
+        </view>
+      </view>
+      
+      <!-- 次要操作 -->
+      <view class="secondary-actions">
+        <view class="small-btn" bindtap="viewOrderDetail">
+          <text>完整订单</text>
+        </view>
+        <view class="small-btn" bindtap="contactService">
+          <text>联系客服</text>
+        </view>
+        <view class="small-btn" bindtap="goToOrders">
+          <text>我的订单</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 使用说明 -->
+    <view class="usage-tips">
+      <view class="tips-header">
+        <text>使用说明</text>
+      </view>
+      <view class="tips-content">
+        <text class="tip-item">• 入园时请主动出示此电子票</text>
+        <text class="tip-item">• 每张票仅限使用一次</text>
+        <text class="tip-item">• 请确保手机电量充足</text>
+        <text class="tip-item">• 如遇问题请联系现场工作人员</text>
+      </view>
+    </view>
+  </view>
+</view>

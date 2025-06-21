@@ -29,9 +29,10 @@
               value="{{progress}}" 
               min="0" 
               max="100"
-              block-size="16"
-              backgroundColor="rgba(255,255,255,0.2)"
-              activeColor="#ffffff"
+              block-size="20"
+              backgroundColor="rgba(0,0,0,0.1)"
+              activeColor="#007AFF"
+              block-color="#007AFF"
               bindchange="onProgressChange">
       </slider>
     </view>

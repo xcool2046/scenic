@@ -370,8 +370,9 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 30rpx 40rpx 20rpx;
-  background: transparent;
+  padding: 32rpx 40rpx;
+  background: #ffffff;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.04);
 }
 
 .header-title {
@@ -397,6 +398,27 @@
 .header-action {
   display: flex;
   align-items: center;
+  gap: 12rpx;
+  padding: 12rpx 20rpx;
+  border-radius: 24rpx;
+  background: rgba(102, 126, 234, 0.1);
+  transition: all 0.3s ease;
+}
+
+.header-action:active {
+  background: rgba(102, 126, 234, 0.15);
+  transform: scale(0.96);
+}
+
+.orders-icon {
+  width: 32rpx;
+  height: 32rpx;
+}
+
+.orders-link {
+  font-size: 28rpx;
+  font-weight: 500;
+  color: #667eea;
 }
 
 .order-btn {
@@ -498,6 +520,7 @@
 
 .ticket-card.selected::before {
   opacity: 1;
+  background: linear-gradient(135deg, rgba(0, 122, 255, 0.05) 0%, rgba(88, 86, 214, 0.05) 100%);
 }
 
 .ticket-card:active {
@@ -505,12 +528,12 @@
 }
 
 .ticket-card.selected {
-  background: #ffffff;
-  border: none;
+  background: linear-gradient(135deg, rgba(0, 122, 255, 0.03) 0%, rgba(88, 86, 214, 0.03) 100%);
+  border: 2rpx solid rgba(0, 122, 255, 0.15);
   transform: translateY(-4rpx);
   box-shadow: 
-    0 12rpx 40rpx rgba(0, 122, 255, 0.15),
-    0 4rpx 12rpx rgba(0, 122, 255, 0.1);
+    0 12rpx 40rpx rgba(0, 122, 255, 0.08),
+    0 4rpx 12rpx rgba(88, 86, 214, 0.06);
 }
 
 /* 票种头部 */
@@ -985,4 +1008,525 @@
   .section-container {
     margin: 0 32rpx 48rpx;
   }
+}
+
+/* 票务页面 - Apple风格极简设计 */
+
+/* 页面容器 */
+.ticket-page {
+  background: linear-gradient(135deg, #fafafa 0%, #f5f5f7 100%);
+  min-height: 100vh;
+  padding: 0 32rpx 120rpx;
+}
+
+/* 页面标题 */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 120rpx 0 60rpx;
+}
+
+.page-title {
+  font-size: 68rpx;
+  font-weight: 700;
+  color: #1d1d1f;
+  letter-spacing: -1rpx;
+}
+
+.orders-link {
+  font-size: 28rpx;
+  color: #007aff;
+  font-weight: 500;
+}
+
+/* 票种网格布局 - Bento Grid */
+.tickets-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24rpx;
+  margin-bottom: 80rpx;
+}
+
+/* 票种卡片 */
+.ticket-card {
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(20rpx);
+  border-radius: 32rpx;
+  padding: 40rpx 32rpx;
+  position: relative;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 2rpx solid transparent;
+  min-height: 260rpx;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.ticket-card.selected {
+  border-color: #007aff;
+  border-width: 3rpx;
+  background: rgba(255, 255, 255, 1);
+  transform: scale(1.02);
+  box-shadow: 0 20rpx 60rpx rgba(0, 122, 255, 0.25);
+  position: relative;
+}
+
+.ticket-card.selected::before {
+  content: '';
+  position: absolute;
+  top: -3rpx;
+  right: -3rpx;
+  left: -3rpx;
+  bottom: -3rpx;
+  background: linear-gradient(135deg, rgba(0, 122, 255, 0.2), rgba(88, 86, 214, 0.2));
+  border-radius: 36rpx;
+  z-index: -1;
+}
+
+/* 票种标签 */
+.ticket-tag {
+  position: absolute;
+  top: 20rpx;
+  right: 20rpx;
+  background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
+  color: white;
+  font-size: 20rpx;
+  font-weight: 600;
+  padding: 8rpx 16rpx;
+  border-radius: 12rpx;
+  text-align: center;
+}
+
+.ticket-card:nth-child(2) .ticket-tag {
+  background: linear-gradient(135deg, #4ecdc4, #6ee8df);
+}
+
+.ticket-card:nth-child(3) .ticket-tag {
+  background: linear-gradient(135deg, #45b7d1, #6cc4d9);
+}
+
+.ticket-card:nth-child(4) .ticket-tag {
+  background: linear-gradient(135deg, #f9ca24, #f7d660);
+}
+
+/* 票种名称 */
+.ticket-name {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #1d1d1f;
+  margin-bottom: 16rpx;
+  letter-spacing: -0.5rpx;
+}
+
+/* 价格区域 */
+.price-section {
+  margin-bottom: 20rpx;
+}
+
+.current-price {
+  font-size: 48rpx;
+  font-weight: 800;
+  color: #007aff;
+  margin-right: 16rpx;
+}
+
+.original-price {
+  font-size: 24rpx;
+  color: #8e8e93;
+  text-decoration: line-through;
+}
+
+/* 描述文字 */
+.ticket-desc {
+  font-size: 24rpx;
+  color: #636366;
+  line-height: 1.4;
+}
+
+/* 选中圆环指示器 */
+.selection-ring {
+  position: absolute;
+  top: -4rpx;
+  right: -4rpx;
+  left: -4rpx;
+  bottom: -4rpx;
+  border: 3rpx solid rgba(0, 122, 255, 0.3);
+  border-radius: 36rpx;
+  opacity: 0;
+  animation: ringAppear 0.3s ease-out forwards;
+}
+
+@keyframes ringAppear {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* 选中状态文字颜色增强 */
+.ticket-card.selected .current-price {
+  color: #007AFF;
+  text-shadow: 0 1rpx 2rpx rgba(0, 0, 0, 0.05);
+}
+
+.ticket-card.selected .ticket-name {
+  color: #1d1d1f;
+  font-weight: 800;
+}
+
+.ticket-card.selected .ticket-desc {
+  color: #515154;
+  font-weight: 500;
+}
+
+/* 选中标记 */
+.selected-badge {
+  position: absolute;
+  top: 16rpx;
+  left: 16rpx;
+  width: 48rpx;
+  height: 48rpx;
+  background: linear-gradient(135deg, rgba(0, 122, 255, 0.9), rgba(88, 86, 214, 0.9));
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4rpx 12rpx rgba(0, 122, 255, 0.2);
+  animation: badgeAppear 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.selected-icon {
+  color: #ffffff;
+  font-size: 24rpx;
+  font-weight: bold;
+}
+
+@keyframes badgeAppear {
+  from {
+    opacity: 0;
+    transform: scale(0) rotate(-180deg);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+/* 购买配置区域 */
+.purchase-config {
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(20rpx);
+  border-radius: 32rpx;
+  padding: 48rpx 40rpx;
+  margin-bottom: 40rpx;
+}
+
+.config-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24rpx 0;
+}
+
+.config-row:not(:last-child) {
+  border-bottom: 1rpx solid #f2f2f7;
+}
+
+.config-label {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #1d1d1f;
+}
+
+/* 数量选择器 */
+.quantity-selector {
+  display: flex;
+  align-items: center;
+  background: #f2f2f7;
+  border-radius: 20rpx;
+  padding: 8rpx;
+}
+
+.qty-btn {
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 16rpx;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #007aff;
+  transition: all 0.2s ease;
+}
+
+.qty-btn.disabled {
+  background: #f2f2f7;
+  color: #c7c7cc;
+}
+
+.qty-number {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #1d1d1f;
+  margin: 0 32rpx;
+  min-width: 48rpx;
+  text-align: center;
+}
+
+/* 日期选择器 */
+.date-picker {
+  display: flex;
+  align-items: center;
+  background: #f2f2f7;
+  border-radius: 20rpx;
+  padding: 16rpx 24rpx;
+  min-width: 240rpx;
+  justify-content: space-between;
+}
+
+.date-text {
+  font-size: 28rpx;
+  font-weight: 500;
+  color: #1d1d1f;
+}
+
+.picker-arrow {
+  font-size: 24rpx;
+  color: #8e8e93;
+  margin-left: 16rpx;
+}
+
+/* 购买底部 */
+.purchase-bottom {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20rpx);
+  padding: 32rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1rpx solid #f2f2f7;
+  z-index: 100;
+}
+
+.total-price {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.price-label {
+  font-size: 24rpx;
+  color: #8e8e93;
+  margin-bottom: 4rpx;
+}
+
+.total-amount {
+  font-size: 40rpx;
+  font-weight: 800;
+  color: #1d1d1f;
+}
+
+/* 购买按钮 */
+.buy-button {
+  background: linear-gradient(135deg, #007aff, #0056d6);
+  border-radius: 28rpx;
+  padding: 24rpx 48rpx;
+  box-shadow: 0 8rpx 24rpx rgba(0, 122, 255, 0.3);
+  transition: all 0.3s ease;
+}
+
+.buy-button text {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.buy-button:active {
+  transform: scale(0.96);
+  box-shadow: 0 4rpx 12rpx rgba(0, 122, 255, 0.2);
+}
+
+/* 购买弹窗 */
+.purchase-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+.purchase-modal.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal-mask {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(10rpx);
+}
+
+.modal-container {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #ffffff;
+  border-radius: 40rpx 40rpx 0 0;
+  padding: 40rpx;
+  transform: translateY(100%);
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.purchase-modal.show .modal-container {
+  transform: translateY(0);
+}
+
+/* 弹窗标题 */
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 48rpx;
+}
+
+.modal-title {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: #1d1d1f;
+}
+
+.modal-close {
+  font-size: 48rpx;
+  color: #8e8e93;
+  font-weight: 300;
+}
+
+/* 表单区域 */
+.form-section {
+  margin-bottom: 48rpx;
+}
+
+.input-group {
+  margin-bottom: 32rpx;
+}
+
+.input-label {
+  display: block;
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #1d1d1f;
+  margin-bottom: 16rpx;
+}
+
+.form-input {
+  width: 100%;
+  height: 88rpx;
+  background: #f2f2f7;
+  border-radius: 20rpx;
+  padding: 0 24rpx;
+  font-size: 28rpx;
+  color: #1d1d1f;
+  border: 2rpx solid transparent;
+  transition: all 0.2s ease;
+}
+
+.form-input:focus {
+  background: #ffffff;
+  border-color: #007aff;
+  box-shadow: 0 0 0 6rpx rgba(0, 122, 255, 0.1);
+}
+
+/* 订单摘要 */
+.order-summary {
+  background: #f2f2f7;
+  border-radius: 20rpx;
+  padding: 32rpx;
+  margin-bottom: 48rpx;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16rpx 0;
+}
+
+.summary-row:not(:last-child) {
+  border-bottom: 1rpx solid #e5e5ea;
+}
+
+.summary-label {
+  font-size: 28rpx;
+  color: #636366;
+}
+
+.summary-value {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #1d1d1f;
+}
+
+.total-row .summary-label,
+.total-row .summary-value {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #007aff;
+}
+
+/* 弹窗操作按钮 */
+.modal-actions {
+  display: flex;
+  gap: 24rpx;
+}
+
+.action-btn {
+  flex: 1;
+  height: 88rpx;
+  border-radius: 24rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32rpx;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.action-btn.cancel {
+  background: #f2f2f7;
+  color: #8e8e93;
+}
+
+.action-btn.confirm {
+  background: linear-gradient(135deg, #007aff, #0056d6);
+  color: #ffffff;
+  box-shadow: 0 8rpx 24rpx rgba(0, 122, 255, 0.3);
+}
+
+.action-btn.loading {
+  background: #c7c7cc;
+  color: #ffffff;
+}
+
+.action-btn:active {
+  transform: scale(0.96);
 }

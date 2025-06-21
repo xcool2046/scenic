@@ -112,7 +112,7 @@ Page({
   // 打开完整地图
   navigateToFullMap() {
     wx.navigateTo({
-      url: '/pages/guide/map/map'
+      url: '/pages/map/map'
     });
   },
 

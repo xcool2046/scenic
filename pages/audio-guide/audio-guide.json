@@ -4,9 +4,9 @@
     "toast": "../../components/toast/toast"
   },
   "navigationBarTitleText": "码上导游",
-  "navigationBarBackgroundColor": "#1AAD19",
-  "navigationBarTextStyle": "white",
-  "backgroundColor": "#ffffff",
+  "navigationBarBackgroundColor": "#f8f9fa",
+  "navigationBarTextStyle": "black",
+  "backgroundColor": "#f8f9fa",
   "backgroundTextStyle": "dark",
   "enablePullDownRefresh": true,
   "onReachBottomDistance": 50

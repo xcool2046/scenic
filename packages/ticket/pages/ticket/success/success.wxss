@@ -1,0 +1,317 @@
+/* 购票成功页面 - Apple风格 */
+
+.success-page {
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  min-height: 100vh;
+  padding: 60rpx 32rpx;
+}
+
+/* 加载状态 */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 60vh;
+}
+
+.loading-icon {
+  width: 80rpx;
+  height: 80rpx;
+  border: 6rpx solid #f3f3f3;
+  border-top: 6rpx solid #007aff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading-text {
+  font-size: 28rpx;
+  color: #8e8e93;
+  margin-top: 32rpx;
+}
+
+/* 成功页面内容 */
+.success-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* 成功头部 */
+.success-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 80rpx;
+  animation: slideInScale 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes slideInScale {
+  from {
+    opacity: 0;
+    transform: translateY(-50rpx) scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.success-icon {
+  width: 160rpx;
+  height: 160rpx;
+  background: linear-gradient(135deg, #34c759, #30b050);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 40rpx;
+  box-shadow: 0 20rpx 60rpx rgba(52, 199, 89, 0.3);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    box-shadow: 0 20rpx 60rpx rgba(52, 199, 89, 0.3);
+  }
+  50% {
+    box-shadow: 0 25rpx 80rpx rgba(52, 199, 89, 0.5);
+  }
+}
+
+.checkmark {
+  font-size: 80rpx;
+  color: white;
+  font-weight: bold;
+}
+
+.success-title {
+  font-size: 56rpx;
+  font-weight: 700;
+  color: #1d1d1f;
+  margin-bottom: 16rpx;
+  letter-spacing: -1rpx;
+}
+
+.success-subtitle {
+  font-size: 28rpx;
+  color: #636366;
+  font-weight: 500;
+}
+
+/* 订单卡片 */
+.order-card {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20rpx);
+  border-radius: 32rpx;
+  padding: 48rpx 40rpx;
+  margin-bottom: 60rpx;
+  box-shadow: 0 10rpx 30rpx rgba(0, 0, 0, 0.1);
+  animation: slideInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.2s both;
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(40rpx);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 门票信息 */
+.ticket-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 40rpx;
+  padding-bottom: 32rpx;
+  border-bottom: 1rpx solid #f2f2f7;
+}
+
+.ticket-name {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: #1d1d1f;
+}
+
+.ticket-quantity {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #007aff;
+  background: rgba(0, 122, 255, 0.1);
+  padding: 8rpx 16rpx;
+  border-radius: 12rpx;
+}
+
+/* 订单详情 */
+.order-details {
+  display: flex;
+  flex-direction: column;
+  gap: 24rpx;
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.detail-label {
+  font-size: 28rpx;
+  color: #636366;
+}
+
+.detail-value {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #1d1d1f;
+}
+
+.detail-value.price {
+  color: #007aff;
+  font-size: 32rpx;
+  font-weight: 700;
+}
+
+/* 操作按钮组 */
+.action-buttons {
+  width: 100%;
+  margin-bottom: 60rpx;
+  animation: slideInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.4s both;
+}
+
+.primary-button {
+  width: 100%;
+  height: 96rpx;
+  background: linear-gradient(135deg, #007aff, #0056d6);
+  border-radius: 28rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 32rpx;
+  box-shadow: 0 12rpx 32rpx rgba(0, 122, 255, 0.4);
+  transition: all 0.3s ease;
+}
+
+.primary-button text {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: white;
+}
+
+.primary-button:active {
+  transform: scale(0.96);
+  box-shadow: 0 8rpx 20rpx rgba(0, 122, 255, 0.3);
+}
+
+.secondary-actions {
+  display: flex;
+  gap: 24rpx;
+}
+
+.secondary-button {
+  flex: 1;
+  height: 80rpx;
+  background: rgba(255, 255, 255, 0.9);
+  border: 2rpx solid #f2f2f7;
+  border-radius: 24rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.secondary-button text {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #007aff;
+}
+
+.secondary-button:active {
+  background: rgba(0, 122, 255, 0.05);
+  border-color: #007aff;
+}
+
+/* 温馨提示 */
+.tips-section {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 24rpx;
+  padding: 40rpx 32rpx;
+  margin-bottom: 60rpx;
+  animation: slideInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.6s both;
+}
+
+.tips-title {
+  margin-bottom: 24rpx;
+}
+
+.tips-title text {
+  font-size: 28rpx;
+  font-weight: 700;
+  color: #1d1d1f;
+}
+
+.tips-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
+.tip-item {
+  font-size: 24rpx;
+  color: #636366;
+  line-height: 1.5;
+}
+
+/* 底部导航 */
+.bottom-nav {
+  width: 100%;
+  display: flex;
+  gap: 24rpx;
+  animation: slideInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.8s both;
+}
+
+.nav-button {
+  flex: 1;
+  height: 88rpx;
+  border-radius: 24rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.nav-button.outline {
+  background: transparent;
+  border: 2rpx solid #007aff;
+}
+
+.nav-button.outline text {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #007aff;
+}
+
+.nav-button.filled {
+  background: #007aff;
+}
+
+.nav-button.filled text {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: white;
+}
+
+.nav-button:active {
+  transform: scale(0.96);
+} 

@@ -1,21 +1,15 @@
-// pages/map/map.js
+// pages/map/map.js - Apple 风格极简地图逻辑
 const app = getApp();
-const env = require('../../utils/env');
-const { mapManager } = require('../../utils/map');
-const { userManager } = require('../../utils/user');
-const api = require('../../utils/api');
 const config = require('../../utils/config');
 const performance = require('../../utils/performance');
 
 Page({
   data: {
-    config,
-    
     // 地图基础配置
     latitude: 39.9042,
     longitude: 116.4074,
     scale: 16,
-    mapType: 'standard', // standard, satellite
+    mapType: 'standard',
     
     // 标记点数据
     markers: [],
@@ -24,17 +18,83 @@ Page({
     // 路线数据
     polyline: [],
     
-    // 景点和设施数据（将从 MapManager 获取）
-    spots: [],
-    facilities: [],
-    
     // UI状态
     loading: true,
     error: false,
-    showLegend: false,
+    errorMessage: '',
     
     // 地图实例
-    mapCtx: null
+    mapCtx: null,
+
+    // 简化的景点数据（避免复杂的MapManager依赖）
+    spotsData: [
+      {
+        id: 1,
+        name: '望海亭',
+        type: 'scenic',
+        category: '景点',
+        latitude: 39.909000,
+        longitude: 116.398000,
+        description: '位于景区最高点，可俯瞰整个景区美景，是拍摄日出和全景的最佳地点',
+        features: ['观景', '摄影', '日出'],
+        iconPath: '/assets/icons/markers/scenic.png'
+      },
+      {
+        id: 2,
+        name: '松月湖',
+        type: 'scenic',
+        category: '景点',
+        latitude: 39.907500,
+        longitude: 116.396500,
+        description: '景区最大的湖泊，湖水清澈见底，四周绿树环绕',
+        features: ['湖泊', '划船', '休闲'],
+        iconPath: '/assets/icons/markers/scenic.png'
+      },
+      {
+        id: 3,
+        name: '古樟园',
+        type: 'scenic',
+        category: '景点',
+        latitude: 39.906000,
+        longitude: 116.395000,
+        description: '百年古樟树群落，树荫蔽日，夏季凉爽宜人',
+        features: ['古树', '避暑', '休憩'],
+        iconPath: '/assets/icons/markers/scenic.png'
+      },
+      {
+        id: 4,
+        name: '飞瀑溪',
+        type: 'scenic',
+        category: '景点',
+        latitude: 39.908500,
+        longitude: 116.394500,
+        description: '山涧飞瀑，水声潺潺，溪边设有观景平台',
+        features: ['瀑布', '观景台', '自然'],
+        iconPath: '/assets/icons/markers/scenic.png'
+      },
+      {
+        id: 5,
+        name: '游客中心',
+        type: 'facility',
+        category: '设施',
+        latitude: 39.908000,
+        longitude: 116.397000,
+        description: '提供咨询服务、导览图和休息区',
+        features: ['服务', '休息', '咨询'],
+        iconPath: '/assets/icons/markers/facility.png'
+      },
+      {
+        id: 6,
+        name: '东大门',
+        type: 'entrance',
+        category: '入口',
+        latitude: 39.910000,
+        longitude: 116.399000,
+        description: '景区主要入口，提供检票和导览服务',
+        features: ['入口', '检票', '停车'],
+        iconPath: '/assets/icons/markers/entrance.png'
+      }
+    ]
   },
 
   async onLoad(options) {
@@ -45,10 +105,12 @@ Page({
       this.mapCtx = wx.createMapContext('map', this);
       
       // 初始化地图数据
-      await this.initializeMapData();
+      await this.initializeMap();
       
-      // 处理页面参数
-      this.processOptions(options);
+      // 处理页面参数（支持从导览页面跳转）
+      if (options.spotId) {
+        this.locateToSpot(parseInt(options.spotId));
+      }
       
       this.setData({ loading: false });
       
@@ -56,221 +118,143 @@ Page({
       console.error('地图页面加载失败:', error);
       this.setData({ 
         loading: false,
-        error: true 
+        error: true,
+        errorMessage: '地图初始化失败，请检查网络连接'
       });
     }
   },
 
   onShow() {
-    // 记录页面显示性能
     performance.performanceMonitor.recordPageShow('map');
   },
-  
+
+  // 初始化地图
+  async initializeMap() {
+    try {
+      // 获取用户位置
+      await this.getCurrentLocation();
+      
+      // 初始化标记点
+      this.initializeMarkers();
+      
+    } catch (error) {
+      console.warn('地图初始化部分功能失败:', error);
+      // 使用默认位置和数据，确保地图能正常显示
+      this.initializeMarkers();
+    }
+  },
+
   // 获取当前位置
   getCurrentLocation() {
-    wx.showLoading({ title: '正在定位...' });
-    
-    wx.getLocation({
-      type: 'gcj02',
-      success: (res) => {
-        console.log('定位成功:', res);
-        this.setData({
-          latitude: res.latitude,
-          longitude: res.longitude,
-          loading: false
-        });
-      },
-      fail: (error) => {
-        console.error('定位失败:', error);
-        // 使用默认位置
-        this.setData({ 
-          loading: false 
-        });
-        
-        // 提示用户
-        wx.showModal({
-          title: '提示',
-          content: '无法获取您的位置，部分功能可能受限。请授权位置权限并重试。',
-          showCancel: false
-        });
-      },
-      complete: () => {
-        wx.hideLoading();
-      }
+    return new Promise((resolve, reject) => {
+      wx.getLocation({
+        type: 'gcj02',
+        success: (res) => {
+          console.log('定位成功:', res);
+          this.setData({
+            latitude: res.latitude,
+            longitude: res.longitude
+          });
+          resolve(res);
+        },
+        fail: (error) => {
+          console.warn('定位失败，使用默认位置:', error);
+          // 不阻塞流程，使用默认位置
+          resolve(null);
+        }
+      });
     });
   },
 
-  // 初始化地图数据
-  async initializeMapData() {
-    try {
-      console.log('开始初始化地图数据...');
-      
-      // 先设置默认位置，确保地图能显示
-      this.setData({
-        latitude: 39.9042, // 北京位置作为默认
-        longitude: 116.4074,
-        scale: 16,
-        loading: false,
-        error: false
-      });
-      
-      // 尝试等待 MapManager 就绪（如果失败不影响基本显示）
-      try {
-        const mapManager = await app.waitForManager('map');
-        
-        // 从 MapManager 获取数据
-        const spots = mapManager.getAllSpots();
-        const facilities = mapManager.getAllFacilities();
-        const userLocation = mapManager.getCurrentLocation();
-        
-        console.log('从 MapManager 获取数据:', { spots, facilities, userLocation });
+  // 初始化标记点
+  initializeMarkers() {
+    const markers = this.data.spotsData.map(spot => ({
+      id: spot.id,
+      latitude: spot.latitude,
+      longitude: spot.longitude,
+      title: spot.name,
+      iconPath: this.getMarkerIcon(spot.type),
+      width: 32,
+      height: 32,
+      callout: {
+        content: spot.name,
+        display: 'BYCLICK',
+        fontSize: 14,
+        borderRadius: 8,
+        padding: 8,
+        bgColor: '#ffffff',
+        color: '#333333',
+        textAlign: 'center'
+      },
+      // 保存完整的景点数据
+      ...spot
+    }));
 
-        if (userLocation) {
-          this.setData({
-            latitude: userLocation.latitude,
-            longitude: userLocation.longitude,
-          });
-        }
-
-        const markers = [];
-        
-        // 添加景点标记
-        spots.forEach(spot => {
-          markers.push({
-            id: spot.id,
-            latitude: spot.latitude,
-            longitude: spot.longitude,
-            title: spot.name,
-            iconPath: this.getMarkerIcon(spot.category), // 使用 category 字段
-            width: 32,
-            height: 32,
-            callout: {
-              content: spot.name,
-              display: 'BYCLICK',
-              fontSize: 14,
-              borderRadius: 6,
-              padding: 10,
-              bgColor: '#ffffff',
-              textAlign: 'center'
-            },
-            ...spot
-          });
-        });
-        
-        // 添加设施标记
-        facilities.forEach(facility => {
-          markers.push({
-            id: facility.id,
-            latitude: facility.latitude,
-            longitude: facility.longitude,
-            title: facility.name,
-            iconPath: this.getMarkerIcon(facility.type),
-            width: 28,
-            height: 28,
-            ...facility
-          });
-        });
-        
-        this.setData({ 
-          spots, 
-          facilities,
-          markers
-        });
-        
-      } catch (mapManagerError) {
-        console.warn('MapManager 加载失败，使用默认配置:', mapManagerError);
-        // 即使 MapManager 失败，地图仍然可以显示
-      }
-
-    } catch (error) {
-      console.error('初始化地图数据失败:', error);
-      this.setData({
-        loading: false,
-        error: true,
-        errorMessage: '地图数据加载失败，请稍后重试。'
-      });
-    }
+    this.setData({ markers });
   },
 
   // 获取标记图标
   getMarkerIcon(type) {
     const iconMap = {
-      'entrance': '/assets/icons/markers/entrance.png',
       'scenic': '/assets/icons/markers/scenic.png',
       'facility': '/assets/icons/markers/facility.png',
-      'toilet': '/assets/icons/markers/toilet.png',
+      'entrance': '/assets/icons/markers/entrance.png',
       'food': '/assets/icons/markers/food.png',
-      'rest': '/assets/icons/markers/rest.png',
-      // 新增分类
-      'natural': '/assets/icons/markers/scenic.png',
-      'cultural': '/assets/icons/markers/scenic.png',
-      'viewpoint': '/assets/icons/markers/scenic.png',
-      'recreation': '/assets/icons/markers/scenic.png',
+      'toilet': '/assets/icons/markers/toilet.png',
+      'rest': '/assets/icons/markers/rest.png'
     };
     return iconMap[type] || '/assets/icons/markers/default.png';
   },
 
-  // 处理页面参数
-  processOptions(options) {
-    // 如果传入了特定类型，筛选显示
-    if (options.type) {
-      const filteredMarkers = this.data.markers.filter(marker => 
-        marker.type === options.type
-      );
-      this.setData({ markers: filteredMarkers });
-    }
-    
-    // 如果传入了景点ID，定位到该景点
-    if (options.spotId) {
-      this.locateToSpot(options.spotId);
-    }
-  },
-
   // 定位到指定景点
   locateToSpot(spotId) {
-    const marker = this.data.markers.find(m => m.id == spotId);
-    if (marker) {
+    const spot = this.data.spotsData.find(s => s.id === spotId);
+    if (spot) {
       this.setData({
-        latitude: marker.latitude,
-        longitude: marker.longitude,
+        latitude: spot.latitude,
+        longitude: spot.longitude,
         scale: 18,
-        selectedMarker: marker
+        selectedMarker: spot
       });
+      
+      // 延迟移动到指定位置，确保地图已渲染
+      setTimeout(() => {
+        if (this.mapCtx) {
+          this.mapCtx.moveToLocation({
+            latitude: spot.latitude,
+            longitude: spot.longitude
+          });
+        }
+      }, 500);
     }
   },
 
   // 标记点击事件
   onMarkerTap(e) {
-    const markerId = e.markerId || e.detail.markerId;
+    const markerId = e.detail.markerId;
     const marker = this.data.markers.find(m => m.id === markerId);
     
     if (marker) {
-      console.log('点击标记:', marker);
-      this.setData({
-        selectedMarker: marker,
-        latitude: marker.latitude,
-        longitude: marker.longitude,
-        scale: 18
-      });
+      this.setData({ selectedMarker: marker });
     }
   },
 
   // 地图点击事件
   onMapTap() {
-    // 点击空白区域关闭信息面板
+    // 点击地图空白区域时关闭信息面板
     this.setData({ selectedMarker: null });
   },
 
-  // 地区改变事件
+  // 地图区域变化
   onRegionChange(e) {
     if (e.type === 'end') {
       console.log('地图区域改变:', e.detail);
     }
   },
 
-  // 控件点击事件
-  onControlTap(e) {
-    console.log('控件点击:', e);
+  // 关闭信息面板
+  closeInfoPanel() {
+    this.setData({ selectedMarker: null });
   },
 
   // 切换地图类型
@@ -295,48 +279,92 @@ Page({
   navigateToMarker() {
     const marker = this.data.selectedMarker;
     if (!marker) return;
-    
-    wx.openLocation({
-      latitude: marker.latitude,
-      longitude: marker.longitude,
-      name: marker.title,
-      address: marker.description || '',
-      scale: 18
+
+    wx.showActionSheet({
+      itemList: ['使用微信导航', '使用第三方地图'],
+      success: (res) => {
+        if (res.tapIndex === 0) {
+          // 使用微信内置导航
+          wx.openLocation({
+            latitude: marker.latitude,
+            longitude: marker.longitude,
+            name: marker.name,
+            address: marker.description
+          });
+        } else if (res.tapIndex === 1) {
+          // 调用第三方地图
+          this.openThirdPartyMap(marker);
+        }
+      }
+    });
+  },
+
+  // 调用第三方地图
+  openThirdPartyMap(marker) {
+    const url = `https://uri.amap.com/navigation?to=${marker.longitude},${marker.latitude}&toname=${marker.name}`;
+    wx.setClipboardData({
+      data: url,
+      success: () => {
+        wx.showToast({
+          title: '地址已复制',
+          icon: 'success'
+        });
+      }
     });
   },
 
   // 查看标记详情
   viewMarkerDetail() {
     const marker = this.data.selectedMarker;
-    if (!marker || !marker.detailUrl) return;
+    if (!marker) return;
+
+    // 跳转到景点详情页面
+    if (marker.type === 'scenic') {
+      wx.navigateTo({
+        url: `/pages/guide/spot/spot?id=${marker.id}`
+      });
+    } else {
+      wx.showToast({
+        title: '暂无详情页面',
+        icon: 'none'
+      });
+    }
+  },
+
+  // 重新加载
+  retryLoad() {
+    this.setData({
+      loading: true,
+      error: false,
+      errorMessage: ''
+    });
     
-    wx.navigateTo({
-      url: marker.detailUrl
+    this.initializeMap().then(() => {
+      this.setData({ loading: false });
+    }).catch(() => {
+      this.setData({
+        loading: false,
+        error: true,
+        errorMessage: '重新加载失败，请检查网络连接'
+      });
     });
   },
 
-  // 关闭信息面板
-  closeInfoPanel() {
-    this.setData({ selectedMarker: null });
-  },
-
-  // 切换图例显示
-  toggleLegend() {
-    this.setData({ showLegend: !this.data.showLegend });
-  },
-
-  // 重试加载
-  retryLoad() {
-    this.setData({ error: false, loading: true });
-    this.onLoad();
-  },
-
-  // 页面分享
+  // 分享功能
   onShareAppMessage() {
+    const marker = this.data.selectedMarker;
+    if (marker) {
+      return {
+        title: `【景区地图】${marker.name}`,
+        path: `/pages/map/map?spotId=${marker.id}`,
+        imageUrl: '/assets/images/map_preview.jpg'
+      };
+    }
+    
     return {
-      title: '景区地图 - 智慧导览',
+      title: '景区地图 - 智能导览',
       path: '/pages/map/map',
       imageUrl: '/assets/images/map_preview.jpg'
     };
   }
-})
+});

@@ -1,171 +1,146 @@
-<!-- packages/ticket/pages/ticket/ticket.wxml -->
-<view class="page-container">
-  <!-- 页面头部 -->
+<!-- 极简专注型票务页面 - Apple风格设计 -->
+<view class="ticket-page">
+  <!-- 页面标题 -->
   <view class="page-header">
-    <view class="header-title">
-      <text class="main-title">景区门票</text>
-      <text class="subtitle">选择适合您的门票类型</text>
+    <text class="page-title">门票</text>
+    <view class="header-action" bindtap="viewMyOrders">
+      <image class="orders-icon" src="/assets/icons/user/pending.png"></image>
+      <text class="orders-link">我的订单</text>
     </view>
-    <view class="header-action">
-      <view class="order-btn" bindtap="viewMyOrders">
-        <text class="order-btn-text">我的订单</text>
+  </view>
+
+  <!-- 票种选择 - Bento Grid 布局 -->
+  <view class="tickets-grid">
+    <view class="ticket-card {{item.selected ? 'selected' : ''}}" 
+          wx:for="{{tickets}}" 
+          wx:key="id"
+          bindtap="selectTicket"
+          data-id="{{item.id}}">
+      
+      <!-- 票种标签 -->
+      <view class="ticket-tag">{{item.tag}}</view>
+      
+      <!-- 票种名称 -->
+      <view class="ticket-name">{{item.name}}</view>
+      
+      <!-- 价格区域 -->
+      <view class="price-section">
+        <text class="current-price">¥{{item.price}}</text>
+        <text class="original-price">¥{{item.originalPrice}}</text>
+      </view>
+      
+      <!-- 描述 -->
+      <view class="ticket-desc">{{item.description}}</view>
+      
+      <!-- 选中指示器 -->
+      <view class="selection-ring" wx:if="{{item.selected}}"></view>
+      
+      <!-- 选中标记 -->
+      <view class="selected-badge" wx:if="{{item.selected}}">
+        <text class="selected-icon">✓</text>
       </view>
     </view>
   </view>
 
-  <!-- 票种选择区域 -->
-  <view class="section-container">
-    <view class="ticket-grid">
-      <view class="ticket-card {{item.selected ? 'selected' : ''}}" 
-            wx:for="{{tickets}}" 
-            wx:key="id"
-            bindtap="selectTicket"
-            data-id="{{item.id}}">
-        
-        <!-- 票种标题区 -->
-        <view class="ticket-header">
-          <view class="ticket-name">{{item.name}}</view>
-          <view class="ticket-price-container">
-            <text class="current-price">¥{{item.price}}</text>
-            <text class="original-price">¥{{item.originalPrice}}</text>
-          </view>
-        </view>
-        
-        <!-- 票种描述 -->
-        <view class="ticket-description">{{item.description}}</view>
-        
-        <!-- 票种特性 -->
-        <view class="ticket-features">
-          <text class="feature-item" wx:for="{{item.features}}" wx:for-item="feature" wx:key="*this">
-            {{feature}}
-          </text>
-        </view>
-        
-        <!-- 重要说明 -->
-        <view class="ticket-notice">{{item.notice}}</view>
-        
-        <!-- 优惠标签 -->
-        <view class="discount-badge">{{item.discount}}</view>
-        
-        <!-- 选中指示器 -->
-        <view class="selection-indicator" wx:if="{{item.selected}}">
-          <text class="check-icon">✓</text>
-        </view>
-      </view>
-    </view>
-  </view>
-
-  <!-- 购买配置区域 -->
-  <view class="section-container">
-    <view class="section-title">购买信息</view>
-    
+  <!-- 购买配置 -->
+  <view class="purchase-config">
     <!-- 数量选择 -->
-    <view class="config-item">
-      <view class="config-label">购买数量</view>
-      <view class="quantity-control">
-        <view class="quantity-btn {{quantity <= 1 ? 'disabled' : ''}}" 
+    <view class="config-row">
+      <text class="config-label">数量</text>
+      <view class="quantity-selector">
+        <view class="qty-btn {{quantity <= 1 ? 'disabled' : ''}}" 
               bindtap="changeQuantity" 
               data-type="minus">−</view>
-        <view class="quantity-display">{{quantity}}</view>
-        <view class="quantity-btn {{quantity >= 10 ? 'disabled' : ''}}" 
+        <text class="qty-number">{{quantity}}</text>
+        <view class="qty-btn {{quantity >= 10 ? 'disabled' : ''}}" 
               bindtap="changeQuantity" 
               data-type="add">+</view>
       </view>
     </view>
     
     <!-- 日期选择 -->
-    <view class="config-item">
-      <view class="config-label">游览日期</view>
+    <view class="config-row">
+      <text class="config-label">日期</text>
       <picker mode="date" 
               value="{{visitDate}}" 
               start="{{visitDate}}" 
               end="2024-12-31" 
               bindchange="bindDateChange">
-        <view class="date-selector">
-          <text class="date-text">{{visitDate || '请选择日期'}}</text>
-          <text class="arrow-icon">›</text>
+        <view class="date-picker">
+          <text class="date-text">{{visitDate}}</text>
+          <text class="picker-arrow">›</text>
         </view>
       </picker>
     </view>
   </view>
 
-  <!-- 总价展示和购买按钮 -->
-  <view class="purchase-section">
-    <view class="price-summary">
+  <!-- 购买按钮 -->
+  <view class="purchase-bottom">
+    <view class="total-price">
       <text class="price-label">总计</text>
       <text class="total-amount">¥{{totalPrice}}</text>
     </view>
-    <view class="purchase-btn" bindtap="buyNow">
+    <view class="buy-button" bindtap="buyNow">
       <text>立即购买</text>
     </view>
   </view>
 
   <!-- 购买表单弹窗 -->
   <view class="purchase-modal {{showPurchaseForm ? 'show' : ''}}" wx:if="{{showPurchaseForm}}">
-    <view class="modal-overlay" bindtap="cancelPurchase"></view>
-    <view class="modal-content">
+    <view class="modal-mask" bindtap="cancelPurchase"></view>
+    <view class="modal-container">
       <view class="modal-header">
-        <text class="modal-title">填写购票信息</text>
+        <text class="modal-title">确认购买</text>
         <text class="modal-close" bindtap="cancelPurchase">×</text>
       </view>
       
+      <!-- 联系人信息 -->
       <view class="form-section">
-        <view class="form-item">
-          <text class="form-label">联系人姓名</text>
+        <view class="input-group">
+          <text class="input-label">联系人</text>
           <input class="form-input" 
-                 placeholder="请输入联系人姓名" 
+                 placeholder="姓名" 
                  value="{{contactInfo.name}}" 
                  bindinput="onContactInput"
                  data-field="name" />
         </view>
         
-        <view class="form-item">
-          <text class="form-label">联系电话</text>
+        <view class="input-group">
+          <text class="input-label">手机号</text>
           <input class="form-input" 
                  type="number" 
                  maxlength="11"
-                 placeholder="请输入手机号码" 
+                 placeholder="手机号码" 
                  value="{{contactInfo.phone}}" 
                  bindinput="onContactInput"
                  data-field="phone" />
         </view>
       </view>
       
-      <view class="modal-summary">
-        <view class="summary-item">
-          <text class="summary-label">门票类型</text>
-          <text class="summary-value">{{selectedTicket.name}}</text>
-        </view>
-        <view class="summary-item">
-          <text class="summary-label">购买数量</text>
+      <!-- 订单摘要 -->
+      <view class="order-summary">
+        <view class="summary-row">
+          <text class="summary-label">{{selectedTicket.name}}</text>
           <text class="summary-value">{{quantity}}张</text>
         </view>
-        <view class="summary-item">
+        <view class="summary-row">
           <text class="summary-label">游览日期</text>
           <text class="summary-value">{{visitDate}}</text>
         </view>
-        <view class="summary-item total">
+        <view class="summary-row total-row">
           <text class="summary-label">支付金额</text>
           <text class="summary-value">¥{{totalPrice}}</text>
         </view>
       </view>
       
+      <!-- 操作按钮 -->
       <view class="modal-actions">
-        <view class="action-btn secondary" bindtap="cancelPurchase">取消</view>
-        <view class="action-btn primary" bindtap="confirmPayment">确认支付</view>
+        <view class="action-btn cancel" bindtap="cancelPurchase">取消</view>
+        <view class="action-btn {{paymentInProgress ? 'loading' : 'confirm'}}" bindtap="confirmPayment">
+          <text wx:if="{{!paymentInProgress}}">确认支付</text>
+          <text wx:else>支付中...</text>
+        </view>
       </view>
-    </view>
-  </view>
-
-  <!-- 购票须知 -->
-  <view class="section-container notice-section">
-    <view class="section-title">购票须知</view>
-    <view class="notice-content">
-      <view class="notice-item">• 门票当天有效，请按选定日期入园游览</view>
-      <view class="notice-item">• 儿童票适用于6-17周岁，入园需出示相关证件</view>
-      <view class="notice-item">• 老人票需持有效身份证或老年证入园</view>
-      <view class="notice-item">• 家庭套票限定人数使用，不可拆分</view>
-      <view class="notice-item">• 如需退款请在游览日期前1天申请</view>
     </view>
   </view>
 </view>

@@ -15,6 +15,14 @@ Page({
       environment: 0   // 环境设施
     },
     
+    // 调试信息（开发时显示）
+    debugInfo: {
+      lastClickedStar: '',
+      lastClickedTag: '',
+      currentRating: '',
+      currentTags: ''
+    },
+    
     // 评价维度配置（Apple风格简洁设计）
     ratingDimensions: [
       {
@@ -37,12 +45,15 @@ Page({
       }
     ],
     
-    // 快捷评价标签（精选6个核心标签）
+    // 快捷评价标签（重新设计数据结构）
     quickTags: [
-      '景色优美', '服务贴心', '设施完善',
-      '交通便利', '值得推荐', '还会再来'
+      { id: 0, text: '景色优美', selected: false },
+      { id: 1, text: '服务贴心', selected: false },
+      { id: 2, text: '设施完善', selected: false },
+      { id: 3, text: '交通便利', selected: false },
+      { id: 4, text: '值得推荐', selected: false },
+      { id: 5, text: '还会再来', selected: false }
     ],
-    selectedTags: [],
     
     // 详细评价文本
     reviewText: '',
@@ -71,6 +82,17 @@ Page({
       performance.mark('review_page_start');
       
       console.log('评价页面参数:', options);
+      console.log('初始化数据结构:', {
+        rating: this.data.rating,
+        selectedTags: this.data.selectedTags,
+        quickTags: this.data.quickTags
+      });
+      
+      // 确保数据结构正确
+      this.setData({
+        'debugInfo.currentRating': JSON.stringify(this.data.rating),
+        'debugInfo.currentTags': ''
+      });
       
       // 获取用户信息
       await this.loadUserInfo();
@@ -132,44 +154,60 @@ Page({
   },
 
   /**
-   * 星级评分点击处理（Apple风格弹性动画）
+   * 星级评分点击处理 - 完全重写版
    */
   onRatingTap(e) {
-    const { dimension, value } = e.currentTarget.dataset;
-    const rating = { ...this.data.rating };
-    rating[dimension] = parseInt(value);
-    
-    this.setData({ rating });
-    
-    console.log('星级评分更新:', rating);
-    
-    // Apple风格触觉反馈
-    wx.vibrateShort({
-      type: 'light'
-    });
+    try {
+      const { dimension, value } = e.currentTarget.dataset;
+      const ratingValue = parseInt(value);
+      
+      // 直接更新评分对象，确保数据同步
+      const newRating = { ...this.data.rating };
+      newRating[dimension] = ratingValue;
+      
+      this.setData({
+        rating: newRating,
+        'debugInfo.lastClickedStar': `${dimension}:${ratingValue}`,
+        'debugInfo.currentRating': JSON.stringify(newRating)
+      });
+      
+      // Apple风格触觉反馈
+      wx.vibrateShort({
+        type: 'light'
+      });
+    } catch (error) {
+      console.error('星级评分点击失败:', error);
+    }
   },
 
   /**
-   * 快捷标签选择（Apple风格交互）
+   * 快捷标签选择 - 彻底重写版
    */
   onTagTap(e) {
-    const tag = e.currentTarget.dataset.tag;
-    let selectedTags = [...this.data.selectedTags];
-    
-    if (selectedTags.includes(tag)) {
-      selectedTags = selectedTags.filter(t => t !== tag);
-    } else {
-      selectedTags.push(tag);
+    try {
+      const tagId = parseInt(e.currentTarget.dataset.tagid);
+      
+      const quickTags = [...this.data.quickTags];
+      const targetTag = quickTags.find(tag => tag.id === tagId);
+      
+      if (targetTag) {
+        // 切换选中状态
+        targetTag.selected = !targetTag.selected;
+        
+        this.setData({
+          quickTags: quickTags,
+          'debugInfo.lastClickedTag': targetTag.text,
+          'debugInfo.currentTags': quickTags.filter(tag => tag.selected).map(tag => tag.text).join(',')
+        });
+        
+        // Apple风格触觉反馈
+        wx.vibrateShort({
+          type: 'light'
+        });
+      }
+    } catch (error) {
+      console.error('快捷标签点击失败:', error);
     }
-    
-    this.setData({ selectedTags });
-    
-    console.log('快捷标签更新:', selectedTags);
-    
-    // Apple风格触觉反馈
-    wx.vibrateShort({
-      type: 'light'
-    });
   },
 
   /**
@@ -182,10 +220,10 @@ Page({
   },
 
   /**
-   * 表单验证（精简版）
+   * 表单验证（重写版）
    */
   validateReview() {
-    const { rating, reviewText, selectedTags } = this.data;
+    const { rating, reviewText, quickTags } = this.data;
     
     // 检查是否至少有一个评分
     const hasRating = Object.values(rating).some(score => score > 0);
@@ -195,7 +233,8 @@ Page({
     }
     
     // 检查是否有评价内容（文字或标签）
-    if (!reviewText.trim() && selectedTags.length === 0) {
+    const selectedTagsCount = quickTags.filter(tag => tag.selected).length;
+    if (!reviewText.trim() && selectedTagsCount === 0) {
       interaction.showToast('请填写评价内容或选择标签');
       return false;
     }
@@ -243,10 +282,13 @@ Page({
   },
 
   /**
-   * 构建提交数据
+   * 构建提交数据（重写版）
    */
   buildSubmitData() {
-    const { rating, reviewText, selectedTags, spotId, userInfo } = this.data;
+    const { rating, reviewText, quickTags, spotId, userInfo } = this.data;
+    
+    // 提取选中的标签文本
+    const selectedTags = quickTags.filter(tag => tag.selected).map(tag => tag.text);
     
     return {
       spotId: spotId || 'default',
@@ -296,11 +338,18 @@ Page({
       cancelText: '取消',
       success: (res) => {
         if (res.confirm) {
+          // 重置所有标签为未选中状态
+          const resetTags = this.data.quickTags.map(tag => ({
+            ...tag,
+            selected: false
+          }));
+          
           this.setData({
             rating: { overall: 0, service: 0, environment: 0 },
-            selectedTags: [],
+            quickTags: resetTags,
             reviewText: '',
-            isSubmitting: false
+            isSubmitting: false,
+            'debugInfo.currentTags': ''
           });
           
           // 重置成功触觉反馈
@@ -313,34 +362,16 @@ Page({
   },
 
   /**
-   * 查看评价历史
+   * 查看评价历史 - 跳转到历史页面
    */
   viewReviewHistory() {
     try {
-      const reviews = wx.getStorageSync('user_reviews') || [];
-      
-      if (reviews.length === 0) {
-        interaction.showToast('暂无评价历史');
-        return;
-      }
-      
-      // 显示历史评价列表
-      const reviewList = reviews.map((review, index) => {
-        const date = new Date(review.submitTime).toLocaleDateString();
-        const avgRating = ((review.overallRating + review.serviceRating + review.environmentRating) / 3).toFixed(1);
-        return `${index + 1}. ${date} - 平均${avgRating}分`;
-      }).join('\n');
-      
-      wx.showModal({
-        title: '我的评价历史',
-        content: reviewList,
-        showCancel: false,
-        confirmText: '知道了'
+      wx.navigateTo({
+        url: '/pages/review/history/history'
       });
-      
     } catch (error) {
-      console.error('获取评价历史失败:', error);
-      interaction.showToast('获取历史失败');
+      console.error('跳转评价历史页面失败:', error);
+      interaction.showToast('页面跳转失败');
     }
   },
 

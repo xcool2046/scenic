@@ -1,2 +1,85 @@
-<!--packages/ticket/pages/ticket/success/success.wxml-->
-<text>packages/ticket/pages/ticket/success/success.wxml</text>
+<!-- 购票成功页面 - Apple风格 -->
+<view class="success-page">
+  <!-- 加载状态 -->
+  <view class="loading-container" wx:if="{{loading}}">
+    <view class="loading-icon"></view>
+    <text class="loading-text">正在加载订单信息...</text>
+  </view>
+
+  <!-- 主要内容 -->
+  <view class="success-content" wx:else>
+    <!-- 成功图标和标题 -->
+    <view class="success-header">
+      <view class="success-icon">
+        <text class="checkmark">✓</text>
+      </view>
+      <text class="success-title">购票成功</text>
+      <text class="success-subtitle">您的门票已生成</text>
+    </view>
+
+    <!-- 订单卡片 -->
+    <view class="order-card" wx:if="{{orderInfo}}">
+      <!-- 门票信息 -->
+      <view class="ticket-info">
+        <text class="ticket-name">{{orderInfo.ticket_name}}</text>
+        <text class="ticket-quantity">×{{orderInfo.quantity}}</text>
+      </view>
+      
+      <!-- 订单详情 -->
+      <view class="order-details">
+        <view class="detail-row">
+          <text class="detail-label">订单号</text>
+          <text class="detail-value">{{orderInfo.order_id}}</text>
+        </view>
+        <view class="detail-row">
+          <text class="detail-label">游览日期</text>
+          <text class="detail-value">{{orderInfo.visit_date}}</text>
+        </view>
+        <view class="detail-row">
+          <text class="detail-label">支付金额</text>
+          <text class="detail-value price">¥{{orderInfo.total_price}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 操作按钮组 -->
+    <view class="action-buttons">
+      <!-- 查看电子票 - 主要操作 -->
+      <view class="primary-button" bindtap="viewTicketCode">
+        <text>查看电子票</text>
+      </view>
+      
+      <!-- 次要操作 -->
+      <view class="secondary-actions">
+        <view class="secondary-button" bindtap="viewOrderDetail">
+          <text>订单详情</text>
+        </view>
+        <view class="secondary-button" bindtap="viewMyOrders">
+          <text>我的订单</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 温馨提示 -->
+    <view class="tips-section">
+      <view class="tips-title">
+        <text>温馨提示</text>
+      </view>
+      <view class="tips-content">
+        <text class="tip-item">• 请按选定日期入园游览</text>
+        <text class="tip-item">• 入园时出示电子票二维码</text>
+        <text class="tip-item">• 如需帮助请联系客服</text>
+      </view>
+    </view>
+
+    <!-- 底部导航 -->
+    <view class="bottom-nav">
+      <view class="nav-button outline" bindtap="continueBuying">
+        <text>继续购票</text>
+      </view>
+      <view class="nav-button filled" bindtap="goHome">
+        <text>返回首页</text>
+      </view>
+    </view>
+  </view>
+</view>

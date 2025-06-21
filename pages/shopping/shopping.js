@@ -266,8 +266,12 @@ Page({
     if (existingIndex >= 0) {
       cartItems[existingIndex].quantity += 1;
     } else {
+      // 修正图片路径：从列表页面的 ../../ 转换为购物车页面需要的 ../../../
+      const correctedImage = product.image ? product.image.replace('../../', '../../../') : '';
+      
       cartItems.push({
         ...product,
+        image: correctedImage, // 使用修正后的图片路径
         quantity: 1,
         addTime: Date.now()
       });
