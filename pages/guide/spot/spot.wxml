@@ -1,19 +1,9 @@
 <!--pages/guide/spot/spot.wxml-->
 <view class="container" wx:if="{{!loading && spot}}">
-  <!-- 顶部轮播图 -->
-  <swiper 
-    class="banner" 
-    indicator-dots="{{indicatorDots}}"
-    autoplay="{{autoplay}}" 
-    interval="{{interval}}" 
-    duration="{{duration}}"
-  >
-    <block wx:for="{{spot.images}}" wx:key="*this">
-      <swiper-item>
-        <image bindtap="previewImage" data-src="{{item}}" src="{{item}}" mode="aspectFill" class="banner-image"></image>
-      </swiper-item>
-    </block>
-  </swiper>
+  <!-- 顶部景点图片 -->
+  <view class="banner">
+    <image bindtap="previewImage" data-src="{{spot.image}}" src="{{spot.image}}" mode="aspectFill" class="banner-image"></image>
+  </view>
   
   <!-- 实时人流量信息 -->
   <view class="crowd-section">
@@ -142,20 +132,20 @@
   </view>
   
   <!-- 附近景点 -->
-  <view class="nearby-section" wx:if="{{spot.nearbySpots && spot.nearbySpots.length > 0}}">
+  <view class="nearby-section" wx:if="{{nearbySpots && nearbySpots.length > 0}}">
     <view class="section-title">
       <text>附近景点</text>
     </view>
     <scroll-view scroll-x="true" class="nearby-scroll">
       <view class="nearby-list">
-        <block wx:for="{{spot.nearbySpots}}" wx:key="*this">
+        <block wx:for="{{nearbySpots}}" wx:key="id">
           <view 
             class="nearby-item" 
             bindtap="navigateToNearbySpot" 
-            data-id="{{item}}"
+            data-id="{{item.id}}"
           >
-            <image class="nearby-image" src="{{spotData[item-1].images[0]}}" mode="aspectFill"></image>
-            <text class="nearby-name">{{spotData[item-1].name}}</text>
+            <image class="nearby-image" src="{{item.image}}" mode="aspectFill"></image>
+            <text class="nearby-name">{{item.name}}</text>
           </view>
         </block>
       </view>

@@ -1,48 +1,12 @@
 // pages/guide/guide.js
 const config = require('../../utils/config');
+const spotsData = require('../../utils/spots-data');
 
 Page({
   data: {
     sortText: '距离优先',
     sortType: 'distance', // 可选值：distance, popular
-    spots: [
-      {
-        id: 1,
-        name: '望海亭',
-        desc: '位于景区最高点，可俯瞰整个景区美景，是拍摄日出和全景的最佳地点',
-        image: config.IMAGES.SPOTS[0],
-        distance: '200米',
-        duration: '15分钟',
-        hot: true
-      },
-      {
-        id: 2,
-        name: '松月湖',
-        desc: '景区最大的湖泊，湖水清澈见底，四周绿树环绕，环湖步道风景秀丽',
-        image: config.IMAGES.SCENIC_SPOTS.LAKE,
-        distance: '500米',
-        duration: '30分钟',
-        hot: true
-      },
-      {
-        id: 3,
-        name: '古樟园',
-        desc: '百年古樟树群落，树荫蔽日，夏季凉爽宜人，是休憩和体验自然的好去处',
-        image: config.IMAGES.SCENIC_SPOTS.OLD_TREES,
-        distance: '850米',
-        duration: '20分钟',
-        hot: false
-      },
-      {
-        id: 4,
-        name: '飞瀑溪',
-        desc: '山涧飞瀑，水声潺潺，溪边设有观景平台，可近距离感受大自然的魅力',
-        image: config.IMAGES.SCENIC_SPOTS.WATERFALL,
-        distance: '1.2公里',
-        duration: '25分钟',
-        hot: false
-      }
-    ],
+    spots: [],
     routes: [
       {
         id: 1,
@@ -79,8 +43,16 @@ Page({
   },
 
   onLoad(options) {
-    // 可以根据传入参数加载不同数据
-    this.sortByDistance(); // 初始化时按距离排序
+    // 加载景点数据
+    this.loadSpotsData();
+  },
+
+  // 加载景点数据
+  loadSpotsData() {
+    const spots = spotsData.getSortedSpots(this.data.sortType);
+    this.setData({
+      spots: spots
+    });
   },
 
   // 切换排序方式
@@ -88,25 +60,17 @@ Page({
     if (this.data.sortType === 'distance') {
       this.setData({
         sortType: 'popular',
-        sortText: '热门优先',
-        spots: this.data.spots.sort((a, b) => (b.hot ? 1 : 0) - (a.hot ? 1 : 0))
+        sortText: '热门优先'
       });
     } else {
-      this.sortByDistance();
+      this.setData({
+        sortType: 'distance',
+        sortText: '距离优先'
+      });
     }
-  },
-
-  // 按距离排序
-  sortByDistance() {
-    this.setData({
-      sortType: 'distance',
-      sortText: '距离优先',
-      spots: this.data.spots.sort((a, b) => {
-        const distA = parseFloat(a.distance.replace(/[^0-9\.]/g, ''));
-        const distB = parseFloat(b.distance.replace(/[^0-9\.]/g, ''));
-        return distA - distB;
-      })
-    });
+    
+    // 重新加载排序后的数据
+    this.loadSpotsData();
   },
 
   // 打开完整地图

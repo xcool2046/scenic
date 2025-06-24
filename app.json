@@ -2,6 +2,8 @@
   "pages": [
     "pages/index/index",
     "pages/guide/guide",
+    "pages/guide/spot/spot",
+    "pages/guide/nearby/nearby",
     "pages/user/user",
     "pages/ticket/ticket",
     "pages/orders/orders",
@@ -31,9 +33,7 @@
       "root": "packages/guide",
       "name": "guide",
       "pages": [
-        "pages/guide/spot/spot",
         "pages/guide/parking/parking",
-        "pages/guide/nearby/nearby",
         "pages/guide/transport/transport",
         "pages/guide/services/services"
       ]
@@ -57,10 +57,16 @@
   "permission": {
     "scope.userLocation": {
       "desc": "您的位置信息将用于地图定位和导航服务"
+    },
+    "scope.record": {
+      "desc": "需要录音权限以支持语音导览功能"
     }
   },
   "requiredPrivateInfos": [
     "getLocation"
+  ],
+  "requiredBackgroundModes": [
+    "audio"
   ],
   "tabBar": {
     "color": "#999999",

@@ -44,6 +44,9 @@ App({
       performance.measure('app_launch', 'app_launch_start', 'app_launch_end');
       
       console.log('应用启动完成');
+      
+      // 强制首页跳转逻辑 - 解决体验版扫码进入默认页面问题
+      this.ensureHomePage();
     } catch (error) {
       console.error('应用启动失败:', error);
       this.handleLaunchError(error);
@@ -381,6 +384,56 @@ App({
     }
   },
   
+  // 确保首页显示 - 解决体验版扫码进入默认页面问题
+  ensureHomePage() {
+    // 延迟执行，确保页面栈初始化完成
+    setTimeout(() => {
+      try {
+        const pages = getCurrentPages();
+        
+        // 如果页面栈为空或当前页面不是首页
+        if (pages.length === 0) {
+          console.log('页面栈为空，跳转到首页');
+          wx.reLaunch({
+            url: '/pages/index/index',
+            fail: (err) => {
+              console.error('跳转首页失败:', err);
+            }
+          });
+          return;
+        }
+        
+        const currentPage = pages[pages.length - 1];
+        const currentRoute = currentPage.route;
+        
+        // 检查当前页面是否为首页
+        if (currentRoute !== 'pages/index/index') {
+          console.log(`当前页面: ${currentRoute}, 需要跳转到首页`);
+          wx.reLaunch({
+            url: '/pages/index/index',
+            success: () => {
+              console.log('成功跳转到首页');
+            },
+            fail: (err) => {
+              console.error('跳转首页失败:', err);
+              // 备用方案：使用 switchTab
+              wx.switchTab({
+                url: '/pages/index/index',
+                fail: (tabErr) => {
+                  console.error('switchTab 也失败了:', tabErr);
+                }
+              });
+            }
+          });
+        } else {
+          console.log('当前已在首页，无需跳转');
+        }
+      } catch (error) {
+        console.error('检查首页状态时出错:', error);
+      }
+    }, 100); // 延迟100ms执行
+  },
+  
   handleLaunchError(error) {
     // 记录错误
     console.error('启动错误:', error);
@@ -536,6 +589,47 @@ App({
     } catch (error) {
       console.log('用户状态检查失败:', error);
     }
+  },
+
+  // 页面不存在时的处理 - 解决扫码进入404的问题
+  onPageNotFound(res) {
+    console.log('页面不存在:', res.path, '查询参数:', res.query);
+    
+    // 记录404信息用于调试
+    if (performance && performance.recordError) {
+      performance.recordError({
+        type: 'page_not_found',
+        path: res.path,
+        query: res.query,
+        timestamp: Date.now()
+      });
+    }
+    
+    // 直接跳转到首页
+    wx.reLaunch({
+      url: '/pages/index/index',
+      success: () => {
+        console.log('404页面重定向到首页成功');
+        // 延迟显示提示
+        setTimeout(() => {
+          wx.showToast({
+            title: '已为您跳转到首页',
+            icon: 'success',
+            duration: 2000
+          });
+        }, 500);
+      },
+      fail: (err) => {
+        console.error('404重定向失败:', err);
+        // 备用方案
+        wx.switchTab({
+          url: '/pages/index/index',
+          fail: (tabErr) => {
+            console.error('switchTab也失败了:', tabErr);
+          }
+        });
+      }
+    });
   },
   
   onHide() {
